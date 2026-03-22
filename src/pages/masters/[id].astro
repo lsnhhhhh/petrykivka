@@ -1,0 +1,39 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const masters = await getCollection('masters');
+  return masters.map(master => ({
+    params: { id: master.id },
+    props: { master },
+  }));
+}
+
+const { master } = Astro.props;
+const { Content } = await render(master);
+---
+
+<!doctype html>
+<html lang="uk">
+  <head>
+    <BaseHead title={master.data.name} description={master.data.name} />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <h1>{master.data.name}</h1>
+      <p><strong>Категорія:</strong> {master.data.category}</p>
+      {master.data.born && (
+        <p>
+          <strong>Роки життя:</strong> {master.data.born}
+          {master.data.died && ` — ${master.data.died}`}
+        </p>
+      )}
+      <Content />
+    </main>
+    <Footer />
+  </body>
+</html>

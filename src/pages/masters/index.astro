@@ -1,0 +1,49 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getCollection } from 'astro:content';
+
+const allMasters = await getCollection('masters');
+
+const categories = [
+  'Старі майстри',
+  'Друге покоління',
+  'Третє покоління',
+  'Сучасні майстри',
+  'Мистецтвознавці',
+];
+
+const mastersByCategory = categories.map(category => ({
+  category,
+  masters: allMasters.filter(m => m.data.category === category),
+})).filter(group => group.masters.length > 0);
+---
+
+<!doctype html>
+<html lang="uk">
+  <head>
+    <BaseHead title="Майстри" description="Майстри петриківського розпису" />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <h1>Майстри</h1>
+      {mastersByCategory.map(group => (
+        <section>
+          <h2>{group.category}</h2>
+          <ul>
+            {group.masters.map(master => (
+              <li>
+                <a href={`/masters/${master.id}`}>
+                  {master.data.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </main>
+    <Footer />
+  </body>
+</html>
