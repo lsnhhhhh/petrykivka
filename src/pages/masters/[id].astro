@@ -5,8 +5,8 @@ import Footer from '../../components/Footer.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
-  const masters = await getCollection('masters');
-  return masters.map(master => ({
+  const allMasters = await getCollection('masters');
+  return allMasters.map(master => ({
     params: { id: master.id },
     props: { master },
   }));
