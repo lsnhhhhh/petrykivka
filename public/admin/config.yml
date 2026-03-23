@@ -64,3 +64,33 @@ collections:
       - { label: "Опис", name: description, widget: string }
       - { label: "Дата", name: pubDate, widget: datetime }
       - { label: "Текст", name: body, widget: markdown }
+      - name: books
+    label: Книги
+    folder: src/content/books
+    create: true
+    slug: '{{slug}}'
+    fields:
+      - { label: "Назва", name: title, widget: string }
+      - { label: "Автор", name: author, widget: string, required: false }
+      - { label: "Рік", name: year, widget: string, required: false }
+      - { label: "Видавництво", name: publisher, widget: string, required: false }
+      - { label: "Мова", name: language, widget: string, required: false }
+      - label: "Категорія"
+        name: category
+        widget: select
+        options:
+          - Альбоми
+          - Альбоми про майстрів
+          - Мистецтвознавчі дослідження
+          - Оздоблені розписом
+          - Наукові статті
+          - Інше
+      - { label: "Обкладинка", name: cover, widget: image, required: false }
+      - label: "Майстри"
+        name: masters
+        widget: list
+        required: false
+        field: { label: Імʼя, name: item, widget: string }
+      - { label: "Посилання онлайн", name: externalUrl, widget: string, required: false }
+      - { label: "PDF", name: pdfUrl, widget: string, required: false }
+      - { label: "Текст", name: body, widget: markdown }

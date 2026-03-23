@@ -1,0 +1,19 @@
+---
+---
+<!doctype html>
+<html>
+<head>
+  <title>Авторизація</title>
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+<body>
+  <script is:inline>
+    window.netlifyIdentity.on("init", user => {
+      if (!user) {
+        window.netlifyIdentity.open();
+      }
+    });
+    window.netlifyIdentity.init();
+  </script>
+</body>
+</html>
