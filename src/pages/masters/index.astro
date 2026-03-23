@@ -167,11 +167,6 @@ const mastersByCategory = categories.map(category => ({
                 }
                 <div class="master-info">
                   <p class="master-name">{master.data.name}</p>
-                  {master.data.born && (
-                    <p class="master-dates">
-                      {master.data.born}{master.data.died && ' — ' + master.data.died}
-                    </p>
-                  )}
                 </div>
               </a>
             ))}

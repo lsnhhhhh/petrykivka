@@ -55,7 +55,7 @@ const books = defineCollection({
     author: z.string().optional(),
     year: z.string().optional(),
     publisher: z.string().optional(),
-    language: z.string().optional(),
+    language: z.union([z.string(), z.array(z.string())]).optional(),
     category: z.enum([
       'Альбоми',
       'Альбоми про майстрів',

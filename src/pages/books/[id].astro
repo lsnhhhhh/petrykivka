@@ -54,7 +54,11 @@ function getMasterUrl(name) {
       .book-meta {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.25rem;
+      }
+      .book-meta p {
+        margin: 0;
+        padding: 0;
       }
       .book-meta h1 {
         margin: 0 0 0.5rem;
@@ -62,6 +66,8 @@ function getMasterUrl(name) {
       .meta-row {
         font-size: 0.95rem;
         color: rgb(96, 115, 159);
+         margin-bottom: 0.4rem;
+         padding: 0;
       }
       .meta-row strong {
         color: rgb(0, 0, 0);
@@ -73,17 +79,19 @@ function getMasterUrl(name) {
         flex-wrap: wrap;
       }
       .book-link {
-        padding: 0.5rem 1.25rem;
-        border-radius: 20px;
+        padding: 0.6rem 1.75rem;
+        border-radius: 30px;
         text-decoration: none;
-        font-size: 0.9rem;
-        border: 1px solid rgb(229, 233, 240);
-        color: inherit;
+        font-size: 1 rem;
+        border: 2px solid #c0392b;
+        color: #c0392b;
+        font-weight: 500;
         transition: all 0.2s;
       }
       .book-link:hover {
+        background: #c0392b;
+        color: white;
         border-color: #c0392b;
-        color: #c0392b;
       }
       .book-link.pdf {
         background: #fff0ee;
@@ -147,7 +155,12 @@ function getMasterUrl(name) {
             <p class="meta-row"><strong>Видавництво:</strong> {book.data.publisher}</p>
           )}
           {book.data.language && (
-            <p class="meta-row"><strong>Мова:</strong> {book.data.language}</p>
+  <p class="meta-row">
+    <strong>Мова:</strong>{' '}
+    {Array.isArray(book.data.language)
+      ? book.data.language.join(', ')
+      : book.data.language}
+  </p>
           )}
           <p class="meta-row"><strong>Категорія:</strong> {book.data.category}</p>
           {book.data.masters && book.data.masters.length > 0 && (
