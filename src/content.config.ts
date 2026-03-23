@@ -20,7 +20,9 @@ const masters = defineCollection({
       'Друге покоління',
       'Третє покоління',
       'Сучасні майстри',
-      'Мистецтвознавці',
+      'Київська група',
+      'Поза осередком',
+      'Дослідники петриківського розпису',
     ]),
     photo: image().optional(),
     born: z.string().optional(),
@@ -30,6 +32,7 @@ const masters = defineCollection({
     teachers: z.array(z.string()).optional(),
     influenced: z.array(z.string()).optional(),
     technique: z.array(z.string()).optional(),
+    school: z.array(z.string()).optional(),
     tags: z.array(z.string()).optional(),
     gallery: z.array(z.object({
       image: image(),
@@ -45,4 +48,27 @@ const masters = defineCollection({
   }),
 });
 
-export const collections = { blog, masters };
+const books = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/books' }),
+  schema: ({ image }) => z.object({
+    title: z.string(),
+    author: z.string().optional(),
+    year: z.string().optional(),
+    publisher: z.string().optional(),
+    language: z.string().optional(),
+    category: z.enum([
+      'Альбоми',
+      'Альбоми про майстрів',
+      'Мистецтвознавчі дослідження',
+      'Оздоблені розписом',
+      'Наукові статті',
+      'Інше',
+    ]),
+    cover: image().optional(),
+    masters: z.array(z.string()).optional(),
+    externalUrl: z.string().optional(),
+    pdfUrl: z.string().optional(),
+  }),
+});
+
+export const collections = { blog, masters, books };

@@ -24,8 +24,7 @@ function getMasterUrl(name) {
 const resolvedTagGroups = [
   { label: 'Осередок', values: master.data.center ? [master.data.center] : [], type: 'tag' },
   { label: 'Період', values: master.data.period ? [master.data.period] : [], type: 'tag' },
-  { label: 'Техніка', values: master.data.technique || [], type: 'tag' },
-  { label: 'Теги', values: master.data.tags || [], type: 'tag' },
+  { label: 'Школа', values: master.data.school || [], type: 'tag' },
   { label: 'Вчителі', values: master.data.teachers || [], type: 'master' },
   { label: 'Вплив на', values: master.data.influenced || [], type: 'master' },
 ].map(group => ({
@@ -36,6 +35,11 @@ const resolvedTagGroups = [
     isMaster: group.type === 'master' && getMasterUrl(value) !== null,
   })),
 }));
+
+const allBooks = await getCollection('books');
+const masterBooks = allBooks.filter(book =>
+  book.data.masters && book.data.masters.includes(master.data.name)
+);
 ---
 <!doctype html>
 <html lang="uk">
@@ -73,6 +77,65 @@ const resolvedTagGroups = [
         padding: 0.4rem 0;
         text-align: center;
       }
+      .meta-section {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgb(229,233,240);
+      }
+      .meta-row {
+        margin-bottom: 0.75rem;
+      }
+      .books-section {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgb(229,233,240);
+      }
+      .books-section h2 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+      }
+      .books-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1rem;
+      }
+      .book-card {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid rgb(229,233,240);
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .book-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        border-color: transparent;
+      }
+      .book-cover-placeholder {
+        width: 100%;
+        height: 200px;
+        background: rgb(229,233,240);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+      }
+      .book-info {
+        padding: 0.75rem;
+      }
+      .book-title {
+        font-size: 0.9rem;
+        font-weight: 700;
+        margin: 0 0 0.25rem;
+        line-height: 1.3;
+      }
+      .book-author {
+        font-size: 0.8rem;
+        color: rgb(96,115,159);
+        margin: 0;
+      }
     </style>
   </head>
   <body>
@@ -80,6 +143,7 @@ const resolvedTagGroups = [
     <main>
       <a href="/masters">← Всі майстри</a>
       <h1>{master.data.name}</h1>
+
       {master.data.photo && (
         <div style="margin: 1.5rem 0;">
           <Image
@@ -91,14 +155,9 @@ const resolvedTagGroups = [
           />
         </div>
       )}
-      <p><strong>Категорія:</strong> {master.data.category}</p>
-      {master.data.born && (
-        <p>
-          <strong>Роки життя:</strong> {master.data.born}
-          {master.data.died && ' — ' + master.data.died}
-        </p>
-      )}
+
       <Content />
+
       {master.data.galleryGroups && master.data.galleryGroups.length > 0 && (
         <div>
           {master.data.galleryGroups.map(group => (
@@ -126,9 +185,10 @@ const resolvedTagGroups = [
           ))}
         </div>
       )}
-      <section style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgb(229,233,240);">
+
+      <section class="meta-section">
         {resolvedTagGroups.map(group => group.items.length > 0 && (
-          <div style="margin-bottom: 0.75rem;">
+          <div class="meta-row">
             <strong>{group.label}:</strong>{' '}
             {group.items.map(item => (
               <a href={item.url} class={item.isMaster ? 'master-link' : 'tag-link'}>
@@ -137,7 +197,41 @@ const resolvedTagGroups = [
             ))}
           </div>
         ))}
+        <div class="meta-row">
+          <strong>Категорія:</strong> {master.data.category}
+        </div>
       </section>
+
+      {masterBooks.length > 0 && (
+        <section class="books-section">
+          <h2>Книги про цього майстра</h2>
+          <div class="books-grid">
+            {masterBooks.map(book => (
+              <a href={'/books/' + book.id} class="book-card">
+                {book.data.cover
+                  ? (
+                    <Image
+                      src={book.data.cover}
+                      alt={book.data.title}
+                      width={160}
+                      height={200}
+                      style="width: 100%; height: 200px; object-fit: cover; display: block;"
+                    />
+                  ) : (
+                    <div class="book-cover-placeholder">📖</div>
+                  )
+                }
+                <div class="book-info">
+                  <p class="book-title">{book.data.title}</p>
+                  {book.data.author && (
+                    <p class="book-author">{book.data.author}</p>
+                  )}
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
     </main>
     <Footer />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/glightbox/3.3.0/js/glightbox.min.js"></script>
