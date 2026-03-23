@@ -63,6 +63,17 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
         </a>
       </div>
     </main>
+    <script is:inline>
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("init", user => {
+      if (!user) {
+        window.netlifyIdentity.on("login", () => {
+          document.location.href = "/admin/";
+        });
+      }
+    });
+  }
+</script>
     <Footer />
   </body>
 </html>
