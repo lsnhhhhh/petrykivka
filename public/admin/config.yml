@@ -21,11 +21,18 @@ collections:
           - Друге покоління
           - Третє покоління
           - Сучасні майстри
-          - Мистецтвознавці
+          - Київська група
+          - Поза осередком
+          - Дослідники петриківського розпису
       - { label: "Рік народження", name: born, widget: string, required: false }
       - { label: "Рік смерті", name: died, widget: string, required: false }
       - { label: "Період", name: period, widget: string, required: false }
       - { label: "Осередок", name: center, widget: string, required: false }
+      - label: "Школа"
+        name: school
+        widget: list
+        required: false
+        field: { label: Школа, name: item, widget: string }
       - label: "Вчителі"
         name: teachers
         widget: list
@@ -36,22 +43,7 @@ collections:
         widget: list
         required: false
         field: { label: Імʼя, name: item, widget: string }
-      - label: "Техніка"
-        name: technique
-        widget: list
-        required: false
-        field: { label: Техніка, name: item, widget: string }
-      - label: "Теги"
-        name: tags
-        widget: list
-        required: false
-        field: { label: Тег, name: item, widget: string }
       - { label: "Фото", name: photo, widget: image, required: false }
-      - label: "Галерея"
-        name: gallery
-        widget: list
-        required: false
-        field: { label: Фото, name: item, widget: image }
       - { label: "Текст", name: body, widget: markdown }
 
   - name: blog
@@ -64,7 +56,8 @@ collections:
       - { label: "Опис", name: description, widget: string }
       - { label: "Дата", name: pubDate, widget: datetime }
       - { label: "Текст", name: body, widget: markdown }
-      - name: books
+
+  - name: books
     label: Книги
     folder: src/content/books
     create: true
