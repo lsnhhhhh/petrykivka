@@ -25,6 +25,12 @@ const masters = defineCollection({
     photo: image().optional(),
     born: z.string().optional(),
     died: z.string().optional(),
+    period: z.string().optional(),
+    center: z.string().optional(),
+    teachers: z.array(z.string()).optional(),
+    influenced: z.array(z.string()).optional(),
+    technique: z.array(z.string()).optional(),
+    tags: z.array(z.string()).optional(),
     gallery: z.array(image()).optional(),
   }),
 });

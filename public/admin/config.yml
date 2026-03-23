@@ -1,0 +1,67 @@
+local_backend: true
+
+backend:
+  name: git-gateway
+
+media_folder: src/assets
+public_folder: /assets
+
+collections:
+  - name: masters
+    label: Майстри
+    folder: src/content/masters
+    create: true
+    slug: '{{slug}}'
+    fields:
+      - { label: "Імʼя", name: name, widget: string }
+      - label: Категорія
+        name: category
+        widget: select
+        options:
+          - Старі майстри
+          - Друге покоління
+          - Третє покоління
+          - Сучасні майстри
+          - Мистецтвознавці
+      - { label: "Рік народження", name: born, widget: string, required: false }
+      - { label: "Рік смерті", name: died, widget: string, required: false }
+      - { label: "Період", name: period, widget: string, required: false }
+      - { label: "Осередок", name: center, widget: string, required: false }
+      - label: "Вчителі"
+        name: teachers
+        widget: list
+        required: false
+        field: { label: Імʼя, name: item, widget: string }
+      - label: "Вплив на"
+        name: influenced
+        widget: list
+        required: false
+        field: { label: Імʼя, name: item, widget: string }
+      - label: "Техніка"
+        name: technique
+        widget: list
+        required: false
+        field: { label: Техніка, name: item, widget: string }
+      - label: "Теги"
+        name: tags
+        widget: list
+        required: false
+        field: { label: Тег, name: item, widget: string }
+      - { label: "Фото", name: photo, widget: image, required: false }
+      - label: "Галерея"
+        name: gallery
+        widget: list
+        required: false
+        field: { label: Фото, name: item, widget: image }
+      - { label: "Текст", name: body, widget: markdown }
+
+  - name: blog
+    label: Блог
+    folder: src/content/blog
+    create: true
+    slug: '{{slug}}'
+    fields:
+      - { label: "Заголовок", name: title, widget: string }
+      - { label: "Опис", name: description, widget: string }
+      - { label: "Дата", name: pubDate, widget: datetime }
+      - { label: "Текст", name: body, widget: markdown }

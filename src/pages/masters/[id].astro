@@ -3,6 +3,7 @@ import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
 
 export async function getStaticPaths() {
   const allMasters = await getCollection('masters');
@@ -14,26 +15,92 @@ export async function getStaticPaths() {
 
 const { master } = Astro.props;
 const { Content } = await render(master);
+
+const tagGroups = [
+  { label: 'Осередок', values: master.data.center ? [master.data.center] : [] },
+  { label: 'Період', values: master.data.period ? [master.data.period] : [] },
+  { label: 'Техніка', values: master.data.technique || [] },
+  { label: 'Теги', values: master.data.tags || [] },
+  { label: 'Вчителі', values: master.data.teachers || [] },
+  { label: 'Вплив на', values: master.data.influenced || [] },
+];
+
+function tagUrl(value: string) {
+  return '/masters/tags/' + value;
+}
 ---
 
 <!doctype html>
 <html lang="uk">
   <head>
     <BaseHead title={master.data.name} description={master.data.name} />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/glightbox/3.3.0/css/glightbox.min.css" />
   </head>
   <body>
     <Header />
     <main>
+      <a href="/masters">← Всі майстри</a>
       <h1>{master.data.name}</h1>
+
+      {master.data.photo && (
+        <div style="margin: 1.5rem 0;">
+          <Image
+            src={master.data.photo}
+            alt={master.data.name}
+            width={800}
+            height={500}
+            style="border-radius: 8px; width: 100%; max-width: 800px; height: auto; display: block;"
+          />
+        </div>
+      )}
+
       <p><strong>Категорія:</strong> {master.data.category}</p>
+
       {master.data.born && (
         <p>
           <strong>Роки життя:</strong> {master.data.born}
-          {master.data.died && ` — ${master.data.died}`}
+          {master.data.died && ' — ' + master.data.died}
         </p>
       )}
+
       <Content />
+
+      {master.data.gallery && master.data.gallery.length > 0 && (
+        <section>
+          <h2>Галерея робіт</h2>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+            {master.data.gallery.map((img, i) => (
+              <a href={img.src} class="glightbox" data-gallery="master-gallery">
+                <Image
+                  src={img}
+                  alt={'Робота ' + (i + 1)}
+                  width={300}
+                  height={300}
+                  style="border-radius: 8px; object-fit: cover; width: 100%; height: 200px; cursor: pointer;"
+                />
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #eee;">
+        {tagGroups.map(group => group.values.length > 0 && (
+          <div style="margin-bottom: 0.75rem;">
+            <strong>{group.label}:</strong>{' '}
+            {group.values.map(value => (
+              <a href={tagUrl(value)} style="display: inline-block; background: #f0f0f0; padding: 2px 10px; border-radius: 12px; margin: 2px; text-decoration: none; color: inherit;">
+                {value}
+              </a>
+            ))}
+          </div>
+        ))}
+      </section>
     </main>
     <Footer />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/glightbox/3.3.0/js/glightbox.min.js"></script>
+    <script>
+      const lightbox = GLightbox({ selector: '.glightbox' });
+    </script>
   </body>
 </html>

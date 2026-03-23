@@ -1,0 +1,68 @@
+---
+import BaseHead from '../../../components/BaseHead.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const allMasters = await getCollection('masters');
+  
+  const allTags: string[] = [];
+  
+  for (const master of allMasters) {
+    if (master.data.tags) allTags.push(...master.data.tags);
+    if (master.data.technique) allTags.push(...master.data.technique);
+    if (master.data.center) allTags.push(master.data.center);
+    if (master.data.period) allTags.push(master.data.period);
+    if (master.data.teachers) allTags.push(...master.data.teachers);
+    if (master.data.influenced) allTags.push(...master.data.influenced);
+  }
+  
+  const uniqueTags = [...new Set(allTags)];
+  
+  return uniqueTags.map(tag => ({
+    params: { tag: String(tag) },
+    props: {
+      tag: String(tag),
+      masters: allMasters.filter(master => {
+        const masterTags: string[] = [];
+        if (master.data.tags) masterTags.push(...master.data.tags);
+        if (master.data.technique) masterTags.push(...master.data.technique);
+        if (master.data.center) masterTags.push(master.data.center);
+        if (master.data.period) masterTags.push(master.data.period);
+        if (master.data.teachers) masterTags.push(...master.data.teachers);
+        if (master.data.influenced) masterTags.push(...master.data.influenced);
+        return masterTags.includes(String(tag));
+      }),
+    },
+  }));
+}
+
+const { tag, masters } = Astro.props;
+---
+
+<!doctype html>
+<html lang="uk">
+  <head>
+    <BaseHead title={`Тег: ${tag}`} description={`Майстри з тегом ${tag}`} />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <a href="/masters">← Всі майстри</a>
+      <h1>Тег: {tag}</h1>
+      <p>{masters.length} майстрів</p>
+      <ul>
+        {masters.map(master => (
+          <li>
+            <a href={`/masters/${master.id}`}>
+              {master.data.name}
+            </a>
+            <span> — {master.data.category}</span>
+          </li>
+        ))}
+      </ul>
+    </main>
+    <Footer />
+  </body>
+</html>
