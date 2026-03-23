@@ -31,7 +31,17 @@ const masters = defineCollection({
     influenced: z.array(z.string()).optional(),
     technique: z.array(z.string()).optional(),
     tags: z.array(z.string()).optional(),
-    gallery: z.array(image()).optional(),
+    gallery: z.array(z.object({
+      image: image(),
+      caption: z.string().optional(),
+    })).optional(),
+    galleryGroups: z.array(z.object({
+      title: z.string(),
+      items: z.array(z.object({
+        image: image(),
+        caption: z.string().optional(),
+      })),
+    })).optional(),
   }),
 });
 

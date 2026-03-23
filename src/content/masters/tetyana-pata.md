@@ -28,10 +28,15 @@ tags:
   - птахи
   - рослинний орнамент
 photo: ../../assets/masters/tetyana-pata/photo.jpg
-gallery:
-  - ../../assets/masters/tetyana-pata/work-1.jpg
-  - ../../assets/masters/tetyana-pata/work-2.jpg
-  - ../../assets/masters/tetyana-pata/work-3.jpg
+galleryGroups:
+  - title: 'Галерея робіт'
+    items:
+      - image: '../../assets/masters/tetyana-pata/work-1.jpg'
+        caption: 'Робота 1'
+      - image: '../../assets/masters/tetyana-pata/work-2.jpg'
+        caption: 'Робота 2'
+      - image: '../../assets/masters/tetyana-pata/work-3.jpg'
+        caption: 'Робота 3'
 ---
 ## Біографія
 
@@ -50,5 +55,4 @@ gallery:
 Заслужений майстер народної творчості України.
 Її роботи зберігаються у музеях по всьому світу.\
 \
-Тетяна Пата
 

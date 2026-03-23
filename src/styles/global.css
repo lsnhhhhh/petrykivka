@@ -2,7 +2,7 @@
 	--accent: #c0392b;
 	--accent-dark: #922b21;
 	--black: 15, 18, 25;
-	--gray: 96, 115, 159;
+	--gray: 0, 0, 0;
 	--gray-light: 229, 233, 240;
 	--gray-dark: 34, 41, 57;
 	--box-shadow:
@@ -45,7 +45,7 @@ body {
 	background: #ffffff;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
-	color: rgb(var(--gray-dark));
+	color: rgb(var(--black));
 	font-size: 20px;
 	line-height: 1.7;
 }

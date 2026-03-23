@@ -9,39 +9,77 @@ export async function getStaticPaths() {
   const allMasters = await getCollection('masters');
   return allMasters.map(master => ({
     params: { id: master.id },
-    props: { master },
+    props: { master, allMasters },
   }));
 }
 
-const { master } = Astro.props;
+const { master, allMasters } = Astro.props;
 const { Content } = await render(master);
 
-const tagGroups = [
-  { label: 'Осередок', values: master.data.center ? [master.data.center] : [] },
-  { label: 'Період', values: master.data.period ? [master.data.period] : [] },
-  { label: 'Техніка', values: master.data.technique || [] },
-  { label: 'Теги', values: master.data.tags || [] },
-  { label: 'Вчителі', values: master.data.teachers || [] },
-  { label: 'Вплив на', values: master.data.influenced || [] },
-];
-
-function tagUrl(value: string) {
-  return '/masters/tags/' + value;
+function getMasterUrl(name) {
+  const found = allMasters.find(m => m.data.name === name);
+  return found ? '/masters/' + found.id : null;
 }
----
 
+const resolvedTagGroups = [
+  { label: 'Осередок', values: master.data.center ? [master.data.center] : [], type: 'tag' },
+  { label: 'Період', values: master.data.period ? [master.data.period] : [], type: 'tag' },
+  { label: 'Техніка', values: master.data.technique || [], type: 'tag' },
+  { label: 'Теги', values: master.data.tags || [], type: 'tag' },
+  { label: 'Вчителі', values: master.data.teachers || [], type: 'master' },
+  { label: 'Вплив на', values: master.data.influenced || [], type: 'master' },
+].map(group => ({
+  ...group,
+  items: group.values.map(value => ({
+    value,
+    url: group.type === 'master' ? (getMasterUrl(value) || '/masters/tags/' + value) : '/masters/tags/' + value,
+    isMaster: group.type === 'master' && getMasterUrl(value) !== null,
+  })),
+}));
+---
 <!doctype html>
 <html lang="uk">
   <head>
     <BaseHead title={master.data.name} description={master.data.name} />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/glightbox/3.3.0/css/glightbox.min.css" />
+    <style>
+      .tag-link {
+        display: inline-block;
+        background: #f0f0f0;
+        padding: 2px 10px;
+        border-radius: 12px;
+        margin: 2px;
+        text-decoration: none;
+        color: inherit;
+      }
+      .master-link {
+        display: inline-block;
+        background: #fff0ee;
+        padding: 2px 10px;
+        border-radius: 12px;
+        margin: 2px;
+        text-decoration: none;
+        color: #c0392b;
+        border: 1px solid #f5c6c0;
+      }
+      .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+      }
+      figcaption {
+        font-size: 0.8rem;
+        color: rgb(96,115,159);
+        padding: 0.4rem 0;
+        text-align: center;
+      }
+    </style>
   </head>
   <body>
     <Header />
     <main>
       <a href="/masters">← Всі майстри</a>
       <h1>{master.data.name}</h1>
-
       {master.data.photo && (
         <div style="margin: 1.5rem 0;">
           <Image
@@ -53,44 +91,48 @@ function tagUrl(value: string) {
           />
         </div>
       )}
-
       <p><strong>Категорія:</strong> {master.data.category}</p>
-
       {master.data.born && (
         <p>
           <strong>Роки життя:</strong> {master.data.born}
           {master.data.died && ' — ' + master.data.died}
         </p>
       )}
-
       <Content />
-
-      {master.data.gallery && master.data.gallery.length > 0 && (
-        <section>
-          <h2>Галерея робіт</h2>
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
-            {master.data.gallery.map((img, i) => (
-              <a href={img.src} class="glightbox" data-gallery="master-gallery">
-                <Image
-                  src={img}
-                  alt={'Робота ' + (i + 1)}
-                  width={300}
-                  height={300}
-                  style="border-radius: 8px; object-fit: cover; width: 100%; height: 200px; cursor: pointer;"
-                />
-              </a>
-            ))}
-          </div>
-        </section>
+      {master.data.galleryGroups && master.data.galleryGroups.length > 0 && (
+        <div>
+          {master.data.galleryGroups.map(group => (
+            <section style="margin-top: 2rem;">
+              <h2>{group.title}</h2>
+              <div class="gallery-grid">
+                {group.items.map((item, i) => (
+                  <a href={item.image.src} class="glightbox" data-gallery={group.title} data-description={item.caption || ''}>
+                    <figure style="margin: 0;">
+                      <Image
+                        src={item.image}
+                        alt={item.caption || 'Робота ' + (i + 1)}
+                        width={300}
+                        height={300}
+                        style="border-radius: 8px; object-fit: cover; width: 100%; height: 200px; cursor: pointer; display: block;"
+                      />
+                      {item.caption && (
+                        <figcaption>{item.caption}</figcaption>
+                      )}
+                    </figure>
+                  </a>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
       )}
-
-      <section style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #eee;">
-        {tagGroups.map(group => group.values.length > 0 && (
+      <section style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgb(229,233,240);">
+        {resolvedTagGroups.map(group => group.items.length > 0 && (
           <div style="margin-bottom: 0.75rem;">
             <strong>{group.label}:</strong>{' '}
-            {group.values.map(value => (
-              <a href={tagUrl(value)} style="display: inline-block; background: #f0f0f0; padding: 2px 10px; border-radius: 12px; margin: 2px; text-decoration: none; color: inherit;">
-                {value}
+            {group.items.map(item => (
+              <a href={item.url} class={item.isMaster ? 'master-link' : 'tag-link'}>
+                {item.value}
               </a>
             ))}
           </div>
