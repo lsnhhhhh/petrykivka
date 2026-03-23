@@ -31,7 +31,7 @@ const resolvedTagGroups = [
   ...group,
   items: group.values.map(value => ({
     value,
-    url: group.type === 'master' ? (getMasterUrl(value) || '/masters/tags/' + value) : '/masters/tags/' + value,
+    url: group.type === 'master' ? (getMasterUrl(value) || '/masters/tags/' + value.toLowerCase().replace(/ /g, '-')) : '/masters/tags/' + value.toLowerCase().replace(/ /g, '-'),
     isMaster: group.type === 'master' && getMasterUrl(value) !== null,
   })),
 }));
