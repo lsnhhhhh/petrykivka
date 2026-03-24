@@ -3,12 +3,65 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { getCollection } from 'astro:content';
+
+const masters = await getCollection('masters');
+const books = await getCollection('books');
+const centers = await getCollection('centers');
+const blog = await getCollection('blog');
 ---
 
 <!doctype html>
 <html lang="uk">
   <head>
     <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+    <style>
+      .section-link {
+        text-decoration: none;
+        color: inherit;
+      }
+      .section-card {
+        padding: 1.5rem;
+        border: 1px solid rgb(229, 233, 240);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: all 0.2s;
+      }
+      .section-card:hover {
+        border-color: #c0392b;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      }
+      .section-card h3 {
+        margin: 0 0 0.25rem;
+      }
+      .section-card p {
+        margin: 0;
+        font-size: 0.9em;
+        color: rgb(96, 115, 159);
+      }
+      .section-right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.25rem;
+      }
+      .count {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #c0392b;
+        line-height: 1;
+      }
+      .count-label {
+        font-size: 0.75rem;
+        color: rgb(96, 115, 159);
+      }
+      .arrow {
+        color: rgb(96, 115, 159);
+        font-size: 1.5rem;
+      }
+    </style>
   </head>
   <body>
     <Header />
@@ -25,55 +78,75 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
       </p>
 
       <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem;">
-        <a href="/masters" style="text-decoration: none; color: inherit;">
-          <div style="padding: 1.5rem; border: 1px solid rgb(var(--gray-light)); border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+        <a href="/masters" class="section-link">
+          <div class="section-card">
             <div>
-              <h3 style="margin: 0 0 0.25rem;">Майстри</h3>
-              <p style="margin: 0; font-size: 0.9em; color: rgb(var(--gray));">Біографії та роботи майстрів петриківського розпису</p>
+              <h3>Майстри</h3>
+              <p>Біографії та роботи майстрів петриківського розпису</p>
             </div>
-            <span style="color: rgb(var(--gray)); font-size: 1.5rem;">→</span>
+            <div class="section-right">
+              <span class="count">{masters.length}</span>
+              <span class="count-label">майстрів</span>
+              <span class="arrow">→</span>
+            </div>
           </div>
         </a>
-        <a href="/blog" style="text-decoration: none; color: inherit;">
-          <div style="padding: 1.5rem; border: 1px solid rgb(var(--gray-light)); border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+
+        <a href="/centers" class="section-link">
+          <div class="section-card">
             <div>
-              <h3 style="margin: 0 0 0.25rem;">Блог</h3>
-              <p style="margin: 0; font-size: 0.9em; color: rgb(var(--gray));">Статті про історію та техніки петриківського розпису</p>
+              <h3>Осередки</h3>
+              <p>Школи, музеї, організації та установи</p>
             </div>
-            <span style="color: rgb(var(--gray)); font-size: 1.5rem;">→</span>
+            <div class="section-right">
+              <span class="count">{centers.length}</span>
+              <span class="count-label">осередків</span>
+              <span class="arrow">→</span>
+            </div>
           </div>
         </a>
-        <a href="/books" style="text-decoration: none; color: inherit;">
-          <div style="padding: 1.5rem; border: 1px solid rgb(var(--gray-light)); border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+
+        <a href="/books" class="section-link">
+          <div class="section-card">
             <div>
-              <h3 style="margin: 0 0 0.25rem;">Книги</h3>
-              <p style="margin: 0; font-size: 0.9em; color: rgb(var(--gray));">Бібліографія видань про петриківський розпис</p>
+              <h3>Книги</h3>
+              <p>Бібліографія видань про петриківський розпис</p>
             </div>
-            <span style="color: rgb(var(--gray)); font-size: 1.5rem;">→</span>
+            <div class="section-right">
+              <span class="count">{books.length}</span>
+              <span class="count-label">книг</span>
+              <span class="arrow">→</span>
+            </div>
           </div>
         </a>
-        <a href="/materials" style="text-decoration: none; color: inherit;">
-          <div style="padding: 1.5rem; border: 1px solid rgb(var(--gray-light)); border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+
+        <a href="/materials" class="section-link">
+          <div class="section-card">
             <div>
-              <h3 style="margin: 0 0 0.25rem;">Матеріали</h3>
-              <p style="margin: 0; font-size: 0.9em; color: rgb(var(--gray));">Архівні матеріали, документи, відео</p>
+              <h3>Матеріали</h3>
+              <p>Архівні матеріали, документи, відео</p>
             </div>
-            <span style="color: rgb(var(--gray)); font-size: 1.5rem;">→</span>
+            <div class="section-right">
+              <span class="arrow">→</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="/blog" class="section-link">
+          <div class="section-card">
+            <div>
+              <h3>Блог</h3>
+              <p>Статті про історію та техніки петриківського розпису</p>
+            </div>
+            <div class="section-right">
+              <span class="count">{blog.length}</span>
+              <span class="count-label">статей</span>
+              <span class="arrow">→</span>
+            </div>
           </div>
         </a>
       </div>
     </main>
-    <script is:inline>
-  if (window.netlifyIdentity) {
-    window.netlifyIdentity.on("init", user => {
-      if (!user) {
-        window.netlifyIdentity.on("login", () => {
-          document.location.href = "/admin/";
-        });
-      }
-    });
-  }
-</script>
     <Footer />
   </body>
 </html>

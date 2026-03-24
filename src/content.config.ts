@@ -71,4 +71,23 @@ const books = defineCollection({
   }),
 });
 
-export const collections = { blog, masters, books };
+const centers = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/centers' }),
+  schema: ({ image }) => z.object({
+    name: z.string(),
+    category: z.enum([
+      'Школи',
+      'Музеї',
+      'Приватні колекції',
+      'Організації та установи',
+    ]),
+    location: z.string().optional(),
+    founded: z.string().optional(),
+    photo: image().optional(),
+    masters: z.array(z.string()).optional(),
+    website: z.string().optional(),
+    address: z.string().optional(),
+  }),
+});
+
+export const collections = { blog, masters, books, centers };
