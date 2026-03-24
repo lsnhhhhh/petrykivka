@@ -5,6 +5,7 @@ center: 'Петриківка'
 teachers: ['Тетяна Пата']
 influenced: ['Андрій Пікуш']
 tags: ['рослинний орнамент']
+photo: '../../assets/masters/vasyl-sokolenko/photo.jpg'
 galleryGroups:
   - title: 'Твори'
     items:
