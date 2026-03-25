@@ -97,7 +97,7 @@ const materials = defineCollection({
     description: z.string().optional(),
     category: z.enum([
     'Галереї',
-    'Лонгріди',
+    'Статті',
     'Майстер-класи',
     'Відео',
   ]),
