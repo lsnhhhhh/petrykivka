@@ -8,21 +8,41 @@ import { Image } from 'astro:assets';
 const allMasters = await getCollection('masters');
 
 const categories = [
-  'Старі майстри',
-  'Друге покоління',
-  'Київська група',
-  'Третє покоління',
-  'Сучасні майстри',
-  'Поза осередком',
-  'Дослідники петриківського розпису',
+  {
+    name: 'Перше покоління',
+    description: 'Так звані Старі майстри, творчість яких сформувалася на першоджерелах народного стінопису, де ще не було професійних художників, а все робилося на основі традиції та передавалося від матері до дитини.',
+  },
+  {
+    name: 'Друге покоління',
+    description: 'Перші випускники школи декоративного малювання, заснованої в 1935 році, в якій викладали як Старі майстри так і професійні художники. Згодом ці майстри розділилися на дві школи — ті хто залишився в Петриківці, та ті хто переїхав працювати до Києва.',
+  },
+  {
+    name: 'Третє покоління',
+    description: 'Переважно учні майстрів другого покоління, що стали ядром художнього колективу фабрики «Дружба».',
+  },
+  {
+    name: 'Четверте покоління',
+    description: 'Сучасні майстри, що сформувалися під впливом Експериментального цеху петриківського розпису в Петриківці та до сьогодні продовжують свою творчу діяльність.',
+  },
+  {
+    name: 'Пяте покоління',
+    description: 'Молоді майстри, що є учнями майстрів третього та четвертого покоління, а також випускники професійних курсів та закладів по Україні.',
+  },
+  {
+    name: 'Самоучки',
+    description: 'Цікавість до петриківського розпису існує і поза осередком — люди самотужки опановують це мистецтво.',
+  },
+  {
+    name: 'Дослідники петриківського розпису',
+    description: 'Мистецтвознавці, науковці та дослідники, які вивчали і популяризували петриківський розпис.',
+  },
 ];
 
-const mastersByCategory = categories.map(category => ({
-  category,
-  masters: allMasters.filter(m => m.data.category === category),
+const mastersByCategory = categories.map(cat => ({
+  ...cat,
+  masters: allMasters.filter(m => m.data.category === cat.name),
 })).filter(group => group.masters.length > 0);
 ---
-
 <!doctype html>
 <html lang="uk">
   <head>
@@ -32,10 +52,11 @@ const mastersByCategory = categories.map(category => ({
         font-size: 2.5rem;
         margin-bottom: 0.5rem;
       }
-      .subtitle {
+      .page-description {
         color: rgb(96, 115, 159);
         font-size: 1.1rem;
         margin-bottom: 2rem;
+        max-width: 680px;
       }
       .nav-anchors {
         display: flex;
@@ -61,18 +82,29 @@ const mastersByCategory = categories.map(category => ({
       .category-section {
         margin-bottom: 4rem;
       }
-      .category-section h2 {
+      .category-header {
+        margin-bottom: 1.5rem;
+      }
+      .category-header h2 {
         font-size: 1.4rem;
         font-weight: 700;
-        margin-bottom: 1.5rem;
+        margin: 0 0 0.5rem;
         padding-bottom: 0.75rem;
         border-bottom: 2px solid #c0392b;
         display: inline-block;
       }
+      .category-description {
+        font-size: 0.95rem;
+        color: rgb(96, 115, 159);
+        margin: 0.75rem 0 0;
+        max-width: 680px;
+        line-height: 1.6;
+      }
       .masters-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 1.5rem;
+        margin-top: 1.5rem;
       }
       .master-card {
         border-radius: 12px;
@@ -90,13 +122,13 @@ const mastersByCategory = categories.map(category => ({
       }
       .master-photo {
         width: 100%;
-        height: 240px;
+        height: 200px;
         object-fit: cover;
         display: block;
       }
       .master-photo-placeholder {
         width: 100%;
-        height: 240px;
+        height: 200px;
         background: rgb(229, 233, 240);
         display: flex;
         align-items: center;
@@ -109,13 +141,8 @@ const mastersByCategory = categories.map(category => ({
       .master-name {
         font-size: 1.05rem;
         font-weight: 700;
-        margin: 0 0 0.3rem;
-        line-height: 1.3;
-      }
-      .master-dates {
-        font-size: 0.8rem;
-        color: rgb(96, 115, 159);
         margin: 0;
+        line-height: 1.3;
       }
       @media (max-width: 720px) {
         .masters-grid {
@@ -133,12 +160,16 @@ const mastersByCategory = categories.map(category => ({
     <Header />
     <main>
       <h1>Майстри</h1>
-      <p class="subtitle">Майстри петриківського декоративно-орнаментального розпису</p>
+      <p class="page-description">
+        На цій сторінці представлено яскравих представників кожного покоління
+        петриківського декоративно-орнаментального розпису — від перших майстрів
+        народної традиції до сучасних художників.
+      </p>
 
       <nav class="nav-anchors">
         {mastersByCategory.map(group => (
-          <a href={'#' + group.category.toLowerCase().replace(/ /g, '-')}>
-            {group.category}
+          <a href={'#' + group.name.toLowerCase().replace(/ /g, '-').replace(/'/g, '')}>
+            {group.name}
           </a>
         ))}
       </nav>
@@ -146,9 +177,14 @@ const mastersByCategory = categories.map(category => ({
       {mastersByCategory.map(group => (
         <section
           class="category-section"
-          id={group.category.toLowerCase().replace(/ /g, '-')}
+          id={group.name.toLowerCase().replace(/ /g, '-').replace(/'/g, '')}
         >
-          <h2>{group.category}</h2>
+          <div class="category-header">
+            <h2>{group.name}</h2>
+            {group.description && (
+              <p class="category-description">{group.description}</p>
+            )}
+          </div>
           <div class="masters-grid">
             {group.masters.map(master => (
               <a href={'/masters/' + master.id} class="master-card">
@@ -157,8 +193,8 @@ const mastersByCategory = categories.map(category => ({
                     <Image
                       src={master.data.photo}
                       alt={master.data.name}
-                      width={220}
-                      height={240}
+                      width={200}
+                      height={200}
                       class="master-photo"
                     />
                   ) : (

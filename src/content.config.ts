@@ -16,12 +16,12 @@ const masters = defineCollection({
   schema: ({ image }) => z.object({
     name: z.string(),
     category: z.enum([
-      'Старі майстри',
+      'Перше покоління',
       'Друге покоління',
       'Третє покоління',
-      'Сучасні майстри',
-      'Київська група',
-      'Поза осередком',
+      'Четверте покоління',
+      'Пяте покоління',
+      'Самоучки',
       'Дослідники петриківського розпису',
     ]),
     photo: image().optional(),
@@ -90,4 +90,27 @@ const centers = defineCollection({
   }),
 });
 
-export const collections = { blog, masters, books, centers };
+const materials = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/materials' }),
+  schema: ({ image }) => z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    category: z.enum([
+    'Галереї',
+    'Лонгріди',
+    'Майстер-класи',
+    'Відео',
+  ]),
+    cover: image().optional(),
+    videoUrl: z.string().optional(),
+    pubDate: z.coerce.date().optional(),
+    masters: z.array(z.string()).optional(),
+    tags: z.array(z.string()).optional(),
+    images: z.array(z.object({
+      src: z.string(),
+      caption: z.string().optional(),
+    })).optional(),
+  }),
+});
+
+export const collections = { blog, masters, books, centers, materials };
