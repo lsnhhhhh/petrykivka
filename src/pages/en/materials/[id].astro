@@ -75,7 +75,7 @@ const isMasterclass = material.data.category === 'Майстер-класи';
     <Header />
     <main>
       <div class="inner">
-        <a href={backUrl} class="back-link" id="back-link">{backLabel}</a>
+        <a href="/en/materials" class="back-link" id="back-link">← All materials</a>
         <p class="material-category">{material.data.category}</p>
         <h1 class="material-title">{material.data.title}</h1>
         {material.data.masters && material.data.masters.length > 0 && (
