@@ -2,33 +2,158 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { getLocaleFromUrl, getLocalizedPath } from '../i18n/translations';
+
+const locale = getLocaleFromUrl(Astro.url);
 ---
 
 <!doctype html>
-<html lang="uk">
+<html lang={locale}>
   <head>
-    <BaseHead title="Про проект" description="Про сайт Петриківський розпис" />
+    <BaseHead
+      title={locale === 'uk' ? 'Про проект' : 'About'}
+      description={locale === 'uk' ? 'Про сайт Петриківський розпис' : 'About Petrykivka Painting website'}
+    />
+    <style>
+      .about-intro { color: rgb(96, 115, 159); font-size: 1.05rem; line-height: 1.7; margin-bottom: 2rem; }
+      .about-section { margin-bottom: 2.5rem; }
+      .about-section h2 { font-size: 1.3rem; font-weight: 700; margin: 0 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #c0392b; display: inline-block; }
+      .section-card { display: flex; gap: 1rem; align-items: baseline; padding: 0.75rem 0; border-bottom: 1px solid rgb(243, 244, 246); }
+      .section-card:last-child { border-bottom: none; }
+      .section-card a { color: #c0392b; text-decoration: none; font-weight: 600; font-size: 1rem; white-space: nowrap; }
+      .section-card a:hover { border-bottom: 1px solid #c0392b; }
+      .section-desc { color: rgb(96, 115, 159); font-size: 0.9rem; margin: 0; }
+      .dev-badge { display: inline-flex; align-items: center; gap: 0.4em; background: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.9rem; margin-bottom: 2rem; }
+    </style>
   </head>
   <body>
     <Header />
     <main>
-      <h1>Про проект</h1>
-      <p>
-        Цей сайт присвячений петриківському декоративно-орнаментальному розпису —
-        унікальному виду українського народного мистецтва, що походить з села
-        Петриківка Дніпропетровської області.
-      </p>
-      <p>
-        Мета проекту — зібрати та систематизувати інформацію про майстрів,
-        техніки, історію та матеріали пов'язані з петриківським розписом.
-      </p>
-      <h2>Що є на сайті</h2>
-      <ul>
-        <li><strong>Майстри</strong> — біографії та роботи майстрів петриківського розпису</li>
-        <li><strong>Блог</strong> — статті про історію та техніки</li>
-        <li><strong>Книги</strong> — бібліографія видань про петриківський розпис</li>
-        <li><strong>Матеріали</strong> — архівні документи, відео, посилання</li>
-      </ul>
+      {locale === 'uk' ? (
+        <>
+          <h1>Про проект</h1>
+
+          <div class="dev-badge">
+            <span>🚧</span>
+            <span>Проект знаходиться в активній розробці — контент постійно доповнюється</span>
+          </div>
+
+          <p class="about-intro">
+            Цей сайт — онлайн-енциклопедія петриківського декоративно-орнаментального розпису,
+            унікального виду українського народного мистецтва, що походить із села Петриківка
+            Дніпропетровської області. У 2013 році ЮНЕСКО внесло петриківський розпис до
+            Репрезентативного списку нематеріальної культурної спадщини людства.
+          </p>
+
+          <p class="about-intro">
+            Мета проєкту — зібрати, систематизувати та зробити доступною інформацію про майстрів,
+            їхні роботи, історію, техніки та матеріали, пов'язані з петриківським розписом.
+            Сайт створений для дослідників, студентів, майстрів та всіх, хто цікавиться
+            цим унікальним мистецтвом.
+          </p>
+
+          <div class="about-section">
+            <h2>Розділи сайту</h2>
+            <div class="section-card">
+              <a href="/masters">Майстри</a>
+              <p class="section-desc">Біографії та роботи майстрів петриківського розпису — від першого покоління до сучасних художників</p>
+            </div>
+            <div class="section-card">
+              <a href="/gallery">Галерея</a>
+              <p class="section-desc">Колекція робіт майстрів з можливістю фільтрації за автором, десятиліттям та сюжетом</p>
+            </div>
+            <div class="section-card">
+              <a href="/centers">Осередки</a>
+              <p class="section-desc">Школи, музеї, приватні колекції, організації та установи, пов'язані з петриківським розписом</p>
+            </div>
+            <div class="section-card">
+              <a href="/books">Книги</a>
+              <p class="section-desc">Бібліографія видань — альбоми, мистецтвознавчі дослідження, наукові статті</p>
+            </div>
+            <div class="section-card">
+              <a href="/materials">Матеріали</a>
+              <p class="section-desc">Статті, галереї, майстер-класи та відео про петриківський розпис</p>
+            </div>
+            <div class="section-card">
+              <a href="/blog">Блог</a>
+              <p class="section-desc">Статті про історію, техніки та цікаві факти про петриківський розпис</p>
+            </div>
+          </div>
+
+          <div class="about-section">
+            <h2>Про розробку</h2>
+            <p class="about-intro">
+              Проєкт знаходиться в активній фазі розробки. Ми постійно додаємо нові біографії
+              майстрів, роботи до галереї, книги та матеріали. Якщо ви маєте інформацію,
+              фотографії робіт або інші матеріали, які можуть доповнити сайт — будемо вдячні
+              за вашу допомогу. Зв'яжіться з нами через сторінку
+              <a href="/contacts" style="color: #c0392b; text-decoration: none; border-bottom: 1px solid #f5c6c0;">контактів</a>.
+            </p>
+          </div>
+        </>
+      ) : (
+        <>
+          <h1>About the Project</h1>
+
+          <div class="dev-badge">
+            <span>🚧</span>
+            <span>This project is under active development — content is being continuously updated</span>
+          </div>
+
+          <p class="about-intro">
+            This website is an online encyclopedia of Petrykivka decorative ornamental painting,
+            a unique form of Ukrainian folk art originating from the village of Petrykivka
+            in the Dnipropetrovsk region. In 2013, UNESCO inscribed Petrykivka painting on the
+            Representative List of the Intangible Cultural Heritage of Humanity.
+          </p>
+
+          <p class="about-intro">
+            The goal of this project is to collect, systematize, and make accessible information
+            about the masters, their works, history, techniques, and materials related to
+            Petrykivka painting. The site is created for researchers, students, artists,
+            and anyone interested in this unique art form.
+          </p>
+
+          <div class="about-section">
+            <h2>Site Sections</h2>
+            <div class="section-card">
+              <a href="/en/masters">Masters</a>
+              <p class="section-desc">Biographies and works of Petrykivka painting masters — from the first generation to contemporary artists</p>
+            </div>
+            <div class="section-card">
+              <a href="/en/gallery">Gallery</a>
+              <p class="section-desc">Collection of masters' works with filtering by author, decade, and subject</p>
+            </div>
+            <div class="section-card">
+              <a href="/en/centers">Centers</a>
+              <p class="section-desc">Schools, museums, private collections, organizations and institutions related to Petrykivka painting</p>
+            </div>
+            <div class="section-card">
+              <a href="/en/books">Books</a>
+              <p class="section-desc">Bibliography of publications — albums, art studies, scientific articles</p>
+            </div>
+            <div class="section-card">
+              <a href="/en/materials">Materials</a>
+              <p class="section-desc">Articles, galleries, masterclasses and videos about Petrykivka painting</p>
+            </div>
+            <div class="section-card">
+              <a href="/en/blog">Blog</a>
+              <p class="section-desc">Articles about the history, techniques, and interesting facts about Petrykivka painting</p>
+            </div>
+          </div>
+
+          <div class="about-section">
+            <h2>About Development</h2>
+            <p class="about-intro">
+              The project is in an active development phase. We are constantly adding new master
+              biographies, works to the gallery, books, and materials. If you have information,
+              photographs of works, or other materials that could complement the site — we would
+              appreciate your help. Please reach out through our
+              <a href="/en/contacts" style="color: #c0392b; text-decoration: none; border-bottom: 1px solid #f5c6c0;">contacts page</a>.
+            </p>
+          </div>
+        </>
+      )}
     </main>
     <Footer />
   </body>

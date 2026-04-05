@@ -1,0 +1,83 @@
+---
+const { items } = Astro.props;
+// items: [{ year, label, text }]
+---
+<div class="timeline">
+  {items.map(item => (
+    <div class="timeline-item">
+      <div class="timeline-left">
+        <span class="timeline-year">{item.year}</span>
+      </div>
+      <div class="timeline-dot-wrap">
+        <span class="timeline-dot"></span>
+        <span class="timeline-line"></span>
+      </div>
+      <div class="timeline-right">
+        {item.label && <strong class="timeline-label">{item.label}</strong>}
+        <p class="timeline-text">{item.text}</p>
+      </div>
+    </div>
+  ))}
+</div>
+
+<style is:global>
+  .timeline {
+    margin: 3rem 0;
+    position: relative;
+  }
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 80px 24px 1fr;
+    gap: 0 1rem;
+    margin-bottom: 0;
+    align-items: start;
+  }
+  .timeline-left {
+    text-align: right;
+    padding-top: 0.15rem;
+  }
+  .timeline-year {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #c0392b;
+    letter-spacing: 0.04em;
+  }
+  .timeline-dot-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .timeline-dot {
+    width: 10px;
+    height: 10px;
+    background: #c0392b;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 0.3rem;
+  }
+  .timeline-line {
+    width: 2px;
+    flex: 1;
+    background: rgb(229, 233, 240);
+    min-height: 2.5rem;
+  }
+  .timeline-item:last-child .timeline-line {
+    display: none;
+  }
+  .timeline-right {
+    padding-bottom: 2rem;
+  }
+  .timeline-label {
+    display: block;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    color: inherit;
+  }
+  .timeline-text {
+    font-size: 0.95rem;
+    color: rgb(96, 115, 159);
+    margin: 0;
+    line-height: 1.6;
+  }
+</style>

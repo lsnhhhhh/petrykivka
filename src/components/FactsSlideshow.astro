@@ -1,0 +1,129 @@
+---
+import { getLocaleFromUrl } from '../i18n/translations';
+const locale = getLocaleFromUrl(Astro.url);
+
+const factsUk = [
+  { num: "№1", title: "Петриківка — мистецтво вільних людей", text: "Село Петриківка виникла 1772 року як вільна козацька слобода — вона ніколи не знала кріпацтва. Саме ця свобода, на думку дослідників, стала головною причиною розквіту тут унікального народного мистецтва — петриківського розпису." },
+  { num: "№2", title: "Секрет розпису — пензлик з котячої шерсті", text: "Унікальні петриківські пензлі виготовляються з котячої шерсті власноруч майстрами. Такий пензель дозволяє малювати тонкі лінії, та робити характерні елементи, які притаманні лише петриківському розпису. Жоден котик не постраждав! Перед тим як зрізати трохи шерсті — котика задобрюють молоком чи сметаною." },
+  { num: "№3", title: "Калинку малюють пальцем", text: "Соковиті ягоди калини та округлі плоди в петриківському розписі традиційно малюють не пензлем, а пальцем. Тетяна Пата, родоначальниця сучасного стилю, використовувала цей прийом як обов'язковий елемент у своїх роботах." },
+  { num: "№4", title: "Перша фіксація — 1913 рік", text: "Систематичне вивчення петриківського розпису розпочалося 1911–1913 роках: художниця Євгенія Евенбах на замовлення академіка Дмитра Яворницького робила акварельні копії та замовляла роботи у місцевих майстринь. Давніших зразків розпису, на жаль, не збереглося." },
+  { num: "№5", title: "Олександр Статива — засновник школи розпису", text: "У вересні 1936 року в Петриківці відкрилась Школа декоративного малювання — перший навчальний заклад, де петриківський розпис викладали як фах. Це стало можливим за ініціативи Олександра Стативи, який зробив все, щоб розпис не занепав та розвивався." },
+  { num: "№6", title: "Природні фарби та яєчний жовток як основа", text: "Петриківчани раніше малювали самостійно виготовленими фарбами з відвару трав, фруктів та овочів, все це розводили на яєчному жовтку, щоб дати фарбам міцність та яскравість. Сьогодні петриківку малюють різними видами фарб — акварель, гуаш, акрил, а як основу використовують клей ПВА." },
+  { num: "№7", title: "Чорне тло — наслідок радянської уніфікації", text: "Петриківський розпис на чорному лакованому тлі сувенірних тарілок та скриньок набув популярності у 1960-х роках. Це було впроваджено на фабриці петриківського розпису «Дружба», для зручності виробництва у промислових масштабах. До того розпис традиційно наносився на білу стіну та паперову мальовку." },
+  { num: "№8", title: "92 роки творчості", text: "Тетяна Пата (1884–1976) прожила 92 роки і малювала майже до кінця життя. Її творчий шлях тривав понад 60 років. Найвідоміші учні — Василь Соколенко, Федір Панко, Марфа Тимченко." },
+  { num: "№9", title: "2013 — внесений в список ЮНЕСКО", text: "5 грудня 2013 року петриківський розпис став першим українським об'єктом внесеним до Репрезентативного списку нематеріальної культурної спадщини людства ЮНЕСКО." },
+  { num: "№10", title: "Живе мистецтво, а не музейний експонат", text: "Петриківський розпис живе і процвітає і сьогодні: у Петриківці працює Центр народного мистецтва та школа Тетяни Пати, по Україні відкриті студії та дитячі гуртки, а по світу регулярно відбуваються виставки та майстер-класи." },
+];
+
+const factsEn = [
+  { num: "#1", title: "Petrykivka — the Art of Free People", text: "The village of Petrykivka was founded in 1772 as a free Cossack settlement — it never knew serfdom. Researchers believe this freedom was the main reason for the flourishing of a unique folk art — Petrykivka painting." },
+  { num: "#2", title: "The Secret — a Cat Hair Brush", text: "Unique Petrykivka brushes are handmade from cat hair by the masters themselves. Such a brush allows painting thin lines and creating characteristic elements found only in Petrykivka painting. No cats were harmed! Before trimming a bit of fur, the cat is treated with milk or sour cream." },
+  { num: "#3", title: "Viburnum Berries Painted with a Finger", text: "Juicy viburnum berries and round fruits in Petrykivka painting are traditionally painted not with a brush, but with a finger. Tetiana Pata, the founder of the modern style, used this technique as an essential element in her works." },
+  { num: "#4", title: "First Documentation — 1913", text: "Systematic study of Petrykivka painting began in 1911–1913: artist Yevheniia Evenbakh, commissioned by academician Dmytro Yavornytskyi, made watercolor copies and commissioned works from local masters. Unfortunately, no earlier examples of the painting have survived." },
+  { num: "#5", title: "Oleksandr Statyva — Founder of the Painting School", text: "In September 1936, the School of Decorative Painting opened in Petrykivka — the first educational institution where Petrykivka painting was taught as a profession. This was made possible by the initiative of Oleksandr Statyva, who did everything to ensure the art would not decline but thrive." },
+  { num: "#6", title: "Natural Paints and Egg Yolk as a Base", text: "Petrykivka artists used to paint with homemade paints from herb, fruit, and vegetable decoctions, mixed with egg yolk for strength and brightness. Today, Petrykivka painting uses various paints — watercolor, gouache, acrylic — with PVA glue as a base." },
+  { num: "#7", title: "Black Background — a Result of Soviet Standardization", text: "Petrykivka painting on black lacquered backgrounds of souvenir plates and boxes became popular in the 1960s. This was introduced at the Druzhba Petrykivka painting factory for industrial-scale convenience. Before that, painting was traditionally applied on white walls and paper." },
+  { num: "#8", title: "92 Years of Creativity", text: "Tetiana Pata (1884–1976) lived 92 years and painted almost until the end of her life. Her creative career spanned over 60 years. Her most famous students — Vasyl Sokolenko, Fedir Panko, Marfa Tymchenko." },
+  { num: "#9", title: "2013 — Inscribed on UNESCO List", text: "On December 5, 2013, Petrykivka painting became the first Ukrainian element inscribed on UNESCO's Representative List of the Intangible Cultural Heritage of Humanity." },
+  { num: "#10", title: "Living Art, Not a Museum Piece", text: "Petrykivka painting is alive and thriving today: the Center of Folk Art and Tetiana Pata School operate in Petrykivka, studios and children's clubs are open across Ukraine, and exhibitions and masterclasses are held regularly around the world." },
+];
+
+const facts = locale === 'en' ? factsEn : factsUk;
+const factLabel = locale === 'en' ? 'Interesting fact about Petrykivka painting' : 'Цікавий факт про петриківський розпис';
+
+const decorImages = [
+  { src: '/images/hero/flower-left.png', cls: 'decor decor--left' },
+  { src: '/images/hero/flower-right.png', cls: 'decor decor--right' },
+];
+---
+
+<section class="facts-hero">
+  {decorImages.map(img => (
+    <img src={img.src} alt="" aria-hidden="true" class={img.cls} data-parallax />
+  ))}
+
+  <div class="facts-section">
+    <div class="facts-inner">
+      <div class="facts-track">
+        {facts.map((fact, i) => (
+          <div class="fact-slide" data-index={i}>
+            <p class="fact-num">{factLabel} {fact.num}</p>
+            <h2 class="fact-title">{fact.title}</h2>
+            <p class="fact-text">{fact.text}</p>
+          </div>
+        ))}
+      </div>
+
+      <button class="facts-btn facts-btn--prev" aria-label={locale === 'en' ? 'Previous' : 'Назад'}>
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+          <path d="M13 4l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="facts-btn facts-btn--next" aria-label={locale === 'en' ? 'Next' : 'Вперед'}>
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+          <path d="M7 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="facts-dots">
+        {facts.map((_, i) => (
+          <button class={`facts-dot${i === 0 ? ' active' : ''}`} aria-label={`${locale === 'en' ? 'Fact' : 'Факт'} ${i + 1}`} data-dot={i} />
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .facts-hero { position: relative; margin-bottom: 3rem; width: 100vw; left: 50%; margin-left: -50vw; padding: 0 0 1rem; overflow: visible; }
+  .facts-section { border: 1px solid rgb(229, 233, 240); border-radius: 16px; overflow: hidden; position: relative; z-index: 2; width: 960px; max-width: calc(100vw - 2rem); margin: 0 auto; background: #fff; }
+  .facts-inner { position: relative; overflow: hidden; }
+  .facts-track { display: flex; transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+  .fact-slide { flex: 0 0 100%; padding: 4rem 7rem; text-align: center; min-height: 340px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; box-sizing: border-box; }
+  .fact-num { font-size: 0.8rem; color: rgb(96, 115, 159); letter-spacing: 0.05em; margin: 0; font-family: "Fixel", sans-serif; }
+  .fact-title { font-size: 2.2rem; font-weight: 700; line-height: 1.25; margin: 0; color: rgb(15, 18, 25); font-family: "Fixel", sans-serif; max-width: 680px; }
+  .fact-text { font-size: 1rem; color: rgb(96, 115, 159); line-height: 1.65; margin: 0; max-width: 640px; font-family: "Fixel", sans-serif; }
+  .facts-btn { position: absolute; top: 50%; transform: translateY(-60%); width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgb(229, 233, 240); background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; color: rgb(15, 18, 25); transition: border-color 0.2s, color 0.2s, box-shadow 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 0; z-index: 2; }
+  .facts-btn:hover { border-color: #c0392b; color: #c0392b; }
+  .facts-btn:disabled { opacity: 0.25; cursor: default; pointer-events: none; }
+  .facts-btn--prev { left: 1.5rem; }
+  .facts-btn--next { right: 1.5rem; }
+  .facts-dots { display: flex; justify-content: center; gap: 0.4rem; padding: 0 1rem 1.25rem; }
+  .facts-dot { width: 6px; height: 6px; border-radius: 50%; background: rgb(229, 233, 240); border: none; padding: 0; cursor: pointer; transition: background 0.2s, transform 0.2s; }
+  .facts-dot.active { background: #c0392b; transform: scale(1.4); }
+  .decor { position: absolute; z-index: 1; pointer-events: none; will-change: transform; }
+  .decor--left { left: 30px; top: 20px; width: 430px; }
+  .decor--right { right: -20px; top: -120px; width: 440px; }
+  @media (max-width: 1100px) { .decor--left, .decor--right { width: 260px; } }
+  @media (max-width: 720px) { .decor { display: none; } .fact-slide { padding: 2.5rem 2rem; min-height: 260px; } .fact-title { font-size: 1.5rem; } .facts-btn--prev { left: 0.5rem; } .facts-btn--next { right: 0.5rem; } }
+</style>
+
+<script is:inline>
+(function () {
+  const section = document.querySelector('.facts-section');
+  if (!section) return;
+  const track = section.querySelector('.facts-track');
+  const btnPrev = section.querySelector('.facts-btn--prev');
+  const btnNext = section.querySelector('.facts-btn--next');
+  const dots = section.querySelectorAll('.facts-dot');
+  const total = dots.length;
+  let current = 0, timer, paused = false;
+  function goTo(idx) {
+    current = ((idx % total) + total) % total;
+    track.style.transform = 'translateX(-' + (current * 100) + '%)';
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    btnPrev.disabled = current === 0;
+    btnNext.disabled = current === total - 1;
+  }
+  function startTimer() { clearInterval(timer); timer = setInterval(() => { if (!paused) goTo(current + 1); }, 7000); }
+  btnPrev.addEventListener('click', () => { goTo(current - 1); startTimer(); });
+  btnNext.addEventListener('click', () => { goTo(current + 1); startTimer(); });
+  dots.forEach((d, i) => d.addEventListener('click', () => { goTo(i); startTimer(); }));
+  section.addEventListener('mouseenter', () => { paused = true; });
+  section.addEventListener('mouseleave', () => { paused = false; });
+  let touchStartX = 0;
+  track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; paused = true; }, { passive: true });
+  track.addEventListener('touchend', e => { paused = false; const diff = e.changedTouches[0].clientX - touchStartX; if (Math.abs(diff) > 40) { goTo(diff < 0 ? current + 1 : current - 1); startTimer(); } });
+  goTo(0); startTimer();
+})();
+</script>

@@ -2,180 +2,127 @@
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import ReadingProgress from '../../components/ReadingProgress.astro';
 import { getCollection, render } from 'astro:content';
+import { getLocaleFromUrl } from '../../i18n/translations';
+import { filterByLocale, getContentUrl } from '../../i18n/content';
 
 export async function getStaticPaths() {
   const allMaterials = await getCollection('materials');
-  return allMaterials.map(material => ({
-    params: { id: material.id },
+  const ukMaterials = allMaterials.filter(m => m.id.startsWith('uk/'));
+  return ukMaterials.map(material => ({
+    params: { id: material.id.replace('uk/', '') },
     props: { material },
   }));
 }
 
 const { material } = Astro.props;
+const locale = getLocaleFromUrl(Astro.url);
 const { Content } = await render(material);
 
 const allMasters = await getCollection('masters');
+const localeMasters = filterByLocale(allMasters, locale);
 function getMasterUrl(name) {
-  const found = allMasters.find(m => m.data.name === name);
-  return found ? '/masters/' + found.id : '/masters';
+  const found = localeMasters.find(m => m.data.name === name);
+  return found ? getContentUrl('masters', found.id) : (locale === 'en' ? '/en/masters' : '/masters');
 }
 
 const isGallery = material.data.category === 'Галереї';
 const isVideo = material.data.category === 'Відео';
-const isLongread = material.data.category === 'Лонгріди';
+const isLongread = material.data.category === 'Лонгріди' || material.data.category === 'Статті';
 const isMasterclass = material.data.category === 'Майстер-класи';
+
+const backUrl = locale === 'en' ? '/en/materials' : '/materials';
+const backLabel = locale === 'uk' ? '← Всі матеріали' : '← All materials';
 ---
 <!doctype html>
-<html lang="uk">
+<html lang={locale}>
   <head>
     <BaseHead title={material.data.title} description={material.data.description || material.data.title} />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/glightbox/3.3.0/css/glightbox.min.css" />
     <style is:global>
-      .material-page main {
-        max-width: 100%;
-        width: 100%;
-        padding: 3em 0;
-      }
-      .material-page .inner {
-        max-width: 720px;
-        margin: 0 auto;
-        padding: 0 1em;
-      }
-      .material-page .inner-wide {
-        max-width: 960px;
-        margin: 0 auto;
-        padding: 0 1em;
-      }
-      .material-category {
-        font-size: 0.85rem;
-        color: #c0392b;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 0.5rem;
-      }
-      .material-title {
-        font-size: 2.2rem;
-        font-weight: 700;
-        margin: 0 0 1.5rem;
-        line-height: 1.2;
-      }
-      .back-link {
-        display: inline-block;
-        margin-bottom: 1.5rem;
-        color: rgb(96, 115, 159);
-        text-decoration: none;
-        font-size: 0.95rem;
-      }
+      .material-page main { max-width: 100%; width: 100%; padding: 3em 0; }
+      .material-page .inner { max-width: 720px; margin: 0 auto; padding: 0 1em; }
+      .material-page .inner-wide { max-width: 960px; margin: 0 auto; padding: 0 1em; }
+      .material-category { font-size: 0.85rem; color: #c0392b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+      .material-title { font-size: 2.2rem; font-weight: 700; margin: 0 0 1.5rem; line-height: 1.2; }
+      .back-link { display: inline-block; margin-bottom: 1.5rem; color: rgb(96, 115, 159); text-decoration: none; font-size: 0.95rem; }
       .back-link:hover { color: #c0392b; }
-      .master-link {
-        display: inline-block;
-        background: #fff0ee;
-        padding: 2px 10px;
-        border-radius: 12px;
-        margin: 2px;
-        text-decoration: none;
-        color: #c0392b;
-        border: 1px solid #f5c6c0;
-        font-size: 0.9rem;
-      }
-      .meta-row {
-        font-size: 0.9rem;
-        color: rgb(96, 115, 159);
-        margin-bottom: 1rem;
-      }
+      .master-link { display: inline-block; background: #fff0ee; padding: 2px 10px; border-radius: 12px; margin: 2px; text-decoration: none; color: #c0392b; border: 1px solid #f5c6c0; font-size: 0.9rem; }
+      .meta-row { font-size: 0.9rem; color: rgb(96, 115, 159); margin-bottom: 1rem; }
       .meta-row strong { color: #000; }
-      .video-embed {
-        position: relative;
-        padding-bottom: 56.25%;
-        height: 0;
-        overflow: hidden;
-        border-radius: 8px;
-        margin-bottom: 1.5rem;
-      }
-      .video-embed iframe {
-        position: absolute;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        border: 0;
-      }
-      .gallery-content img {
-        width: min(1080px, 100vw);
-        max-width: min(1080px, 100vw);
-        margin-left: max(calc(-540px + 50%), calc(-50vw + 50%));
-        height: auto;
-        display: block;
-        margin-bottom: 0.5rem;
-        border-radius: 0;
-      }
-      .gallery-content h1,
-      .gallery-content h2,
-      .gallery-content h3 {
-        max-width: 720px;
-        margin-left: auto;
-        margin-right: auto;
-        padding: 0 1em;
-      }
-      .gallery-content p {
-        max-width: 720px;
-        margin: 0 auto 1.5rem;
-        padding: 0 1em;
-        font-size: 0.85rem;
-        color: rgb(96, 115, 159);
-      }
-      .longread-content {
-        font-size: 1.1rem;
-        line-height: 1.8;
-        max-width: 720px;
-        margin: 0 auto;
-        padding: 0 1em;
-      }
-      .longread-content img {
-        width: min(1080px, 100vw);
-        max-width: min(1080px, 100vw);
-        margin-left: max(calc(-540px + 50%), calc(-50vw + 50%));
-        height: auto;
-        display: block;
-        margin: 1.5rem 0;
-        border-radius: 0;
-      }
-      .masterclass-content {
-        max-width: 720px;
-        margin: 0 auto;
-        padding: 0 1em;
-      }
-      .masterclass-content h2 {
-        border-left: 4px solid #c0392b;
-        padding-left: 1rem;
-        margin-top: 2rem;
-      }
-      .masterclass-content img {
-        width: min(1080px, 100vw);
-        max-width: min(1080px, 100vw);
-        margin-left: max(calc(-540px + 50%), calc(-50vw + 50%));
-        height: auto;
-        display: block;
-        margin: 1rem 0;
-        border-radius: 0;
-      }
+      .meta-attribution { display: flex; gap: 1rem; align-items: baseline; margin-bottom: 0.5rem; font-size: 0.95rem; }
+      .meta-label { font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.08em; color: rgb(96, 115, 159); min-width: 80px; flex-shrink: 0; }
+      .meta-value { color: inherit; }
+      .meta-link { color: #c0392b; text-decoration: none; border-bottom: 1px solid #f5c6c0; }
+      .meta-link:hover { border-bottom-color: #c0392b; }
+      .video-embed { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; margin-bottom: 1.5rem; }
+      .video-embed iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+      .video-embed--wide { width: min(960px, 100vw); max-width: min(960px, 100vw); margin-left: max(-480px + 50%, -50vw + 50%); padding-bottom: clamp(0px, 56.25vw, 540px); }
+      .gallery-content > p { max-width: 720px; margin: 0 auto 1.5rem; padding: 0 1em; font-size: 1rem; color: inherit; }
+      .gallery-content h1, .gallery-content h2, .gallery-content h3 { max-width: 720px; margin-left: auto; margin-right: auto; padding: 1rem; }
+      .gallery-row-1, .gallery-row-2, .gallery-row-3 { display: grid; gap: 0.5rem; margin-bottom: 1rem; }
+      .gallery-row-1 { grid-template-columns: 1fr; max-width: 720px; margin-left: auto; margin-right: auto; padding: 0 1em; }
+      .gallery-row-2 { grid-template-columns: 1fr 1fr; width: min(1080px, 100vw); max-width: min(1080px, 100vw); margin-left: max(-540px + 50%, -50vw + 50%); }
+      .gallery-row-3 { grid-template-columns: 1fr 1fr 1fr; width: min(1080px, 100vw); max-width: min(1080px, 100vw); margin-left: max(-540px + 50%, -50vw + 50%); }
+      .gallery-row-1 img, .gallery-row-2 img, .gallery-row-3 img { width: 100%; height: auto; display: block; margin: 1rem; }
+      .gallery-row-caption { max-width: 720px; margin: 0.75rem auto 0; padding: 1rem; font-size: 0.85rem; color: rgb(96, 115, 159); padding-bottom: 4rem; border-bottom: 1px solid rgb(229, 233, 240); margin-bottom: 5rem; }
+      .gallery-row-caption:last-child { border-bottom: none; }
+      .longread-content { font-size: 1.1rem; line-height: 1.8; max-width: 720px; margin: 0 auto; padding: 0 1em; }
+      .longread-content img { width: min(1080px, 100vw); max-width: min(1080px, 100vw); margin-left: max(-540px + 50%, -50vw + 50%); height: auto; display: block; margin: 1.5rem 0; border-radius: 0; }
+      .masterclass-content { max-width: 720px; margin: 0 auto; padding: 0 1em; }
+      .masterclass-content img { width: min(1080px, 100vw); max-width: min(1080px, 100vw); margin-left: max(-540px + 50%, -50vw + 50%); height: auto; display: block; margin: 1rem 0; border-radius: 0; }
+      .lesson-block { margin-bottom: 4rem; padding-bottom: 0; border-bottom: none; }
+      .lesson-block + .lesson-block { border-top: 1px solid rgb(229, 233, 240); padding-top: 3rem; }
+      .lesson-block h2 { font-size: 2rem; margin-bottom: 1rem; margin-top: 1rem; border-left: none; padding-left: 0; display: flex; flex-direction: column; gap: 1rem; }
+      .lesson-number { font-size: 1.5rem; font-weight: 700; letter-spacing: 0.12em; color: #c0392b; }
+      .lesson-name { font-size: 2rem; font-weight: 700; line-height: 1.2; }
+      .lesson-desc { color: rgb(96, 115, 159); font-size: 1.2rem; margin-bottom: 3rem; }
+      .about-master-section { margin-top: 6rem; padding-top: 3rem; border-top: 12px solid rgb(229, 233, 240); }
+      .about-master-section h2 { border-left: none; padding-left: 0; font-size: 1.4rem; }
+      .sources-section { max-width: 720px; margin: 4rem auto 0; padding: 2rem 1em 0; border-top: 1px solid rgb(229, 233, 240); }
+      .sources-section h2 { font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgb(96, 115, 159); margin-bottom: 1rem; }
+      .sources-list { list-style: none; padding: 0; margin: 0; }
+      .sources-list li { margin-bottom: 0.5rem; font-size: 0.95rem; }
+      .sources-list a { color: #c0392b; text-decoration: none; border-bottom: 1px solid #f5c6c0; }
+      .sources-list a:hover { border-bottom-color: #c0392b; }
+      .sources-list span { color: rgb(96, 115, 159); }
     </style>
   </head>
   <body class="material-page">
     <Header />
     <main>
       <div class="inner">
-        <a href="/materials" class="back-link">← Всі матеріали</a>
+        <a href={backUrl} class="back-link" id="back-link">{backLabel}</a>
         <p class="material-category">{material.data.category}</p>
         <h1 class="material-title">{material.data.title}</h1>
+
         {material.data.masters && material.data.masters.length > 0 && (
           <div class="meta-row">
-            <strong>Майстри:</strong>{' '}
+            <strong>{locale === 'uk' ? 'Майстри' : 'Masters'}:</strong>{' '}
             {material.data.masters.map(name => (
-              <a href={getMasterUrl(name)} class="master-link">
-                {name}
-              </a>
+              <a href={getMasterUrl(name)} class="master-link">{name}</a>
             ))}
+          </div>
+        )}
+
+        {(material.data.author || material.data.source) && (
+          <div style="margin-bottom: 2rem;">
+            {material.data.author && (
+              <div class="meta-attribution">
+                <span class="meta-label">{locale === 'uk' ? 'Автор' : 'Author'}</span>
+                <span class="meta-value">{material.data.author}</span>
+              </div>
+            )}
+            {material.data.source && (
+              <div class="meta-attribution">
+                <span class="meta-label">{locale === 'uk' ? 'Джерело' : 'Source'}</span>
+                {material.data.sourceUrl
+                  ? <a href={material.data.sourceUrl} class="meta-value meta-link" target="_blank" rel="noopener">{material.data.source}</a>
+                  : <span class="meta-value">{material.data.source}</span>
+                }
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -183,35 +130,58 @@ const isMasterclass = material.data.category === 'Майстер-класи';
       {isVideo && material.data.videoUrl && (
         <div class="inner-wide">
           <div class="video-embed">
-            <iframe
-              src={material.data.videoUrl.replace('watch?v=', 'embed/')}
-              allowfullscreen
-            ></iframe>
+            <iframe src={material.data.videoUrl.replace('watch?v=', 'embed/')} allowfullscreen></iframe>
           </div>
         </div>
       )}
 
       {isGallery && (
-        <div class="gallery-content">
-          <Content />
-        </div>
+        <div class="gallery-content"><Content /></div>
       )}
 
       {isLongread && (
-        <div class="longread-content">
-          <Content />
-        </div>
+        <>
+          <ReadingProgress />
+          <div class="longread-content"><Content /></div>
+        </>
       )}
 
       {isMasterclass && (
         <div class="masterclass-content">
-          <Content />
+          {material.data.lessons && material.data.lessons.map((lesson, i) => (
+            <div class="lesson-block">
+              <h2>
+                <span class="lesson-number">{locale === 'uk' ? 'УРОК' : 'LESSON'} {i + 1}</span>
+                <span class="lesson-name">{lesson.title.replace(/^Урок \d+\.\s*/i, '')}</span>
+              </h2>
+              {lesson.description && <p class="lesson-desc">{lesson.description}</p>}
+              <div class="video-embed video-embed--wide">
+                <iframe src={lesson.videoUrl.replace('watch?v=', 'embed/')} allowfullscreen loading="lazy" title={lesson.title}></iframe>
+              </div>
+            </div>
+          ))}
+          {material.data.lessons && <div class="about-master-section"><Content /></div>}
+          {!material.data.lessons && <Content />}
         </div>
       )}
 
       {isVideo && (
-        <div class="inner">
-          <Content />
+        <div class="inner"><Content /></div>
+      )}
+
+      {material.data.sources && material.data.sources.length > 0 && (
+        <div class="sources-section">
+          <h2>{locale === 'uk' ? 'Джерела' : 'Sources'}</h2>
+          <ul class="sources-list">
+            {material.data.sources.map(source => (
+              <li>
+                {source.id
+                  ? <a href={getContentUrl('books', `${locale}/${source.id}`)}>{source.title}</a>
+                  : <span>{source.title}</span>
+                }
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </main>
@@ -219,6 +189,19 @@ const isMasterclass = material.data.category === 'Майстер-класи';
     <script src="https://cdnjs.cloudflare.com/ajax/libs/glightbox/3.3.0/js/glightbox.min.js"></script>
     <script is:inline>
       const lightbox = GLightbox({ selector: '.glightbox' });
+    </script>
+    <script is:inline>
+      // Restore scroll position via back link
+      var backLink = document.getElementById('back-link');
+      if (backLink) {
+        var ref = document.referrer;
+        if (ref && ref.includes('/materials')) {
+          backLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            history.back();
+          });
+        }
+      }
     </script>
   </body>
 </html>

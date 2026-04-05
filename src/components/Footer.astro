@@ -1,23 +1,49 @@
 ---
+import { getLocaleFromUrl, t, getLocalizedPath } from '../i18n/translations';
+
+const locale = getLocaleFromUrl(Astro.url);
 const today = new Date();
 ---
-
 <footer>
-  <div class="footer-content">
-    <p>&copy; {today.getFullYear()} Петриківський розпис. Всі права захищені.</p>
+  <div class="footer-inner">
+    <nav class="footer-links">
+      <a href={getLocalizedPath('/blog', locale)}>{t(locale, 'nav.blog')}</a>
+      <a href={getLocalizedPath('/about', locale)}>{t(locale, 'nav.about')}</a>
+      <a href={getLocalizedPath('/contacts', locale)}>{locale === 'uk' ? 'Контакти' : 'Contacts'}</a>
+    </nav>
+    <p class="footer-copy">&copy; {today.getFullYear()} {locale === 'uk' ? 'Петриківський розпис' : 'Petrykivka Painting'}</p>
   </div>
 </footer>
-
-<style>
+<style is:global>
   footer {
-    padding: 2em 1em;
+    padding: 2.5em 1em;
     background: white;
-    border-top: 1px solid rgb(var(--gray-light));
-    color: rgb(var(--gray));
+    border-top: 1px solid rgb(229, 233, 240);
+    color: rgb(96, 115, 159);
     text-align: center;
   }
-  .footer-content p {
+  .footer-inner {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .footer-links a {
+    color: rgb(55, 65, 81);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover {
+    color: #c0392b;
+  }
+  .footer-copy {
     margin: 0;
-    font-size: 0.9em;
+    font-size: 0.85rem;
+    color: rgb(156, 163, 175);
   }
 </style>

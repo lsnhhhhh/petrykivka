@@ -4,29 +4,35 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
+import { getLocaleFromUrl, t } from '../../i18n/translations';
+import { getSlugFromId, getContentUrl, filterByLocale } from '../../i18n/content';
 
 export async function getStaticPaths() {
   const allMasters = await getCollection('masters');
-  return allMasters.map(master => ({
-    params: { id: master.id },
+  const ukMasters = allMasters.filter(m => m.id.startsWith('uk/'));
+  return ukMasters.map(master => ({
+    params: { id: master.id.replace('uk/', '') },
     props: { master, allMasters },
   }));
 }
 
 const { master, allMasters } = Astro.props;
+const locale = getLocaleFromUrl(Astro.url);
+const localeMasters = filterByLocale(allMasters, locale);
 const { Content } = await render(master);
 
-function getMasterUrl(name) {
-  const found = allMasters.find(m => m.data.name === name);
-  return found ? '/masters/' + found.id : null;
+function getMasterUrl(name: string) {
+  const found = localeMasters.find(m => m.data.name === name);
+  return found ? getContentUrl('masters', found.id) : null;
 }
 
 const resolvedTagGroups = [
-  { label: 'Осередок', values: master.data.center ? [master.data.center] : [], type: 'tag' },
-  { label: 'Період', values: master.data.period ? [master.data.period] : [], type: 'tag' },
-  { label: 'Школа', values: master.data.school || [], type: 'tag' },
-  { label: 'Вчителі', values: master.data.teachers || [], type: 'master' },
-  { label: 'Вплив на', values: master.data.influenced || [], type: 'master' },
+  { label: t(locale, 'masters.born'), values: master.data.center ? [master.data.center] : [], type: 'tag' as const },
+  { label: locale === 'uk' ? 'Осередок' : 'Center', values: master.data.center ? [master.data.center] : [], type: 'tag' as const },
+  { label: locale === 'uk' ? 'Період' : 'Period', values: master.data.period ? [master.data.period] : [], type: 'tag' as const },
+  { label: locale === 'uk' ? 'Школа' : 'School', values: master.data.school || [], type: 'tag' as const },
+  { label: t(locale, 'masters.teachers'), values: master.data.teachers || [], type: 'master' as const },
+  { label: locale === 'uk' ? 'Вплив на' : 'Influenced', values: master.data.influenced || [], type: 'master' as const },
 ].map(group => ({
   ...group,
   items: group.values.map(value => ({
@@ -37,12 +43,20 @@ const resolvedTagGroups = [
 }));
 
 const allBooks = await getCollection('books');
-const masterBooks = allBooks.filter(book =>
+const localBooks = filterByLocale(allBooks, locale);
+const masterBooks = localBooks.filter(book =>
   book.data.masters && book.data.masters.includes(master.data.name)
 );
+const allArtworks = await getCollection('artworks');
+const masterArtworks = filterByLocale(allArtworks, locale).filter(
+  a => a.data.master === master.data.name
+);
+
+const backUrl = locale === 'en' ? '/en/masters' : '/masters';
+const backLabel = locale === 'uk' ? '← Всі майстри' : '← All masters';
 ---
 <!doctype html>
-<html lang="uk">
+<html lang={locale}>
   <head>
     <BaseHead title={master.data.name} description={master.data.name} />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/glightbox/3.3.0/css/glightbox.min.css" />
@@ -136,12 +150,20 @@ const masterBooks = allBooks.filter(book =>
         color: rgb(96,115,159);
         margin: 0;
       }
+      .back-link {
+        display: inline-block;
+        margin-bottom: 1.5rem;
+        color: rgb(96, 115, 159);
+        text-decoration: none;
+        font-size: 0.95rem;
+      }
+      .back-link:hover { color: #c0392b; }
     </style>
   </head>
   <body>
     <Header />
     <main>
-      <a href="/masters">← Всі майстри</a>
+      <a href={backUrl} class="back-link" id="back-link">{backLabel}</a>
       <h1>{master.data.name}</h1>
 
       {master.data.photo && (
@@ -158,34 +180,45 @@ const masterBooks = allBooks.filter(book =>
 
       <Content />
 
-      {master.data.galleryGroups && master.data.galleryGroups.length > 0 && (
-        <div>
-          {master.data.galleryGroups.map(group => (
-            <section style="margin-top: 2rem;">
-              <h2>{group.title}</h2>
-              <div class="gallery-grid">
-                {group.items.map((item, i) => (
-                  <a href={item.image.src} class="glightbox" data-gallery={group.title} data-description={item.caption || ''}>
-                    <figure style="margin: 0;">
-                      <Image
-                        src={item.image}
-                        alt={item.caption || 'Робота ' + (i + 1)}
-                        width={300}
-                        height={300}
-                        style="border-radius: 8px; object-fit: cover; width: 100%; height: 200px; cursor: pointer; display: block;"
-                      />
-                      {item.caption && (
-                        <figcaption>{item.caption}</figcaption>
-                      )}
-                    </figure>
-                  </a>
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
+      {masterArtworks.length > 0 && (
+        <section style="margin-top: 2rem;">
+          <h2>{locale === 'uk' ? 'Роботи' : 'Works'}</h2>
+          <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+            {masterArtworks.map(artwork => (
+              <a href={getContentUrl('gallery', artwork.id)} style="text-decoration: none; color: inherit; display: block;">
+                <figure style="margin: 0;">
+                  <Image
+                    src={artwork.data.image}
+                    alt={artwork.data.title}
+                    widths={[300]}
+                    sizes="33vw"
+                    style="width: 100%; height: auto; display: block; border-radius: 0;"
+                  />
+                  <figcaption style="font-size: 0.8rem; color: rgb(96,115,159); padding: 0.4rem 0;">
+                    {artwork.data.title}{artwork.data.year ? `, ${artwork.data.year}` : ''}
+                  </figcaption>
+                </figure>
+              </a>
+            ))}
+          </div>
+        </section>
       )}
-
+      
+      {master.data.links && master.data.links.length > 0 && (
+        <section style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgb(229,233,240);">
+          <h2 style="font-size: 1.2rem; margin-bottom: 1rem;">{locale === 'uk' ? 'Посилання' : 'Links'}</h2>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            {master.data.links.map(link => (
+              <li style="margin-bottom: 0.5rem;">
+                <a href={link.url} target="_blank" rel="noopener" style="color: #c0392b; text-decoration: none; border-bottom: 1px solid #f5c6c0; font-size: 0.95rem;">
+                  {link.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      
       <section class="meta-section">
         {resolvedTagGroups.map(group => group.items.length > 0 && (
           <div class="meta-row">
@@ -198,16 +231,16 @@ const masterBooks = allBooks.filter(book =>
           </div>
         ))}
         <div class="meta-row">
-          <strong>Категорія:</strong> {master.data.category}
+          <strong>{locale === 'uk' ? 'Категорія' : 'Category'}:</strong> {master.data.category}
         </div>
       </section>
 
       {masterBooks.length > 0 && (
         <section class="books-section">
-          <h2>Додаткові матеріали</h2>
+          <h2>{locale === 'uk' ? 'Додаткові матеріали' : 'Additional Materials'}</h2>
           <div class="books-grid">
             {masterBooks.map(book => (
-              <a href={'/books/' + book.id} class="book-card">
+              <a href={getContentUrl('books', book.id)} class="book-card">
                 {book.data.cover
                   ? (
                     <Image
@@ -237,6 +270,19 @@ const masterBooks = allBooks.filter(book =>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/glightbox/3.3.0/js/glightbox.min.js"></script>
     <script>
       const lightbox = GLightbox({ selector: '.glightbox' });
+    </script>
+    <script is:inline>
+      // Restore scroll position via back link
+      var backLink = document.getElementById('back-link');
+      if (backLink) {
+        var ref = document.referrer;
+        if (ref && ref.includes('/masters')) {
+          backLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            history.back();
+          });
+        }
+      }
     </script>
   </body>
 </html>

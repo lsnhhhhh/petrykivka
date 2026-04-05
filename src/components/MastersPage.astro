@@ -1,0 +1,123 @@
+---
+import BaseHead from './BaseHead.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import { t } from '../i18n/translations';
+import { filterByLocale, getContentUrl } from '../i18n/content';
+import type { Locale } from '../i18n/translations';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const allMasters = await getCollection('masters');
+const masters = filterByLocale(allMasters, locale);
+
+const categoriesUk = [
+  { name: 'Перше покоління', description: 'Так звані Старі майстри, творчість яких сформувалася на першоджерелах народного стінопису, де ще не було професійних художників, а все робилося на основі традиції та передавалося від матері до дитини.' },
+  { name: 'Друге покоління', description: 'Перші випускники школи декоративного малювання, заснованої в 1935 році, в якій викладали як Старі майстри так і професійні художники. Згодом ці майстри розділилися на дві школи — ті хто залишився в Петриківці, та ті хто переїхав працювати до Києва.' },
+  { name: 'Третє покоління', description: 'Переважно учні майстрів другого покоління, що стали ядром художнього колективу фабрики «Дружба».' },
+  { name: 'Четверте покоління', description: 'Сучасні майстри, що сформувалися під впливом Експериментального цеху петриківського розпису в Петриківці та до сьогодні продовжують свою творчу діяльність.' },
+  { name: 'Пяте покоління', description: 'Молоді майстри, що є учнями майстрів третього та четвертого покоління, а також випускники професійних курсів та закладів по Україні.' },
+  { name: 'Самоучки', description: 'Цікавість до петриківського розпису існує і поза осередком — люди самотужки опановують це мистецтво.' },
+  { name: 'Дослідники петриківського розпису', description: 'Мистецтвознавці, науковці та дослідники, які вивчали і популяризували петриківський розпис.' },
+];
+
+const categoriesEn = [
+  { name: 'Перше покоління', description: 'The so-called Old Masters, whose art was shaped by the origins of folk wall painting, where there were no professional artists and everything was based on tradition passed from mother to child.' },
+  { name: 'Друге покоління', description: 'The first graduates of the School of Decorative Painting, founded in 1935, where both Old Masters and professional artists taught. These masters later split into two schools — those who stayed in Petrykivka and those who moved to Kyiv.' },
+  { name: 'Третє покоління', description: 'Mostly students of second-generation masters who became the core of the artistic team at the "Druzhba" factory.' },
+  { name: 'Четверте покоління', description: 'Contemporary masters shaped by the Experimental Workshop of Petrykivka painting, who continue their creative work to this day.' },
+  { name: 'Пяте покоління', description: 'Young masters who are students of third- and fourth-generation masters, as well as graduates of professional courses across Ukraine.' },
+  { name: 'Самоучки', description: 'Interest in Petrykivka painting exists beyond the traditional center — people master this art on their own.' },
+  { name: 'Дослідники петриківського розпису', description: 'Art historians, scholars and researchers who studied and promoted Petrykivka painting.' },
+];
+
+const categoryNamesEn: Record<string, string> = {
+  'Перше покоління': 'First Generation',
+  'Друге покоління': 'Second Generation',
+  'Третє покоління': 'Third Generation',
+  'Четверте покоління': 'Fourth Generation',
+  'Пяте покоління': 'Fifth Generation',
+  'Самоучки': 'Self-taught',
+  'Дослідники петриківського розпису': 'Researchers of Petrykivka Painting',
+};
+
+const categories = locale === 'en' ? categoriesEn : categoriesUk;
+
+const mastersByCategory = categories.map(cat => ({
+  ...cat,
+  displayName: locale === 'en' ? (categoryNamesEn[cat.name] || cat.name) : cat.name,
+  masters: masters.filter(m => m.data.category === cat.name),
+})).filter(group => group.masters.length > 0);
+---
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <BaseHead title={t(locale, 'nav.masters')} description={t(locale, 'nav.masters')} />
+    <style>
+      h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+      .page-description { color: rgb(96, 115, 159); font-size: 1.1rem; margin-bottom: 2rem; max-width: 680px; }
+      .nav-anchors { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 3rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgb(229, 233, 240); }
+      .nav-anchors a { text-decoration: none; padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.9rem; border: 1px solid rgb(229, 233, 240); color: rgb(0, 0, 0); transition: all 0.2s; }
+      .nav-anchors a:hover { border-color: #c0392b; color: #c0392b; }
+      .category-section { margin-bottom: 4rem; }
+      .category-header { margin-bottom: 1.5rem; }
+      .category-header h2 { font-size: 1.4rem; font-weight: 700; margin: 0 0 0.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid #c0392b; display: inline-block; }
+      .category-description { font-size: 0.95rem; color: rgb(96, 115, 159); margin: 0.75rem 0 0; max-width: 680px; line-height: 1.6; }
+      .masters-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+      .master-card { border-radius: 12px; overflow: hidden; border: 1px solid rgb(229, 233, 240); text-decoration: none; color: inherit; display: block; transition: transform 0.2s, box-shadow 0.2s; }
+      .master-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); border-color: transparent; }
+      .master-photo { width: 100%; height: 200px; object-fit: cover; display: block; }
+      .master-photo-placeholder { width: 100%; height: 200px; background: rgb(229, 233, 240); display: flex; align-items: center; justify-content: center; font-size: 4rem; }
+      .master-info { padding: 1rem 1.25rem 1.25rem; }
+      .master-name { font-size: 1.05rem; font-weight: 700; margin: 0; line-height: 1.3; }
+      @media (max-width: 720px) { .masters-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; } .master-photo, .master-photo-placeholder { height: 180px; } }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <h1>{t(locale, 'nav.masters')}</h1>
+      <p class="page-description">
+        {locale === 'uk'
+          ? 'На цій сторінці представлено яскравих представників кожного покоління петриківського декоративно-орнаментального розпису — від перших майстрів народної традиції до сучасних художників.'
+          : 'This page presents prominent representatives of each generation of Petrykivka decorative painting — from the first masters of folk tradition to contemporary artists.'}
+      </p>
+
+      <nav class="nav-anchors">
+        {mastersByCategory.map(group => (
+          <a href={'#' + group.displayName.toLowerCase().replace(/ /g, '-').replace(/'/g, '')}>
+            {group.displayName}
+          </a>
+        ))}
+      </nav>
+
+      {mastersByCategory.map(group => (
+        <section class="category-section" id={group.displayName.toLowerCase().replace(/ /g, '-').replace(/'/g, '')}>
+          <div class="category-header">
+            <h2>{group.displayName}</h2>
+            {group.description && <p class="category-description">{group.description}</p>}
+          </div>
+          <div class="masters-grid">
+            {group.masters.map(master => (
+              <a href={getContentUrl('masters', master.id)} class="master-card">
+                {master.data.photo
+                  ? <Image src={master.data.photo} alt={master.data.name} width={200} height={200} class="master-photo" />
+                  : <div class="master-photo-placeholder">👤</div>
+                }
+                <div class="master-info">
+                  <p class="master-name">{master.data.name}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+    </main>
+    <Footer />
+  </body>
+</html>

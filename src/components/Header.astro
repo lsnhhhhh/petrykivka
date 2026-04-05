@@ -1,29 +1,56 @@
 ---
 import { SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
+import { getLocaleFromUrl, t, getLocalizedPath } from '../i18n/translations';
+
+const locale = getLocaleFromUrl(Astro.url);
+const title = SITE_TITLE[locale];
+
+const currentPath = Astro.url.pathname;
+const switchPath = locale === 'uk'
+  ? `/en${currentPath === '/' ? '' : currentPath}`
+  : currentPath.replace(/^\/en(\/|$)/, '/');
 ---
 
 <header>
   <nav>
-    <h2><a href="/">{SITE_TITLE}</a></h2>
+    <h2><a href={locale === 'en' ? '/en' : '/'}>{title}</a></h2>
     <button class="burger" id="burger" aria-label="Меню">
       <span></span>
       <span></span>
       <span></span>
     </button>
     <div class="internal-links" id="nav-links">
-      <HeaderLink href="/masters">Майстри</HeaderLink>
-<HeaderLink href="/centers">Осередки</HeaderLink>
-<HeaderLink href="/books">Книги</HeaderLink>
-<HeaderLink href="/materials">Матеріали</HeaderLink>
-<HeaderLink href="/blog">Блог</HeaderLink>
-<HeaderLink href="/about">Про проект</HeaderLink>
-	  <a href="/search" aria-label="Пошук" class="search-icon">
-  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="11" cy="11" r="8"></circle>
-    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-  </svg>
-</a>
+      <HeaderLink href={getLocalizedPath('/masters', locale)}>{t(locale, 'nav.masters')}</HeaderLink>
+      <HeaderLink href={getLocalizedPath('/gallery', locale)}>{t(locale, 'nav.gallery')}</HeaderLink>
+      <HeaderLink href={getLocalizedPath('/centers', locale)}>{t(locale, 'nav.centers')}</HeaderLink>
+      <HeaderLink href={getLocalizedPath('/books', locale)}>{t(locale, 'nav.books')}</HeaderLink>
+      <HeaderLink href={getLocalizedPath('/materials', locale)}>{t(locale, 'nav.materials')}</HeaderLink>
+      <a href={getLocalizedPath('/search', locale)} aria-label="Пошук" class="search-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </a>
+      <div class="lang-dropdown" id="lang-dropdown">
+        <button class="lang-toggle" id="lang-toggle" aria-label="Change language" type="button">
+          <span class="lang-flag">{locale === 'uk' ? '🇺🇦' : '🇬🇧'}</span>
+          <span class="lang-code">{locale === 'uk' ? 'UA' : 'EN'}</span>
+          <svg class="lang-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="lang-menu" id="lang-menu">
+          <a href={locale === 'uk' ? currentPath : switchPath} class={`lang-option ${locale === 'uk' ? 'active' : ''}`}>
+            <span class="lang-flag">🇺🇦</span>
+            <span>Українська</span>
+          </a>
+          <a href={locale === 'en' ? currentPath : switchPath} class={`lang-option ${locale === 'en' ? 'active' : ''}`}>
+            <span class="lang-flag">🇬🇧</span>
+            <span>English</span>
+          </a>
+        </div>
+      </div>
     </div>
   </nav>
 </header>
@@ -37,15 +64,15 @@ import HeaderLink from './HeaderLink.astro';
     position: sticky;
     top: 0;
     z-index: 100;
-	header .search-icon {
-  display: flex;
-  align-items: center;
-  padding: 0.5em 0.6em;
-  border-bottom: 4px solid transparent !important;
-}
-header .search-icon:hover {
-  opacity: 0.7;
-}
+  }
+  header .search-icon {
+    display: flex;
+    align-items: center;
+    padding: 0.5em 0.6em;
+    border-bottom: 4px solid transparent !important;
+  }
+  header .search-icon:hover {
+    opacity: 0.7;
   }
   header h2 {
     margin: 0;
@@ -78,6 +105,89 @@ header .search-icon:hover {
   header nav a.active {
     border-bottom-color: #c0392b;
   }
+
+  /* Lang dropdown */
+  .lang-dropdown {
+    position: relative;
+    margin-left: 0.5em;
+  }
+  .lang-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.35em;
+    padding: 0.4em 0.65em;
+    border: 1px solid rgb(229, 233, 240);
+    border-radius: 50px;
+    background: white;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.85em;
+    color: rgb(15, 18, 25);
+    transition: all 0.2s;
+    line-height: 1;
+  }
+  .lang-toggle:hover {
+    border-color: rgb(200, 205, 215);
+    background: rgb(249, 250, 252);
+  }
+  .lang-flag {
+    font-size: 1.1em;
+    line-height: 1;
+  }
+  .lang-code {
+    font-size: 0.82em;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: rgb(55, 65, 81);
+  }
+  .lang-chevron {
+    color: rgb(156, 163, 175);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .lang-dropdown.open .lang-chevron {
+    transform: rotate(180deg);
+  }
+  .lang-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: white;
+    border: 1px solid rgb(229, 233, 240);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    min-width: 160px;
+    z-index: 200;
+  }
+  .lang-dropdown.open .lang-menu {
+    display: block;
+  }
+  .lang-option {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    padding: 0.65em 1em;
+    text-decoration: none;
+    color: rgb(55, 65, 81);
+    font-size: 0.9em;
+    font-weight: 400;
+    transition: background 0.15s;
+    border-bottom: none !important;
+  }
+  .lang-option:hover {
+    background: rgb(249, 250, 252);
+  }
+  .lang-option.active {
+    color: #c0392b;
+    background: #fef2f1;
+    font-weight: 500;
+  }
+  .lang-option + .lang-option {
+    border-top: 1px solid rgb(243, 244, 246);
+  }
+
   header .burger {
     display: none;
     flex-direction: column;
@@ -127,6 +237,16 @@ header .search-icon:hover {
       border-bottom: 1px solid rgb(229, 233, 240);
       color: #c0392b;
     }
+    .lang-dropdown {
+      margin: 0.75em 0.5em 0;
+    }
+    .lang-menu {
+      position: static;
+      box-shadow: none;
+      border: 1px solid rgb(229, 233, 240);
+      border-radius: 10px;
+      margin-top: 0.4em;
+    }
   }
 </style>
 
@@ -142,5 +262,26 @@ header .search-icon:hover {
     link.addEventListener('click', () => {
       navLinks?.classList.remove('open');
     });
+  });
+
+  // Lang dropdown
+  const langToggle = document.getElementById('lang-toggle');
+  const langDropdown = document.getElementById('lang-dropdown');
+
+  langToggle?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    langDropdown?.classList.toggle('open');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!langDropdown?.contains(e.target as Node)) {
+      langDropdown?.classList.remove('open');
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      langDropdown?.classList.remove('open');
+    }
   });
 </script>

@@ -2,29 +2,38 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { getLocaleFromUrl } from '../i18n/translations';
+
+const locale = getLocaleFromUrl(Astro.url);
 ---
 
 <!doctype html>
-<html lang="uk">
+<html lang={locale}>
   <head>
-    <BaseHead title="Пошук" description="Пошук по сайту" />
+    <BaseHead
+      title={locale === 'uk' ? 'Пошук' : 'Search'}
+      description={locale === 'uk' ? 'Пошук по сайту' : 'Site search'}
+    />
     <link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
   </head>
   <body>
     <Header />
     <main>
-      <h1>Пошук</h1>
+      <h1>{locale === 'uk' ? 'Пошук' : 'Search'}</h1>
       <div id="search"></div>
     </main>
     <Footer />
     <script src="/pagefind/pagefind-ui.js" is:inline></script>
-    <script is:inline>
+    <script is:inline define:vars={{ locale }}>
       new PagefindUI({
         element: '#search',
         showSubResults: true,
-        translations: {
+        translations: locale === 'uk' ? {
           placeholder: 'Пошук по сайту...',
           zero_results: 'Нічого не знайдено для [SEARCH_TERM]',
+        } : {
+          placeholder: 'Search the site...',
+          zero_results: 'No results found for [SEARCH_TERM]',
         }
       });
     </script>

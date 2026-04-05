@@ -1,0 +1,126 @@
+---
+import BaseHead from '../../../components/BaseHead.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import { getLocaleFromUrl } from '../../../i18n/translations';
+import { filterByLocale, getContentUrl } from '../../../i18n/content';
+
+export async function getStaticPaths() {
+  const allBooks = await getCollection('books');
+  const enBooks = allBooks.filter(b => b.id.startsWith('en/'));
+  return enBooks.map(book => ({
+    params: { id: book.id.replace('en/', '') },
+    props: { book },
+  }));
+}
+
+const { book } = Astro.props;
+const locale = getLocaleFromUrl(Astro.url);
+const { Content } = await render(book);
+
+const allMasters = await getCollection('masters');
+const localeMasters = filterByLocale(allMasters, locale);
+
+function getMasterUrl(name) {
+  const found = localeMasters.find(m => m.data.name === name);
+  return found ? getContentUrl('masters', found.id) : null;
+}
+
+const labels = { author: 'Author', year: 'Year', publisher: 'Publisher', language: 'Language', category: 'Category', masters: 'Masters', readOnline: 'Read online', downloadPdf: 'Download PDF', back: '← All books' };
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={book.data.title} description={book.data.title} />
+    <style>
+      .back-link { display: inline-block; margin-bottom: 1.5rem; color: rgb(96, 115, 159); text-decoration: none; font-size: 0.95rem; }
+      .back-link:hover { color: #c0392b; }
+      .book-header { display: grid; grid-template-columns: 200px 1fr; gap: 2.5rem; margin-bottom: 2rem; align-items: start; }
+      .book-cover-wrap { perspective: 900px; display: flex; justify-content: center; }
+      .book-cover-3d { position: relative; transform: rotateY(-4deg); transform-style: preserve-3d; transition: transform 0.4s ease; }
+      .book-cover-3d:hover { transform: rotateY(0deg); }
+      .book-cover-3d::before { content: ''; position: absolute; top: 3%; left: -4px; width: 12px; height: 94%; background: linear-gradient(to right, #d4d0c8, #e8e4dc 40%, #c8c4bc 60%, #b8b4ac); transform: rotateY(90deg) translateX(-6px); transform-origin: left; border-radius: 2px 0 0 2px; }
+      .book-cover-3d::after { content: ''; position: absolute; inset: 0; border-radius: 4px; box-shadow: 6px 6px 18px rgba(0,0,0,0.18), 2px 2px 6px rgba(0,0,0,0.08); pointer-events: none; }
+      .book-cover-3d img { display: block; width: 200px; height: auto; border-radius: 4px; border: 1px solid rgba(0,0,0,0.06); }
+      .book-cover-placeholder { width: 200px; height: 280px; background: linear-gradient(135deg, rgb(235,238,244) 0%, rgb(215,220,230) 100%); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 4rem; box-shadow: 6px 6px 18px rgba(0,0,0,0.15); }
+      .book-meta { display: flex; flex-direction: column; gap: 0.15rem; }
+      .book-meta h1 { font-size: 1.6rem; line-height: 1.25; margin: 0 0 0.75rem; font-weight: 700; }
+      .book-meta p { margin: 0; padding: 0; }
+      .meta-row { font-size: 0.92rem; color: rgb(96,115,159); margin-bottom: 0.35rem; padding: 0; line-height: 1.5; }
+      .meta-row strong { color: rgb(50,55,65); font-weight: 600; }
+      .master-link { display: inline-block; background: #fff0ee; padding: 2px 10px; border-radius: 12px; margin: 2px; text-decoration: none; color: #c0392b; border: 1px solid #f5c6c0; font-size: 0.85rem; transition: all 0.2s; }
+      .master-link:hover { background: #c0392b; color: white; border-color: #c0392b; }
+      .book-actions { display: flex; gap: 0.75rem; margin-top: 1.25rem; flex-wrap: wrap; }
+      .book-action { display: inline-flex; align-items: center; gap: 0.4em; padding: 0.5rem 1.25rem; border-radius: 8px; text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+      .book-action--read { background: #c0392b; color: white; border: none; }
+      .book-action--read:hover { background: #a93226; }
+      .book-action--pdf { background: white; color: #c0392b; border: 1px solid #f0d0cc; }
+      .book-action--pdf:hover { background: #fef2f1; border-color: #c0392b; }
+      .section-divider { margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid rgb(229,233,240); }
+      @media (max-width: 600px) { .book-header { grid-template-columns: 1fr; justify-items: center; text-align: center; } .book-meta { align-items: center; } .book-actions { justify-content: center; } }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <a href={locale === 'en' ? '/en/books' : '/books'} class="back-link" id="back-link">
+        {locale === 'uk' ? '← Всі книги' : '← All books'}
+      </a>
+      <div class="book-header">
+        <div class="book-cover-wrap">
+          {book.data.cover
+            ? <div class="book-cover-3d"><Image src={book.data.cover} alt={book.data.title} width={200} height={280} /></div>
+            : <div class="book-cover-placeholder">📖</div>
+          }
+        </div>
+        <div class="book-meta">
+          <h1>{book.data.title}</h1>
+          {book.data.author && <p class="meta-row"><strong>{labels.author}:</strong> {book.data.author}</p>}
+          {book.data.year && <p class="meta-row"><strong>{labels.year}:</strong> {book.data.year}</p>}
+          {book.data.publisher && <p class="meta-row"><strong>{labels.publisher}:</strong> {book.data.publisher}</p>}
+          {book.data.language && <p class="meta-row"><strong>{labels.language}:</strong> {Array.isArray(book.data.language) ? book.data.language.join(', ') : book.data.language}</p>}
+          <p class="meta-row"><strong>{labels.category}:</strong> {book.data.category}</p>
+          {book.data.masters && book.data.masters.length > 0 && (
+            <div class="meta-row">
+              <strong>{labels.masters}:</strong>{' '}
+              {book.data.masters.map(name => (
+                <a href={getMasterUrl(name) || '/en/masters'} class="master-link">{name}</a>
+              ))}
+            </div>
+          )}
+          <div class="book-actions">
+            {book.data.externalUrl && (
+              <a href={book.data.externalUrl} target="_blank" class="book-action book-action--read">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                {labels.readOnline}
+              </a>
+            )}
+            {book.data.pdfUrl && (
+              <a href={book.data.pdfUrl} target="_blank" class="book-action book-action--pdf">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                {labels.downloadPdf}
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+      <div class="section-divider"><Content /></div>
+    </main>
+    <Footer />
+    <script is:inline>
+      // Restore scroll position via back link
+      var backLink = document.getElementById('back-link');
+      if (backLink) {
+        var ref = document.referrer;
+        if (ref && ref.includes('/books')) {
+          backLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            history.back();
+          });
+        }
+      }
+    </script>
+  </body>
+</html>

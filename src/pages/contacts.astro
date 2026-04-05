@@ -1,0 +1,56 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getLocaleFromUrl } from '../i18n/translations';
+
+const locale = getLocaleFromUrl(Astro.url);
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <BaseHead
+      title={locale === 'uk' ? 'Контакти' : 'Contacts'}
+      description={locale === 'uk' ? 'Контактна інформація' : 'Contact information'}
+    />
+    <style>
+      .contact-section { margin-bottom: 2rem; }
+      .contact-label { font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: rgb(156, 163, 175); margin: 0 0 0.3rem; }
+      .contact-value { font-size: 1rem; color: rgb(55, 65, 81); margin: 0; }
+      .contact-value a { color: #c0392b; text-decoration: none; border-bottom: 1px solid #f5c6c0; }
+      .contact-value a:hover { border-bottom-color: #c0392b; }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      {locale === 'uk' ? (
+        <>
+          <h1>Контакти</h1>
+          <p style="color: rgb(96, 115, 159); margin-bottom: 2rem;">
+            Якщо у вас є питання, пропозиції або ви хочете поділитися матеріалами
+            про петриківський розпис — зв'яжіться з нами.
+          </p>
+          <div class="contact-section">
+            <p class="contact-label">Електронна пошта</p>
+            <p class="contact-value"><a href="mailto:petrykivkapaint@gmail.com">petrykivkapaint@gmail.com</a></p>
+          </div>
+        </>
+      ) : (
+        <>
+          <h1>Contacts</h1>
+          <p style="color: rgb(96, 115, 159); margin-bottom: 2rem;">
+            If you have questions, suggestions, or would like to share materials
+            about Petrykivka painting — please get in touch.
+          </p>
+          <div class="contact-section">
+            <p class="contact-label">Email</p>
+            <p class="contact-value"><a href="mailto:petrykivkapaint@gmail.com">petrykivkapaint@gmail.com</a></p>
+          </div>
+        </>
+      )}
+    </main>
+    <Footer />
+  </body>
+</html>

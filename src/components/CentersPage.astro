@@ -1,0 +1,101 @@
+---
+import BaseHead from './BaseHead.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import { t } from '../i18n/translations';
+import { filterByLocale, getContentUrl } from '../i18n/content';
+import type { Locale } from '../i18n/translations';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const allCenters = await getCollection('centers');
+const centers = filterByLocale(allCenters, locale);
+
+const categories = [
+  'Школи',
+  'Музеї',
+  'Приватні колекції',
+  'Організації та установи',
+];
+
+const categoryNamesEn: Record<string, string> = {
+  'Школи': 'Schools',
+  'Музеї': 'Museums',
+  'Приватні колекції': 'Private Collections',
+  'Організації та установи': 'Organizations & Institutions',
+};
+
+const centersByCategory = categories.map(category => ({
+  category,
+  displayName: locale === 'en' ? (categoryNamesEn[category] || category) : category,
+  centers: centers.filter(c => c.data.category === category),
+})).filter(group => group.centers.length > 0);
+---
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <BaseHead title={t(locale, 'nav.centers')} description={t(locale, 'nav.centers')} />
+    <style>
+      h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+      .subtitle { color: rgb(96, 115, 159); font-size: 1.1rem; margin-bottom: 2rem; }
+      .nav-anchors { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 3rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgb(229, 233, 240); }
+      .nav-anchors a { text-decoration: none; padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.9rem; border: 1px solid rgb(229, 233, 240); color: rgb(0, 0, 0); transition: all 0.2s; }
+      .nav-anchors a:hover { border-color: #c0392b; color: #c0392b; }
+      .category-section { margin-bottom: 4rem; }
+      .category-section h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid #c0392b; display: inline-block; }
+      .centers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+      .center-card { border-radius: 12px; overflow: hidden; border: 1px solid rgb(229, 233, 240); text-decoration: none; color: inherit; display: block; transition: transform 0.2s, box-shadow 0.2s; }
+      .center-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); border-color: transparent; }
+      .center-photo { width: 100%; height: 200px; object-fit: cover; display: block; }
+      .center-photo-placeholder { width: 100%; height: 200px; background: rgb(229, 233, 240); display: flex; align-items: center; justify-content: center; font-size: 4rem; }
+      .center-info { padding: 1rem 1.25rem 1.25rem; }
+      .center-name { font-size: 1.05rem; font-weight: 700; margin: 0 0 0.3rem; line-height: 1.3; }
+      .center-location { font-size: 0.85rem; color: rgb(96, 115, 159); margin: 0; }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <h1>{t(locale, 'nav.centers')}</h1>
+      <p class="subtitle">
+        {locale === 'uk'
+          ? "Школи, музеї, організації та установи пов'язані з петриківським розписом"
+          : 'Schools, museums, organizations and institutions related to Petrykivka painting'}
+      </p>
+
+      <nav class="nav-anchors">
+        {centersByCategory.map(group => (
+          <a href={'#' + group.displayName.toLowerCase().replace(/ /g, '-')}>
+            {group.displayName}
+          </a>
+        ))}
+      </nav>
+
+      {centersByCategory.map(group => (
+        <section class="category-section" id={group.displayName.toLowerCase().replace(/ /g, '-')}>
+          <h2>{group.displayName}</h2>
+          <div class="centers-grid">
+            {group.centers.map(center => (
+              <a href={getContentUrl('centers', center.id)} class="center-card">
+                {center.data.photo
+                  ? <Image src={center.data.photo} alt={center.data.name} width={280} height={200} class="center-photo" />
+                  : <div class="center-photo-placeholder">🏛️</div>
+                }
+                <div class="center-info">
+                  <p class="center-name">{center.data.name}</p>
+                  {center.data.location && <p class="center-location">{center.data.location}</p>}
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+    </main>
+    <Footer />
+  </body>
+</html>
