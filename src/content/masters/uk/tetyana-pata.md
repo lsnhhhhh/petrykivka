@@ -23,7 +23,7 @@ tags:
   - 'засновниця школи'
   - 'орнамент'
   - 'панно'
-photo: '../../../assets/masters/tetyana-pata/Photo.jpg'
+photo: '../../../assets/masters/tetyana-pata/photo.jpg'
 links:
   - title: 'Тетяна Пата — Вікіпедія'
     url: 'https://uk.wikipedia.org/wiki/Пата_Тетяна_Якимівна'
