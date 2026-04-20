@@ -1,17 +1,17 @@
 ---
 locale: uk
-title: 'Калина'
-master: 'Тетяна Пата'
-year: '1960-ті'
-decade: '1960'
+title: Декоративне панно з птахом
+master: Тетяна Пата
+image: ../../../assets/masters/tetyana-pata/2.jpg
+year: "1947"
+decade: "1950"
 subject:
-  - 'Калина'
-medium: 'Темпера, папір'
-location: 'НМУНДМ'
+  - Птахи
+medium: Темпера, папір
+dimensions: 65 × 72 см
+location: НМУНДМ
 elements:
-  - 'Калина'
-  - 'Зернятко'
-  - 'Перехідний мазок'
-image: '../../../assets/masters/tetyana-pata/2.jpg'
-description: 'Один з найулюбленіших мотивів Тетяни Пати — грона калини з листям, виконані в характерній техніці з використанням пальцевого друку для ягід.'
+  - Рогозинка
+  - Волошки
+description: ""
 ---
