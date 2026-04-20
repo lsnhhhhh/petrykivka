@@ -4,7 +4,7 @@ title: Синій пуп'янок
 master: Тетяна Пата
 image: ../../../assets/masters/tetyana-pata/1.jpg
 year: "1913"
-decade: "1920"
+decade: "1910"
 subject:
   - Квіти
 medium: Темпера, папір
