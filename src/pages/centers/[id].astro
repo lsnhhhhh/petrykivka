@@ -42,6 +42,7 @@ const foundedLabel = founded
 <html lang={locale}>
   <head>
     <BaseHead title={center.data.name} description={center.data.name} />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/glightbox/3.3.0/css/glightbox.min.css" />
     <style>
       .meta-section { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgb(229,233,240); }
       .meta-row { margin-bottom: 0.75rem; font-size: 0.95rem; }
@@ -58,6 +59,9 @@ const foundedLabel = founded
       .website-link:hover { background: #c0392b; color: white; }
       .back-link { display: inline-block; margin-bottom: 1.5rem; color: rgb(96, 115, 159); text-decoration: none; font-size: 0.95rem; }
       .back-link:hover { color: #c0392b; }
+      .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+      .gallery-grid img { border-radius: 0; }
+      figcaption { font-size: 0.8rem; color: rgb(96,115,159); padding: 0.4rem 0; text-align: center; }
     </style>
   </head>
   <body>
@@ -122,6 +126,33 @@ const foundedLabel = founded
           </div>
         </section>
       )}
+      {center.data.galleryGroups && center.data.galleryGroups.length > 0 && (
+        <div>
+          {center.data.galleryGroups.map(group => (
+            <section class="masters-section">
+              <h2>{group.title}</h2>
+              <div class="gallery-grid">
+                {group.items.map((item, i) => (
+                  <a href={item.image.src} class="glightbox" data-gallery={group.title} data-description={item.caption || ''}>
+                    <figure style="margin: 0;">
+                      <Image
+                        src={item.image}
+                        alt={item.caption || `${group.title} ${i + 1}`}
+                        width={300}
+                        height={300}
+                        style="width: 100%; height: auto; object-fit: contain; display: block; cursor: pointer; border-radius: 0;"
+                      />
+                      {item.caption && (
+                        <figcaption>{item.caption}</figcaption>
+                      )}
+                    </figure>
+                  </a>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      )}
       {centerArtworks.length > 0 && (
         <section class="masters-section">
           <h2>{locale === 'uk' ? 'Роботи з колекції' : 'Works from collection'}</h2>
@@ -159,6 +190,12 @@ const foundedLabel = founded
           });
         }
       }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/glightbox/3.3.0/js/glightbox.min.js"></script>
+    <script is:inline>
+      window.addEventListener('load', function() {
+        GLightbox({ selector: '.glightbox' });
+      });
     </script>
   </body>
 </html>

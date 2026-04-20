@@ -97,6 +97,13 @@ const centers = defineCollection({
     masters: z.array(z.string()).optional(),
     website: z.string().optional(),
     address: z.string().optional(),
+    galleryGroups: z.array(z.object({
+      title: z.string(),
+      items: z.array(z.object({
+        image: image(),
+        caption: z.string().optional(),
+      })),
+    })).optional(),
     locale: localeSchema,
   }),
 });
