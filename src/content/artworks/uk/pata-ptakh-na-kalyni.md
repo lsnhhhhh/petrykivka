@@ -4,7 +4,7 @@ title: Зозуля на калині
 master: Тетяна Пата
 image: ../../../assets/masters/tetyana-pata/3.jpg
 year: "1972"
-decade: "1980"
+decade: "1970"
 subject:
   - Птахи
   - Калина
