@@ -61,24 +61,62 @@ const backLabel = locale === 'uk' ? '← Всі майстри' : '← All maste
     <BaseHead title={master.data.name} description={master.data.name} />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/glightbox/3.3.0/css/glightbox.min.css" />
     <style>
+      .master-page h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem;
+        line-height: 1.25;
+      }
+      .master-page .master-category {
+        font-size: 0.78rem;
+        color: #c0392b;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+      }
+      .master-page .master-dates {
+        font-size: 0.9rem;
+        color: rgb(96, 115, 159);
+        margin: 0 0 1.5rem;
+      }
+      .master-page .master-content {
+        font-size: 1rem;
+        line-height: 1.75;
+      }
+      .master-page .master-content h2 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin: 2rem 0 0.75rem;
+      }
+      .master-page .master-content h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin: 1.5rem 0 0.5rem;
+      }
+      .master-page .master-content p {
+        margin: 0 0 1rem;
+      }
       .tag-link {
         display: inline-block;
         background: #f0f0f0;
-        padding: 2px 10px;
+        padding: 2px 8px;
         border-radius: 12px;
         margin: 2px;
         text-decoration: none;
         color: inherit;
+        font-size: 0.82rem;
       }
       .master-link {
         display: inline-block;
         background: #fff0ee;
-        padding: 2px 10px;
+        padding: 2px 8px;
         border-radius: 12px;
         margin: 2px;
         text-decoration: none;
         color: #c0392b;
         border: 1px solid #f5c6c0;
+        font-size: 0.82rem;
       }
       .gallery-grid {
         display: grid;
@@ -86,9 +124,9 @@ const backLabel = locale === 'uk' ? '← Всі майстри' : '← All maste
         gap: 1rem;
       }
       figcaption {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         color: rgb(96,115,159);
-        padding: 0.4rem 0;
+        padding: 0.3rem 0;
         text-align: center;
       }
       .meta-section {
@@ -97,7 +135,12 @@ const backLabel = locale === 'uk' ? '← Всі майстри' : '← All maste
         border-top: 1px solid rgb(229,233,240);
       }
       .meta-row {
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.88rem;
+      }
+      .meta-row strong {
+        color: rgb(50, 55, 65);
+        font-weight: 600;
       }
       .books-section {
         margin-top: 2rem;
@@ -105,7 +148,7 @@ const backLabel = locale === 'uk' ? '← Всі майстри' : '← All maste
         border-top: 1px solid rgb(229,233,240);
       }
       .books-section h2 {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         margin-bottom: 1rem;
       }
       .books-grid {
@@ -140,13 +183,13 @@ const backLabel = locale === 'uk' ? '← Всі майстри' : '← All maste
         padding: 0.75rem;
       }
       .book-title {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         font-weight: 700;
         margin: 0 0 0.25rem;
         line-height: 1.3;
       }
       .book-author {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         color: rgb(96,115,159);
         margin: 0;
       }
@@ -155,7 +198,7 @@ const backLabel = locale === 'uk' ? '← Всі майстри' : '← All maste
         margin-bottom: 1.5rem;
         color: rgb(96, 115, 159);
         text-decoration: none;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
       }
       .back-link:hover { color: #c0392b; }
     </style>
@@ -164,21 +207,25 @@ const backLabel = locale === 'uk' ? '← Всі майстри' : '← All maste
     <Header />
     <main>
       <a href={backUrl} class="back-link" id="back-link">{backLabel}</a>
-      <h1>{master.data.name}</h1>
 
-      {master.data.photo && (
-        <div style="margin: 1.5rem 0;">
-          <Image
-            src={master.data.photo}
-            alt={master.data.name}
-            width={800}
-            height={500}
-            style="border-radius: 8px; width: 100%; max-width: 800px; height: auto; display: block;"
-          />
+      <div class="master-page">
+        <h1>{master.data.name}</h1>
+
+        {master.data.photo && (
+          <div style="margin: 0 0 2rem;">
+            <Image
+              src={master.data.photo}
+              alt={master.data.name}
+              width={800}
+              height={500}
+              style="width: 100%; max-width: 800px; height: auto; display: block; border-radius: 0;"
+            />
+          </div>
+        )}
+
+        <div class="master-content">
+          <Content />
         </div>
-      )}
-
-      <Content />
 
       {masterArtworks.length > 0 && (
         <section style="margin-top: 2rem;">
@@ -265,6 +312,7 @@ const backLabel = locale === 'uk' ? '← Всі майстри' : '← All maste
           </div>
         </section>
       )}
+     </div>
     </main>
     <Footer />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/glightbox/3.3.0/js/glightbox.min.js"></script>

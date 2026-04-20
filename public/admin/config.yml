@@ -106,9 +106,8 @@ collections:
       - { label: "Видавництво", name: publisher, widget: string, required: false }
       - label: "Мова"
         name: language
-        widget: list
+        widget: string
         required: false
-        field: { label: "Мова", name: item, widget: string }
       - label: "Категорія"
         name: category
         widget: select
