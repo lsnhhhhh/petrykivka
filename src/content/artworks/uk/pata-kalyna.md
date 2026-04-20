@@ -4,7 +4,7 @@ title: Декоративне панно з птахом
 master: Тетяна Пата
 image: ../../../assets/masters/tetyana-pata/2.jpg
 year: "1947"
-decade: "1950"
+decade: "1940"
 subject:
   - Птахи
 medium: Темпера, папір
