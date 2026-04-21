@@ -3,7 +3,6 @@ backend:
   repo: lsnhhhhh/petrykivka
   branch: main
   base_url: https://petrykivka-cms-auth.lisnyihor.workers.dev
-  auth_endpoint: auth
 
 # Де лежать завантажені зображення
 media_folder: src/assets
