@@ -27,7 +27,6 @@ function getMasterUrl(name) {
 }
 
 const resolvedTagGroups = [
-  { label: 'Center', values: master.data.center ? [master.data.center] : [], type: 'tag' },
   { label: 'Period', values: master.data.period ? [master.data.period] : [], type: 'tag' },
   { label: 'School', values: master.data.school || [], type: 'tag' },
   { label: 'Teachers', values: master.data.teachers || [], type: 'master' },
@@ -202,7 +201,7 @@ const masterArtworks = filterByLocale(allArtworks, locale).filter(
   <body>
     <Header />
     <main>
-      <a href={backUrl} class="back-link" id="back-link">{backLabel}</a>
+      <a href="/en/masters" class="back-link" id="back-link">← All masters</a>
 
       <div class="master-page">
         <h1>{master.data.name}</h1>

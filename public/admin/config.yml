@@ -1,305 +1,185 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: lsnhhhhh/petrykivka
   branch: main
+  base_url: https://petrykivka-cms-auth.lisnyihor.workers.dev
+  auth_endpoint: auth
+
+# Де лежать завантажені зображення
 media_folder: src/assets
 public_folder: /assets
 
+# Глобальна i18n-конфігурація
+# multiple_folders означає: файли лежать у <folder>/<locale>/<slug>.md
+# Наприклад: src/content/masters/uk/tetyana-pata.md і src/content/masters/en/tetyana-pata.md
+i18n:
+  structure: multiple_folders
+  locales: [uk, en]
+  default_locale: uk
+
 collections:
-  - name: artworks
-    label: "Галерея"
-    folder: src/content/artworks/uk
+  # ====================== МАЙСТРИ ======================
+  - name: masters
+    label: "Майстри"
+    label_singular: "Майстер"
+    folder: src/content/masters
     create: true
     slug: "{{slug}}"
+    i18n: true
+    # Сортування у списку
+    sortable_fields: [name, born]
+    # Для попереднього перегляду у списку
+    summary: "{{name}}"
     fields:
-      - { label: "Locale", name: locale, widget: hidden, default: "uk" }
-      - { label: "Назва роботи", name: title, widget: string }
-      - { label: "Майстер", name: master, widget: string, hint: "Має збігатися з іменем майстра на сайті" }
-      - { label: "Зображення", name: image, widget: image }
-      - { label: "Рік", name: year, widget: string, required: false }
+      - { label: "Ім'я", name: name, widget: string, i18n: true }
+      - label: "Категорія"
+        name: category
+        widget: select
+        i18n: duplicate
+        options:
+          - "Перше покоління"
+          - "Друге покоління"
+          - "Третє покоління"
+          - "Четверте покоління"
+          - "Пяте покоління"
+          - "Самоучки"
+          - "Дослідники петриківського розпису"
+      - { label: "Фото", name: photo, widget: image, required: false, i18n: duplicate }
+      - { label: "Рік народження", name: born, widget: string, required: false, i18n: duplicate }
+      - { label: "Рік смерті", name: died, widget: string, required: false, i18n: duplicate }
+      - { label: "Період", name: period, widget: string, required: false, i18n: true }
+      - { label: "Осередок", name: center, widget: string, required: false, i18n: true }
+      - label: "Школа"
+        name: school
+        widget: list
+        required: false
+        i18n: true
+        field: { label: "Школа", name: item, widget: string }
+      - label: "Вчителі"
+        name: teachers
+        widget: list
+        required: false
+        i18n: duplicate
+        field: { label: "Ім'я", name: item, widget: string }
+      - label: "Вплив на"
+        name: influenced
+        widget: list
+        required: false
+        i18n: duplicate
+        field: { label: "Ім'я", name: item, widget: string }
+      - label: "Теги"
+        name: tags
+        widget: list
+        required: false
+        i18n: true
+        field: { label: "Тег", name: item, widget: string }
+      - label: "Посилання"
+        name: links
+        widget: list
+        required: false
+        i18n: true
+        fields:
+          - { label: "Назва", name: title, widget: string }
+          - { label: "URL", name: url, widget: string }
+      - { label: "Текст (біографія)", name: body, widget: markdown, i18n: true }
+
+  # ====================== ГАЛЕРЕЯ ======================
+  - name: artworks
+    label: "Галерея"
+    label_singular: "Робота"
+    folder: src/content/artworks
+    create: true
+    slug: "{{slug}}"
+    i18n: true
+    sortable_fields: [title, year, decade]
+    summary: "{{title}} — {{master}}"
+    fields:
+      - { label: "Назва роботи", name: title, widget: string, i18n: true }
+      - { label: "Майстер", name: master, widget: string, i18n: duplicate, hint: "Має збігатися з іменем майстра на сайті" }
+      - { label: "Зображення", name: image, widget: image, i18n: duplicate }
+      - { label: "Рік", name: year, widget: string, required: false, i18n: duplicate }
       - label: "Десятиліття"
         name: decade
         widget: select
         required: false
+        i18n: duplicate
         options: ["1910", "1920", "1930", "1940", "1950", "1960", "1970", "1980", "1990", "2000", "2010", "2020"]
         hint: "Для фільтру в галереї"
       - label: "Сюжет"
         name: subject
         widget: list
         required: false
+        i18n: true
         field: { label: "Сюжет", name: item, widget: string }
         hint: "Квіти, Птахи, Калина, Панно..."
-      - { label: "Матеріали", name: medium, widget: string, required: false, hint: "Темпера, папір" }
-      - { label: "Розмір", name: dimensions, widget: string, required: false, hint: "45 × 60 см" }
-      - { label: "Де зберігається", name: location, widget: string, required: false, hint: "Має збігатися з назвою осередку для лінкування" }
+      - { label: "Матеріали", name: medium, widget: string, required: false, i18n: true, hint: "Темпера, папір" }
+      - { label: "Розмір", name: dimensions, widget: string, required: false, i18n: duplicate, hint: "45 × 60 см" }
+      - { label: "Де зберігається", name: location, widget: string, required: false, i18n: true, hint: "Має збігатися з назвою осередку для лінкування" }
       - label: "Основні елементи"
         name: elements
         widget: list
         required: false
+        i18n: true
         field: { label: "Елемент", name: item, widget: string }
         hint: "Кучерявка, Цибулинка, Зернятко..."
-      - { label: "Опис", name: description, widget: text, required: false }
-      - { label: "Текст", name: body, widget: markdown, required: false }
+      - { label: "Опис", name: description, widget: text, required: false, i18n: true }
+      - { label: "Текст", name: body, widget: markdown, required: false, i18n: true }
 
-  - name: masters
-    label: "Майстри"
-    folder: src/content/masters/uk
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - { label: "Locale", name: locale, widget: hidden, default: "uk" }
-      - { label: "Ім'я", name: name, widget: string }
-      - label: "Категорія"
-        name: category
-        widget: select
-        options:
-          - "Перше покоління"
-          - "Друге покоління"
-          - "Третє покоління"
-          - "Четверте покоління"
-          - "Пяте покоління"
-          - "Самоучки"
-          - "Дослідники петриківського розпису"
-      - { label: "Фото", name: photo, widget: image, required: false }
-      - { label: "Рік народження", name: born, widget: string, required: false }
-      - { label: "Рік смерті", name: died, widget: string, required: false }
-      - { label: "Період", name: period, widget: string, required: false }
-      - { label: "Осередок", name: center, widget: string, required: false }
-      - label: "Школа"
-        name: school
-        widget: list
-        required: false
-        field: { label: "Школа", name: item, widget: string }
-      - label: "Вчителі"
-        name: teachers
-        widget: list
-        required: false
-        field: { label: "Ім'я", name: item, widget: string }
-      - label: "Вплив на"
-        name: influenced
-        widget: list
-        required: false
-        field: { label: "Ім'я", name: item, widget: string }
-      - label: "Теги"
-        name: tags
-        widget: list
-        required: false
-        field: { label: "Тег", name: item, widget: string }
-      - label: "Посилання"
-        name: links
-        widget: list
-        required: false
-        fields:
-          - { label: "Назва", name: title, widget: string }
-          - { label: "URL", name: url, widget: string }
-      - { label: "Текст", name: body, widget: markdown }
-
-  - name: books
-    label: "Книги"
-    folder: src/content/books/uk
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - { label: "Locale", name: locale, widget: hidden, default: "uk" }
-      - { label: "Назва", name: title, widget: string }
-      - { label: "Автор", name: author, widget: string, required: false }
-      - { label: "Рік", name: year, widget: string, required: false }
-      - { label: "Видавництво", name: publisher, widget: string, required: false }
-      - label: "Мова"
-        name: language
-        widget: string
-        required: false
-      - label: "Категорія"
-        name: category
-        widget: select
-        options:
-          - "Альбоми"
-          - "Альбоми про майстрів"
-          - "Мистецтвознавчі дослідження"
-          - "Оздоблені розписом"
-          - "Наукові статті"
-          - "Інше"
-      - { label: "Обкладинка", name: cover, widget: image, required: false }
-      - label: "Майстри"
-        name: masters
-        widget: list
-        required: false
-        field: { label: "Ім'я", name: item, widget: string }
-      - { label: "Посилання онлайн", name: externalUrl, widget: string, required: false }
-      - { label: "PDF", name: pdfUrl, widget: string, required: false }
-      - { label: "Текст", name: body, widget: markdown, required: false }
-
+  # ====================== ОСЕРЕДКИ ======================
   - name: centers
     label: "Осередки"
-    folder: src/content/centers/uk
+    label_singular: "Осередок"
+    folder: src/content/centers
     create: true
     slug: "{{slug}}"
+    i18n: true
+    sortable_fields: [name, founded]
+    summary: "{{name}}"
     fields:
-      - { label: "Locale", name: locale, widget: hidden, default: "uk" }
-      - { label: "Назва", name: name, widget: string }
+      - { label: "Назва", name: name, widget: string, i18n: true }
       - label: "Категорія"
         name: category
         widget: select
+        i18n: duplicate
         options:
           - "Школи"
           - "Музеї"
           - "Приватні колекції"
           - "Організації та установи"
-      - { label: "Розташування", name: location, widget: string, required: false }
-      - { label: "Засновано", name: founded, widget: string, required: false }
-      - { label: "Закрито", name: closed, widget: string, required: false }
-      - { label: "Фото", name: photo, widget: image, required: false }
+      - { label: "Розташування", name: location, widget: string, required: false, i18n: true }
+      - { label: "Засновано", name: founded, widget: string, required: false, i18n: duplicate }
+      - { label: "Закрито", name: closed, widget: string, required: false, i18n: duplicate }
+      - { label: "Фото", name: photo, widget: image, required: false, i18n: duplicate }
       - label: "Майстри"
         name: masters
         widget: list
         required: false
+        i18n: duplicate
         field: { label: "Ім'я", name: item, widget: string }
-      - { label: "Сайт", name: website, widget: string, required: false }
-      - { label: "Адреса", name: address, widget: string, required: false }
-      - { label: "Текст", name: body, widget: markdown, required: false }
+      - { label: "Сайт", name: website, widget: string, required: false, i18n: duplicate }
+      - { label: "Адреса", name: address, widget: string, required: false, i18n: true }
+      - { label: "Текст", name: body, widget: markdown, required: false, i18n: true }
 
-  - name: materials
-    label: "Матеріали"
-    folder: src/content/materials/uk
+  # ====================== КНИГИ ======================
+  - name: books
+    label: "Книги"
+    label_singular: "Книга"
+    folder: src/content/books
     create: true
     slug: "{{slug}}"
+    i18n: true
+    sortable_fields: [title, year, author]
+    summary: "{{title}}"
     fields:
-      - { label: "Locale", name: locale, widget: hidden, default: "uk" }
-      - { label: "Назва", name: title, widget: string }
-      - { label: "Опис", name: description, widget: string, required: false }
+      - { label: "Назва", name: title, widget: string, i18n: true }
+      - { label: "Автор", name: author, widget: string, required: false, i18n: true }
+      - { label: "Рік", name: year, widget: string, required: false, i18n: duplicate }
+      - { label: "Видавництво", name: publisher, widget: string, required: false, i18n: true }
+      - { label: "Мова", name: language, widget: string, required: false, i18n: duplicate }
       - label: "Категорія"
         name: category
         widget: select
-        options:
-          - "Галереї"
-          - "Статті"
-          - "Майстер-класи"
-          - "Відео"
-      - { label: "Обкладинка", name: cover, widget: image, required: false }
-      - { label: "URL відео", name: videoUrl, widget: string, required: false }
-      - { label: "Дата", name: pubDate, widget: datetime, required: false }
-      - { label: "Автор", name: author, widget: string, required: false }
-      - { label: "Джерело", name: source, widget: string, required: false }
-      - { label: "URL джерела", name: sourceUrl, widget: string, required: false }
-      - label: "Майстри"
-        name: masters
-        widget: list
-        required: false
-        field: { label: "Ім'я", name: item, widget: string }
-      - { label: "Текст", name: body, widget: markdown, required: false }
-
-  - name: blog
-    label: "Блог"
-    folder: src/content/blog/uk
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - { label: "Locale", name: locale, widget: hidden, default: "uk" }
-      - { label: "Заголовок", name: title, widget: string }
-      - { label: "Опис", name: description, widget: string }
-      - { label: "Дата", name: pubDate, widget: datetime }
-      - { label: "Головне зображення", name: heroImage, widget: image, required: false }
-      - { label: "Текст", name: body, widget: markdown }
-  
-  - name: artworks-en
-    label: "Gallery (EN)"
-    folder: src/content/artworks/en
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - { label: "Locale", name: locale, widget: hidden, default: "en" }
-      - { label: "Title", name: title, widget: string }
-      - { label: "Master", name: master, widget: string, hint: "Must match master name on the site" }
-      - { label: "Image", name: image, widget: image }
-      - { label: "Year", name: year, widget: string, required: false }
-      - label: "Decade"
-        name: decade
-        widget: select
-        required: false
-        options: ["1910", "1920", "1930", "1940", "1950", "1960", "1970", "1980", "1990", "2000", "2010", "2020"]
-      - label: "Subject"
-        name: subject
-        widget: list
-        required: false
-        field: { label: "Subject", name: item, widget: string }
-      - { label: "Medium", name: medium, widget: string, required: false }
-      - { label: "Dimensions", name: dimensions, widget: string, required: false }
-      - { label: "Location", name: location, widget: string, required: false }
-      - label: "Elements"
-        name: elements
-        widget: list
-        required: false
-        field: { label: "Element", name: item, widget: string }
-      - { label: "Description", name: description, widget: text, required: false }
-      - { label: "Text", name: body, widget: markdown, required: false }
-
-  - name: masters-en
-    label: "Masters (EN)"
-    folder: src/content/masters/en
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - { label: "Locale", name: locale, widget: hidden, default: "en" }
-      - { label: "Name", name: name, widget: string }
-      - label: "Category"
-        name: category
-        widget: select
-        options:
-          - "Перше покоління"
-          - "Друге покоління"
-          - "Третє покоління"
-          - "Четверте покоління"
-          - "Пяте покоління"
-          - "Самоучки"
-          - "Дослідники петриківського розпису"
-      - { label: "Photo", name: photo, widget: image, required: false }
-      - { label: "Born", name: born, widget: string, required: false }
-      - { label: "Died", name: died, widget: string, required: false }
-      - { label: "Period", name: period, widget: string, required: false }
-      - { label: "Center", name: center, widget: string, required: false }
-      - label: "School"
-        name: school
-        widget: list
-        required: false
-        field: { label: "School", name: item, widget: string }
-      - label: "Teachers"
-        name: teachers
-        widget: list
-        required: false
-        field: { label: "Name", name: item, widget: string }
-      - label: "Influenced"
-        name: influenced
-        widget: list
-        required: false
-        field: { label: "Name", name: item, widget: string }
-      - label: "Tags"
-        name: tags
-        widget: list
-        required: false
-        field: { label: "Tag", name: item, widget: string }
-      - label: "Links"
-        name: links
-        widget: list
-        required: false
-        fields:
-          - { label: "Title", name: title, widget: string }
-          - { label: "URL", name: url, widget: string }
-      - { label: "Text", name: body, widget: markdown }
-
-  - name: books-en
-    label: "Books (EN)"
-    folder: src/content/books/en
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - { label: "Locale", name: locale, widget: hidden, default: "en" }
-      - { label: "Title", name: title, widget: string }
-      - { label: "Author", name: author, widget: string, required: false }
-      - { label: "Year", name: year, widget: string, required: false }
-      - { label: "Publisher", name: publisher, widget: string, required: false }
-      - { label: "Language", name: language, widget: string, required: false }
-      - label: "Category"
-        name: category
-        widget: select
+        i18n: duplicate
         options:
           - "Альбоми"
           - "Альбоми про майстрів"
@@ -307,84 +187,66 @@ collections:
           - "Оздоблені розписом"
           - "Наукові статті"
           - "Інше"
-      - { label: "Cover", name: cover, widget: image, required: false }
-      - label: "Masters"
+      - { label: "Обкладинка", name: cover, widget: image, required: false, i18n: duplicate }
+      - label: "Майстри"
         name: masters
         widget: list
         required: false
-        field: { label: "Name", name: item, widget: string }
-      - { label: "External URL", name: externalUrl, widget: string, required: false }
-      - { label: "PDF URL", name: pdfUrl, widget: string, required: false }
-      - { label: "Text", name: body, widget: markdown, required: false }
+        i18n: duplicate
+        field: { label: "Ім'я", name: item, widget: string }
+      - { label: "Посилання онлайн", name: externalUrl, widget: string, required: false, i18n: duplicate }
+      - { label: "PDF", name: pdfUrl, widget: string, required: false, i18n: duplicate }
+      - { label: "Текст", name: body, widget: markdown, required: false, i18n: true }
 
-  - name: centers-en
-    label: "Centers (EN)"
-    folder: src/content/centers/en
+  # ====================== МАТЕРІАЛИ ======================
+  - name: materials
+    label: "Матеріали"
+    label_singular: "Матеріал"
+    folder: src/content/materials
     create: true
     slug: "{{slug}}"
+    i18n: true
+    sortable_fields: [title, pubDate]
+    summary: "{{title}}"
     fields:
-      - { label: "Locale", name: locale, widget: hidden, default: "en" }
-      - { label: "Name", name: name, widget: string }
-      - label: "Category"
+      - { label: "Назва", name: title, widget: string, i18n: true }
+      - { label: "Опис", name: description, widget: string, required: false, i18n: true }
+      - label: "Категорія"
         name: category
         widget: select
-        options:
-          - "Школи"
-          - "Музеї"
-          - "Приватні колекції"
-          - "Організації та установи"
-      - { label: "Location", name: location, widget: string, required: false }
-      - { label: "Founded", name: founded, widget: string, required: false }
-      - { label: "Closed", name: closed, widget: string, required: false }
-      - { label: "Photo", name: photo, widget: image, required: false }
-      - label: "Masters"
-        name: masters
-        widget: list
-        required: false
-        field: { label: "Name", name: item, widget: string }
-      - { label: "Website", name: website, widget: string, required: false }
-      - { label: "Address", name: address, widget: string, required: false }
-      - { label: "Text", name: body, widget: markdown, required: false }
-
-  - name: materials-en
-    label: "Materials (EN)"
-    folder: src/content/materials/en
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - { label: "Locale", name: locale, widget: hidden, default: "en" }
-      - { label: "Title", name: title, widget: string }
-      - { label: "Description", name: description, widget: string, required: false }
-      - label: "Category"
-        name: category
-        widget: select
+        i18n: duplicate
         options:
           - "Галереї"
           - "Статті"
           - "Майстер-класи"
           - "Відео"
-      - { label: "Cover", name: cover, widget: image, required: false }
-      - { label: "Video URL", name: videoUrl, widget: string, required: false }
-      - { label: "Date", name: pubDate, widget: datetime, required: false }
-      - { label: "Author", name: author, widget: string, required: false }
-      - { label: "Source", name: source, widget: string, required: false }
-      - { label: "Source URL", name: sourceUrl, widget: string, required: false }
-      - label: "Masters"
+      - { label: "Обкладинка", name: cover, widget: image, required: false, i18n: duplicate }
+      - { label: "URL відео", name: videoUrl, widget: string, required: false, i18n: duplicate }
+      - { label: "Дата", name: pubDate, widget: datetime, required: false, i18n: duplicate }
+      - { label: "Автор", name: author, widget: string, required: false, i18n: duplicate }
+      - { label: "Джерело", name: source, widget: string, required: false, i18n: true }
+      - { label: "URL джерела", name: sourceUrl, widget: string, required: false, i18n: duplicate }
+      - label: "Майстри"
         name: masters
         widget: list
         required: false
-        field: { label: "Name", name: item, widget: string }
-      - { label: "Text", name: body, widget: markdown, required: false }
+        i18n: duplicate
+        field: { label: "Ім'я", name: item, widget: string }
+      - { label: "Текст", name: body, widget: markdown, required: false, i18n: true }
 
-  - name: blog-en
-    label: "Blog (EN)"
-    folder: src/content/blog/en
+  # ====================== БЛОГ ======================
+  - name: blog
+    label: "Блог"
+    label_singular: "Стаття"
+    folder: src/content/blog
     create: true
     slug: "{{slug}}"
+    i18n: true
+    sortable_fields: [title, pubDate]
+    summary: "{{title}} — {{pubDate}}"
     fields:
-      - { label: "Locale", name: locale, widget: hidden, default: "en" }
-      - { label: "Title", name: title, widget: string }
-      - { label: "Description", name: description, widget: string }
-      - { label: "Date", name: pubDate, widget: datetime }
-      - { label: "Hero image", name: heroImage, widget: image, required: false }
-      - { label: "Text", name: body, widget: markdown }
+      - { label: "Заголовок", name: title, widget: string, i18n: true }
+      - { label: "Опис", name: description, widget: string, i18n: true }
+      - { label: "Дата", name: pubDate, widget: datetime, i18n: duplicate }
+      - { label: "Головне зображення", name: heroImage, widget: image, required: false, i18n: duplicate }
+      - { label: "Текст", name: body, widget: markdown, i18n: true }
