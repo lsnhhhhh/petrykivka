@@ -1,7 +1,7 @@
 ---
 name: Paraska Pavlenko
 category: Перше покоління
-photo: /assets/paraska-pavlenko.jpg
+photo: ../../../assets/masters/paraska-pavlenko/photo.jpg
 born: '1881'
 died: '1983'
 period: First half of the 20th century
