@@ -4,13 +4,11 @@ backend:
   branch: main
   base_url: https://petrykivka-cms-auth.lisnyihor.workers.dev
 
-# Де лежать завантажені зображення
+# Глобальний fallback (майже не використовується — кожна колекція має свій)
 media_folder: src/assets
 public_folder: /assets
 
 # Глобальна i18n-конфігурація
-# multiple_folders означає: файли лежать у <folder>/<locale>/<slug>.md
-# Наприклад: src/content/masters/uk/tetyana-pata.md і src/content/masters/en/tetyana-pata.md
 i18n:
   structure: multiple_folders
   locales: [uk, en]
@@ -25,10 +23,12 @@ collections:
     create: true
     slug: "{{slug}}"
     i18n: true
-    # Сортування у списку
     sortable_fields: [name, born]
-    # Для попереднього перегляду у списку
     summary: "{{name}}"
+    # Куди завантажуються фото цієї колекції
+    media_folder: "/src/assets/masters"
+    # Який шлях записується у frontmatter (відносний від .md-файлу)
+    public_folder: "../../../assets/masters"
     fields:
       - { label: "Ім'я", name: name, widget: string, i18n: true }
       - label: "Категорія"
@@ -92,6 +92,8 @@ collections:
     i18n: true
     sortable_fields: [title, year, decade]
     summary: "{{title}} — {{master}}"
+    media_folder: "/src/assets/artworks"
+    public_folder: "../../../assets/artworks"
     fields:
       - { label: "Назва роботи", name: title, widget: string, i18n: true }
       - { label: "Майстер", name: master, widget: string, i18n: duplicate, hint: "Має збігатися з іменем майстра на сайті" }
@@ -134,6 +136,8 @@ collections:
     i18n: true
     sortable_fields: [name, founded]
     summary: "{{name}}"
+    media_folder: "/src/assets/centers"
+    public_folder: "../../../assets/centers"
     fields:
       - { label: "Назва", name: name, widget: string, i18n: true }
       - label: "Категорія"
@@ -169,6 +173,8 @@ collections:
     i18n: true
     sortable_fields: [title, year, author]
     summary: "{{title}}"
+    media_folder: "/src/assets/books"
+    public_folder: "../../../assets/books"
     fields:
       - { label: "Назва", name: title, widget: string, i18n: true }
       - { label: "Автор", name: author, widget: string, required: false, i18n: true }
@@ -207,6 +213,8 @@ collections:
     i18n: true
     sortable_fields: [title, pubDate]
     summary: "{{title}}"
+    media_folder: "/src/assets/materials"
+    public_folder: "../../../assets/materials"
     fields:
       - { label: "Назва", name: title, widget: string, i18n: true }
       - { label: "Опис", name: description, widget: string, required: false, i18n: true }
@@ -243,6 +251,8 @@ collections:
     i18n: true
     sortable_fields: [title, pubDate]
     summary: "{{title}} — {{pubDate}}"
+    media_folder: "/src/assets/blog"
+    public_folder: "../../../assets/blog"
     fields:
       - { label: "Заголовок", name: title, widget: string, i18n: true }
       - { label: "Опис", name: description, widget: string, i18n: true }
