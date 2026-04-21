@@ -1,8 +1,14 @@
 ---
+name: Валентина Дека
+category: Третє покоління
+photo: /assets/paraska-pavlenko.jpg
+born: ''
+died: ''
+period: ''
+center: Петриківка
 locale: uk
-name: 'Валентина Дека'
-category: 'Третє покоління'
-center: 'Петриківка'
 ---
+
 ## Біографія
+
 Інформація готується.
