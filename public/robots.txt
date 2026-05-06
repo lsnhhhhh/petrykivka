@@ -10,5 +10,21 @@ Disallow: /admin-old/
 Disallow: /admin-callback/
 Disallow: /pagefind/
 
+# Не індексуємо тег-сторінки (вони дублюють контент майстрів і розбавляють SEO)
+Disallow: /masters/tags/
+Disallow: /en/masters/tags/
+Disallow: /books/tags/
+Disallow: /en/books/tags/
+Disallow: /centers/tags/
+Disallow: /en/centers/tags/
+Disallow: /materials/tags/
+Disallow: /en/materials/tags/
+Disallow: /gallery/tags/
+Disallow: /en/gallery/tags/
+
+# Не індексуємо пошук
+Disallow: /search/
+Disallow: /en/search/
+
 # Карта сайту
 Sitemap: https://petrykivka.org/sitemap-index.xml
