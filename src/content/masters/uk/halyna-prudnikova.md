@@ -1,7 +1,6 @@
 ---
 name: Галина Пруднікова
 category: Друге покоління
-photo: ../../../assets/masters/paraska-pavlenko/photo.jpg
 born: '1921'
 died: '2008'
 period: Друга половина XX ст.
