@@ -1,0 +1,14 @@
+# Petrykivka.org - Енциклопедія петриківського розпису
+# https://petrykivka.org
+
+User-agent: *
+Allow: /
+
+# Не індексуємо адмінку і службові сторінки
+Disallow: /admin/
+Disallow: /admin-old/
+Disallow: /admin-callback/
+Disallow: /pagefind/
+
+# Карта сайту
+Sitemap: https://petrykivka.org/sitemap-index.xml

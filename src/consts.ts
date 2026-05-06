@@ -4,6 +4,6 @@ export const SITE_TITLE = {
 };
 
 export const SITE_DESCRIPTION = {
-  uk: 'Енциклопедія петриківського декоративно-орнаментального мистецтва України',
-  en: 'Encyclopedia of Petrykivka decorative painting of Ukraine',
+  uk: 'Енциклопедія петриківського розпису — українського декоративно-орнаментального мистецтва. Майстри, історія, осередки, книги та галерея робіт. Спадщина ЮНЕСКО.',
+  en: 'Encyclopedia of Petrykivka painting — Ukrainian decorative ornamental folk art. Masters, history, centers, books and gallery of works. UNESCO heritage.',
 };
