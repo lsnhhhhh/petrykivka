@@ -1,7 +1,7 @@
 ---
 name: Анатолій Чернуський
 category: Третє покоління
-photo: ../../../assets/masters/paraska-pavlenko/photo.jpg
+photo: ../../../assets/masters/Slide 16_9 - 49.png
 born: 1940-і
 died: ''
 period: Друга половина XX — початок XXI ст.
