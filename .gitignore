@@ -24,3 +24,5 @@ pnpm-debug.log*
 .idea/
 .claude/
 .claude/
+translate_masters.py
+.deepl-cache.json
