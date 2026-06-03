@@ -1,0 +1,13 @@
+---
+locale: en
+title: 'Pelaheia Hlushchenko. Album'
+year: '1977'
+publisher: 'Mystetstvo, Kyiv'
+language: 'Ukrainian'
+category: 'Альбоми про майстрів'
+cover: '../../../assets/books/pelaheia-hlushchenko-album.jpg'
+masters:
+  - Пелагея Глущенко
+pdfUrl: 'https://drive.google.com/file/d/1CsgT5dU_HFbOdeZKAibAWNwJkSXPrswJ/view?usp=sharing'
+---
+77 pages.
