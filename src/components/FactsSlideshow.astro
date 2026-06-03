@@ -3,33 +3,36 @@ import { getLocaleFromUrl } from '../i18n/translations';
 const locale = getLocaleFromUrl(Astro.url);
 
 const factsUk = [
-  { num: "№1", title: "Петриківка — мистецтво вільних людей", text: "Село Петриківка виникла 1772 року як вільна козацька слобода — вона ніколи не знала кріпацтва. Саме ця свобода, на думку дослідників, стала головною причиною розквіту тут унікального народного мистецтва — петриківського розпису." },
-  { num: "№2", title: "Секрет розпису — пензлик з котячої шерсті", text: "Унікальні петриківські пензлі виготовляються з котячої шерсті власноруч майстрами. Такий пензель дозволяє малювати тонкі лінії, та робити характерні елементи, які притаманні лише петриківському розпису. Жоден котик не постраждав! Перед тим як зрізати трохи шерсті — котика задобрюють молоком чи сметаною." },
-  { num: "№3", title: "Калинку малюють пальцем", text: "Соковиті ягоди калини та округлі плоди в петриківському розписі традиційно малюють не пензлем, а пальцем. Тетяна Пата, родоначальниця сучасного стилю, використовувала цей прийом як обов'язковий елемент у своїх роботах." },
-  { num: "№4", title: "Перша фіксація — 1913 рік", text: "Систематичне вивчення петриківського розпису розпочалося 1911–1913 роках: художниця Євгенія Евенбах на замовлення академіка Дмитра Яворницького робила акварельні копії та замовляла роботи у місцевих майстринь. Давніших зразків розпису, на жаль, не збереглося." },
-  { num: "№5", title: "Олександр Статива — засновник школи розпису", text: "У вересні 1936 року в Петриківці відкрилась Школа декоративного малювання — перший навчальний заклад, де петриківський розпис викладали як фах. Це стало можливим за ініціативи Олександра Стативи, який зробив все, щоб розпис не занепав та розвивався." },
-  { num: "№6", title: "Природні фарби та яєчний жовток як основа", text: "Петриківчани раніше малювали самостійно виготовленими фарбами з відвару трав, фруктів та овочів, все це розводили на яєчному жовтку, щоб дати фарбам міцність та яскравість. Сьогодні петриківку малюють різними видами фарб — акварель, гуаш, акрил, а як основу використовують клей ПВА." },
-  { num: "№7", title: "Чорне тло — наслідок радянської уніфікації", text: "Петриківський розпис на чорному лакованому тлі сувенірних тарілок та скриньок набув популярності у 1960-х роках. Це було впроваджено на фабриці петриківського розпису «Дружба», для зручності виробництва у промислових масштабах. До того розпис традиційно наносився на білу стіну та паперову мальовку." },
-  { num: "№8", title: "92 роки творчості", text: "Тетяна Пата (1884–1976) прожила 92 роки і малювала майже до кінця життя. Її творчий шлях тривав понад 60 років. Найвідоміші учні — Василь Соколенко, Федір Панко, Марфа Тимченко." },
-  { num: "№9", title: "2013 — внесений в список ЮНЕСКО", text: "5 грудня 2013 року петриківський розпис став першим українським об'єктом внесеним до Репрезентативного списку нематеріальної культурної спадщини людства ЮНЕСКО." },
-  { num: "№10", title: "Живе мистецтво, а не музейний експонат", text: "Петриківський розпис живе і процвітає і сьогодні: у Петриківці працює Центр народного мистецтва та школа Тетяни Пати, по Україні відкриті студії та дитячі гуртки, а по світу регулярно відбуваються виставки та майстер-класи." },
+  { num: "№1", title: "Мистецтво вільних людей", text: "Петриківка виникла як вільна козацька слобода — тут ніколи не знали кріпацтва. Саме ця свобода, на думку дослідників, стала головною причиною розквіту унікального народного мистецтва — петриківського розпису." },
+  { num: "№2", title: "Зародився розпис на білій стіні хати-мазанки", text: "Петриківський розпис виник як сакральний інтер'єрний розпис, яким оздоблювали піч, вікна та стіни. Згодом розпис перейшов на папір, щоб можливість прикрашати житло мали ті, хто не вміє малювати. Так і виник сучасний петриківський розпис." },
+  { num: "№3", title: "Унікальний пензлик із котячої шерсті", text: "Котячі пензлі петриківські майстри виготовляють власноруч. Такий пензлик дозволяє малювати тонкі лінії та створювати характерні елементи, притаманні лише петриківському розпису. Жоден котик не постраждав — перед стрижкою його задобрюють молоком чи сметаною." },
+  { num: "№4", title: "Палець — важливий інструмент", text: "Ягоди калини традиційно малюють пальцем — так, щоб було видно відбиток руки майстра. Ще пальцем створюють різні типи квітів, листя, фруктів і ягід. Наприклад, Василь Соколенко виконував свої роботи, використовуючи лише котячий пензлик і власні пальці." },
+  { num: "№5", title: "Перші дослідники петриківки", text: "У 1911–1913 роках художниця Євгенія Евенбах на замовлення академіка Дмитра Яворницького створювала копії настінних розписів хат петриківчан. Саме так перші зразки потрапили до музеїв і були задокументовані. Давніші зразки не збереглися." },
+  { num: "№6", title: "Чотири хранительки традиції", text: "Тетяна Пата, Надія Білокінь, Параска Павленко та Орина Пилипенко перейняли мистецтво розпису хат від своїх матерів і стали основою для відродження петриківського розпису на початку 1930-х років. Їхній розпис ще називають «джерельним»." },
+  { num: "№7", title: "1936 — рік заснування Петриківської школи декоративного малювання", text: "Школа заснована за ініціативи Олександра Стативи, мистецтвознавця та місцевого вчителя. Тетяна Пата стала першою викладачкою розпису. Школа випустила декілька поколінь відомих майстрів розпису — Федір Панко, Василь Соколенко, Марфа Тимченко та інші." },
+  { num: "№8", title: "Чорне тло — спадщина совєцької уніфікації", text: "Петриківський розпис на чорному тлі з'явився в 1950-х роках — його впровадили на фабриці «Дружба» для масового виробництва сувенірної продукції. Традиційно розпис виконується на білому фоні." },
+  { num: "№9", title: "Культурна спадщина ЮНЕСКО", text: "5 грудня 2013 року петриківський розпис став першим українським елементом, внесеним до Репрезентативного списку нематеріальної культурної спадщини людства ЮНЕСКО." },
+  { num: "№10", title: "Живе мистецтво, а не музейний експонат", text: "Петриківський розпис живе й розвивається сьогодні: у Петриківці працюють Центр народного мистецтва та школа Тетяни Пати, по всій Україні діють студії й дитячі гуртки, у світі регулярно відбуваються виставки та майстер-класи." },
+  { num: "", title: "Завантажте презентацію та діліться нею", text: "Ми зібрали всі ці факти у зручну презентацію Google Slides. Завантажуйте, діліться з друзями, використовуйте на уроках та лекціях — петриківський розпис заслуговує бути відомим.", isBonus: true, ctaText: "Відкрити презентацію", ctaHref: "https://docs.google.com/presentation/d/YOUR_PRESENTATION_ID/edit" },
 ];
 
 const factsEn = [
-  { num: "#1", title: "Petrykivka — the Art of Free People", text: "The village of Petrykivka was founded in 1772 as a free Cossack settlement — it never knew serfdom. Researchers believe this freedom was the main reason for the flourishing of a unique folk art — Petrykivka painting." },
-  { num: "#2", title: "The Secret — a Cat Hair Brush", text: "Unique Petrykivka brushes are handmade from cat hair by the masters themselves. Such a brush allows painting thin lines and creating characteristic elements found only in Petrykivka painting. No cats were harmed! Before trimming a bit of fur, the cat is treated with milk or sour cream." },
-  { num: "#3", title: "Viburnum Berries Painted with a Finger", text: "Juicy viburnum berries and round fruits in Petrykivka painting are traditionally painted not with a brush, but with a finger. Tetiana Pata, the founder of the modern style, used this technique as an essential element in her works." },
-  { num: "#4", title: "First Documentation — 1913", text: "Systematic study of Petrykivka painting began in 1911–1913: artist Yevheniia Evenbakh, commissioned by academician Dmytro Yavornytskyi, made watercolor copies and commissioned works from local masters. Unfortunately, no earlier examples of the painting have survived." },
-  { num: "#5", title: "Oleksandr Statyva — Founder of the Painting School", text: "In September 1936, the School of Decorative Painting opened in Petrykivka — the first educational institution where Petrykivka painting was taught as a profession. This was made possible by the initiative of Oleksandr Statyva, who did everything to ensure the art would not decline but thrive." },
-  { num: "#6", title: "Natural Paints and Egg Yolk as a Base", text: "Petrykivka artists used to paint with homemade paints from herb, fruit, and vegetable decoctions, mixed with egg yolk for strength and brightness. Today, Petrykivka painting uses various paints — watercolor, gouache, acrylic — with PVA glue as a base." },
-  { num: "#7", title: "Black Background — a Result of Soviet Standardization", text: "Petrykivka painting on black lacquered backgrounds of souvenir plates and boxes became popular in the 1960s. This was introduced at the Druzhba Petrykivka painting factory for industrial-scale convenience. Before that, painting was traditionally applied on white walls and paper." },
-  { num: "#8", title: "92 Years of Creativity", text: "Tetiana Pata (1884–1976) lived 92 years and painted almost until the end of her life. Her creative career spanned over 60 years. Her most famous students — Vasyl Sokolenko, Fedir Panko, Marfa Tymchenko." },
-  { num: "#9", title: "2013 — Inscribed on UNESCO List", text: "On December 5, 2013, Petrykivka painting became the first Ukrainian element inscribed on UNESCO's Representative List of the Intangible Cultural Heritage of Humanity." },
-  { num: "#10", title: "Living Art, Not a Museum Piece", text: "Petrykivka painting is alive and thriving today: the Center of Folk Art and Tetiana Pata School operate in Petrykivka, studios and children's clubs are open across Ukraine, and exhibitions and masterclasses are held regularly around the world." },
+  { num: "#1", title: "The Art of Free People", text: "Petrykivka was founded as a free Cossack settlement — serfdom was never known here. According to researchers, this very freedom was the main reason for the flourishing of a unique folk art — Petrykivka painting." },
+  { num: "#2", title: "Born on the White Wall of a Ukrainian Cottage", text: "Petrykivka painting originated as a sacred interior decoration, adorning stoves, windows, and walls. Later, it moved to paper so that even those who couldn't paint themselves could still decorate their homes. This is how modern Petrykivka painting came to be." },
+  { num: "#3", title: "A Unique Brush Made of Cat Hair", text: "Petrykivka masters handcraft their brushes from cat hair. Such a brush allows painting thin lines and creating the characteristic elements found only in Petrykivka painting. No cat was harmed — before trimming, the cat is treated to milk or sour cream." },
+  { num: "#4", title: "The Finger — an Essential Tool", text: "Viburnum berries are traditionally painted with a finger — so that the imprint of the master's hand remains visible. Fingers are also used to create various flowers, leaves, fruits, and berries. Vasyl Sokolenko, for example, created his works using only a cat-hair brush and his own fingers." },
+  { num: "#5", title: "The First Researchers of Petrykivka", text: "In 1911–1913, artist Yevheniia Evenbakh, commissioned by academician Dmytro Yavornytskyi, made copies of wall paintings from Petrykivka cottages. This is how the first examples reached museums and were documented. Earlier examples have not survived." },
+  { num: "#6", title: "Four Keepers of the Tradition", text: "Tetiana Pata, Nadiia Bilokin, Paraska Pavlenko, and Oryna Pylypenko inherited the art of house painting from their mothers and became the foundation for the revival of Petrykivka painting in the early 1930s. Their style is also known as the 'source' style." },
+  { num: "#7", title: "1936 — the Founding of the Petrykivka School of Decorative Painting", text: "The school was founded on the initiative of Oleksandr Statyva, an art historian and local teacher. Tetiana Pata became its first painting instructor. The school produced several generations of renowned masters — Fedir Panko, Vasyl Sokolenko, Marfa Tymchenko, and others." },
+  { num: "#8", title: "Black Background — a Legacy of Soviet Standardization", text: "Petrykivka painting on black backgrounds appeared in the 1950s — it was introduced at the Druzhba factory for the mass production of souvenirs. Traditionally, the painting is executed on a white background." },
+  { num: "#9", title: "UNESCO Cultural Heritage", text: "On December 5, 2013, Petrykivka painting became the first Ukrainian element inscribed on UNESCO's Representative List of the Intangible Cultural Heritage of Humanity." },
+  { num: "#10", title: "Living Art, Not a Museum Piece", text: "Petrykivka painting is alive and thriving today: the Center of Folk Art and the Tetiana Pata School operate in Petrykivka, studios and children's clubs are active across Ukraine, and exhibitions and masterclasses are held regularly around the world." },
+  { num: "", title: "Download the Presentation and Share It", text: "We've gathered all these facts into a handy Google Slides presentation. Download it, share with friends, use it in classrooms and lectures — Petrykivka painting deserves to be known.", isBonus: true, ctaText: "Open presentation", ctaHref: "https://docs.google.com/presentation/d/YOUR_PRESENTATION_ID/edit" },
 ];
 
 const facts = locale === 'en' ? factsEn : factsUk;
 const factLabel = locale === 'en' ? 'Interesting fact about Petrykivka painting' : 'Цікавий факт про петриківський розпис';
+const bonusLabel = locale === 'en' ? 'Bonus' : 'Бонус';
 
 const decorImages = [
   { src: '/images/hero/flower-left.png', cls: 'decor decor--left' },
@@ -47,9 +50,19 @@ const decorImages = [
       <div class="facts-track">
         {facts.map((fact, i) => (
           <div class="fact-slide" data-index={i}>
-            <p class="fact-num">{factLabel} {fact.num}</p>
+            <p class="fact-num">{fact.isBonus ? bonusLabel : `${factLabel} ${fact.num}`}</p>
             <h2 class="fact-title">{fact.title}</h2>
             <p class="fact-text">{fact.text}</p>
+            {fact.ctaHref && (
+              <a href={fact.ctaHref} class="fact-cta" target="_blank" rel="noopener noreferrer">
+                <span>{fact.ctaText}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </a>
+            )}
           </div>
         ))}
       </div>
@@ -83,6 +96,8 @@ const decorImages = [
   .fact-num { font-size: 0.8rem; color: rgb(96, 115, 159); letter-spacing: 0.05em; margin: 0; font-family: "Fixel", sans-serif; }
   .fact-title { font-size: 2.2rem; font-weight: 700; line-height: 1.25; margin: 0; color: rgb(15, 18, 25); font-family: "Fixel", sans-serif; max-width: 680px; }
   .fact-text { font-size: 1rem; color: rgb(96, 115, 159); line-height: 1.65; margin: 0; max-width: 640px; font-family: "Fixel", sans-serif; }
+  .fact-cta { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: #c0392b; color: #fff !important; text-decoration: none !important; border-radius: 8px; font-weight: 500; font-size: 0.95rem; margin-top: 0.75rem; transition: background 0.2s, transform 0.2s, box-shadow 0.2s; font-family: "Fixel", sans-serif; box-shadow: 0 2px 8px rgba(192, 57, 43, 0.25); }
+  .fact-cta:hover { background: #a02d20; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(192, 57, 43, 0.35); }
   .facts-btn { position: absolute; top: 50%; transform: translateY(-60%); width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgb(229, 233, 240); background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; color: rgb(15, 18, 25); transition: border-color 0.2s, color 0.2s, box-shadow 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 0; z-index: 2; }
   .facts-btn:hover { border-color: #c0392b; color: #c0392b; }
   .facts-btn:disabled { opacity: 0.25; cursor: default; pointer-events: none; }
