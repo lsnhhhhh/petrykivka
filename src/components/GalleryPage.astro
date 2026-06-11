@@ -34,7 +34,13 @@ const galleryBase = locale === 'en' ? '/en/gallery' : '/gallery';
   <head>
     <BaseHead title={pageTitle} description={pageSubtitle} />
     <style is:global>
-      .gallery-page main { max-width: 960px; width: 960px; }
+      .gallery-page main { 
+       max-width: 960px; 
+       width: 100%; 
+       margin: 0 auto; 
+       padding: 1rem; 
+       box-sizing: border-box; 
+       }
       h1.gallery-title { font-size: 2rem; margin-bottom: 0.25rem; }
       .subtitle { color: rgb(96, 115, 159); font-size: 1.05rem; margin-bottom: 2rem; }
 
@@ -155,7 +161,8 @@ const galleryBase = locale === 'en' ? '/en/gallery' : '/gallery';
       .no-results[hidden] { display: none; }
 
       @media (max-width: 960px) { .gallery-grid { grid-template-columns: repeat(3, 1fr); } }
-      @media (max-width: 600px) { .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; } }
+      @media (max-width: 700px) { .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; } }
+      @media (max-width: 520px) { .gallery-grid { grid-template-columns: 1fr; gap: 1.25rem; } }
     </style>
   </head>
   <body class="gallery-page">

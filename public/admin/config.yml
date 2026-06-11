@@ -259,3 +259,32 @@ collections:
       - { label: "Дата", name: pubDate, widget: datetime, i18n: duplicate }
       - { label: "Головне зображення", name: heroImage, widget: image, required: false, i18n: duplicate }
       - { label: "Текст", name: body, widget: markdown, i18n: true }
+
+  # ====================== НОВИНИ ======================
+  - name: 'news'
+  label: 'Новини'
+  label_singular: 'Новина'
+  i18n:
+    structure: multiple_folders
+    locales: [uk, en]
+  folder: 'src/content/news'
+  media_folder: '/src/assets/news'
+  public_folder: '../../../assets/news'
+  create: true
+  slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+  fields:
+    - { name: 'date', label: 'Дата', widget: 'datetime', i18n: 'duplicate', format: 'YYYY-MM-DD', date_format: 'YYYY-MM-DD', time_format: false }
+    - { name: 'type', label: 'Тип', widget: 'select', i18n: 'duplicate', options: [
+        { label: 'Виставка', value: 'exhibition' },
+        { label: 'Стаття', value: 'article' },
+        { label: 'Подія', value: 'event' },
+        { label: 'Майстер-клас', value: 'workshop' },
+        { label: 'Відео', value: 'video' },
+        { label: 'Медіа', value: 'media' }
+      ] }
+    - { name: 'title', label: 'Заголовок', widget: 'string', i18n: true }
+    - { name: 'source', label: 'Джерело', widget: 'string', i18n: 'duplicate' }
+    - { name: 'url', label: 'URL', widget: 'string', i18n: 'duplicate' }
+    - { name: 'description', label: 'Опис', widget: 'text', i18n: true, required: false }
+    - { name: 'image', label: 'Зображення', widget: 'image', i18n: 'duplicate', required: false }
+    - { name: 'locale', label: 'Locale', widget: 'hidden', default: 'uk' }

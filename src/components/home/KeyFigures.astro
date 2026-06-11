@@ -1,0 +1,185 @@
+---
+import HomepageSection from './HomepageSection.astro';
+import { getCollection } from 'astro:content';
+import { sectionTitles, keyFigures } from '../../data/homepage';
+
+interface Props {
+  locale: 'uk' | 'en';
+}
+
+const { locale } = Astro.props;
+
+const allMasters = await getCollection('masters');
+const masters = allMasters.filter((m) => m.data.locale === locale);
+
+function getSlugOnly(id: string) {
+  return id.includes('/') ? id.split('/').pop()! : id;
+}
+
+function findBySlug(slug: string) {
+  return masters.find((m) => getSlugOnly(m.id) === slug);
+}
+
+function masterUrl(slug: string) {
+  return locale === 'uk' ? `/masters/${slug}` : `/en/masters/${slug}`;
+}
+
+function getMasterPeriod(master: any) {
+  const byear = master.data.born ? String(master.data.born).slice(0, 4) : '';
+  const dyear = master.data.died ? String(master.data.died).slice(0, 4) : '';
+  if (byear && dyear) return `${byear}–${dyear}`;
+  if (byear) return locale === 'uk' ? `від ${byear}` : `from ${byear}`;
+  return '';
+}
+
+function getInitials(name: string) {
+  return name
+    .split(/\s+/)
+    .map((w) => w[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+}
+
+const figures = keyFigures
+  .map((fig) => {
+    const master = findBySlug(fig.slug);
+    if (!master) return null;
+    return {
+      slug: fig.slug,
+      role: fig.role[locale],
+      name: master.data.name,
+      period: getMasterPeriod(master),
+      initials: getInitials(master.data.name),
+    };
+  })
+  .filter((x): x is NonNullable<typeof x> => x !== null);
+
+const viewAllText = locale === 'uk' ? 'Усі майстри' : 'All masters';
+const viewAllHref = locale === 'uk' ? '/masters' : '/en/masters';
+---
+
+<HomepageSection
+  title={sectionTitles.keyFigures[locale]}
+  viewAllHref={viewAllHref}
+  viewAllText={viewAllText}
+>
+  <div class="figures">
+    {figures.map((figure) => (
+      <a href={masterUrl(figure.slug)} class="figure">
+        <div class="figure__photo">
+          <span class="figure__initials">{figure.initials}</span>
+        </div>
+        <div class="figure__info">
+          <h3 class="figure__name">{figure.name}</h3>
+          {figure.period && <div class="figure__period">{figure.period}</div>}
+          <p class="figure__role">{figure.role}</p>
+        </div>
+      </a>
+    ))}
+  </div>
+</HomepageSection>
+
+<style>
+  .figures {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px 28px;
+  }
+  .figure {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease;
+  }
+  .figure:hover {
+    transform: translateY(-3px);
+  }
+  .figure__photo {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background: linear-gradient(135deg, #F0E6D6 0%, #E5D8C2 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 18px;
+    transition: box-shadow 0.25s ease;
+  }
+  .figure:hover .figure__photo {
+    box-shadow: 0 14px 32px rgba(40, 42, 43, 0.12);
+  }
+  .figure__photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    border: 1px solid rgba(40, 42, 43, 0.06);
+    pointer-events: none;
+  }
+  .figure__photo::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 60%;
+    height: 3px;
+    background: #c0392b;
+    transform: translateX(-50%) scaleX(0);
+    transition: transform 0.3s ease;
+  }
+  .figure:hover .figure__photo::before {
+    transform: translateX(-50%) scaleX(1);
+  }
+  .figure__initials {
+    font-size: clamp(2.5rem, 4vw, 3.75rem);
+    font-weight: 400;
+    color: rgba(40, 42, 43, 0.32);
+    letter-spacing: -0.02em;
+    font-family: Georgia, 'Times New Roman', serif;
+    user-select: none;
+  }
+  .figure__info {
+    padding: 0 2px;
+  }
+  .figure__name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 4px;
+    color: #282A2B;
+    line-height: 1.25;
+    transition: color 0.15s ease;
+  }
+  .figure:hover .figure__name {
+    color: #c0392b;
+  }
+  .figure__period {
+    font-size: 0.875rem;
+    color: rgba(40, 42, 43, 0.55);
+    margin-bottom: 8px;
+  }
+  .figure__role {
+    font-size: 0.9375rem;
+    color: rgba(40, 42, 43, 0.7);
+    line-height: 1.45;
+    margin: 0;
+  }
+
+  @media (max-width: 900px) {
+    .figures {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px 24px;
+    }
+  }
+  @media (max-width: 520px) {
+    .figures {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .figure__initials {
+      font-size: 4rem;
+    }
+  }
+</style>

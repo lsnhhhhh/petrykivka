@@ -1,0 +1,310 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import { hero, heroNavCards } from '../../data/homepage';
+
+// Імпорт 4 зображень для слайдшоу
+import slide1 from '../../assets/artworks/dnipro-art-museum/2.jpg';
+import slide2 from '../../assets/artworks/dnipro-art-museum/43.jpg';
+import slide3 from '../../assets/artworks/dnipro-art-museum/20.jpg';
+import slide4 from '../../assets/artworks/dnipro-art-museum/54.jpg';
+import slide5 from '../../assets/artworks/dnipro-art-museum/53.jpg';
+import slide6 from '../../assets/artworks/dnipro-art-museum/36.jpg';
+
+interface Props {
+  locale: 'uk' | 'en';
+}
+
+const { locale } = Astro.props;
+
+const heroSlides = [
+  { image: slide1 },
+  { image: slide2 },
+  { image: slide3 },
+  { image: slide4 },
+  { image: slide5 },
+  { image: slide6 },
+];
+
+// Підрахунок матеріалів
+const [masters, artworks, books, materials, centers] = await Promise.all([
+  getCollection('masters'),
+  getCollection('artworks'),
+  getCollection('books'),
+  getCollection('materials'),
+  getCollection('centers'),
+]);
+
+const countByLocale = (col: any[]) =>
+  col.filter((item) => item.data.locale === locale).length;
+
+const counts: Record<string, number> = {
+  masters: countByLocale(masters),
+  artworks: countByLocale(artworks),
+  books: countByLocale(books),
+  materials: countByLocale(materials) + countByLocale(centers),
+};
+
+const icons: Record<string, string> = {
+  masters: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+  artworks: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
+  books: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+  materials: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>`,
+};
+---
+
+<section class="hero">
+  <div class="hero__image-wrap">
+    <div class="hero__slides" id="hero-slides">
+      {heroSlides.map((slide) => (
+        <div class="hero__slide">
+          <Image
+            src={slide.image}
+            alt={hero.imageAlt[locale]}
+            widths={[640, 1024, 1440, 1920]}
+            sizes="100vw"
+            loading="eager"
+            class="hero__slide-img"
+          />
+        </div>
+      ))}
+    </div>
+    <div class="hero__overlay"></div>
+    <div class="hero__text">
+      <h1 class="hero__title">{hero.title[locale]}</h1>
+      <p class="hero__subtitle">{hero.subtitle[locale]}</p>
+    </div>
+  </div>
+
+  <nav class="hero__nav" aria-label={locale === 'uk' ? 'Розділи енциклопедії' : 'Encyclopedia sections'}>
+    <div class="hero__nav-grid">
+      {heroNavCards.map((card) => (
+        <a href={locale === 'uk' ? card.hrefUk : card.hrefEn} class="hero__card">
+          <div class="hero__card-icon" set:html={icons[card.key]} />
+          <div class="hero__card-count">{counts[card.key]}</div>
+          <h3 class="hero__card-title">{card.title[locale]}</h3>
+          <p class="hero__card-desc">{card.description[locale]}</p>
+          <svg class="hero__card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+      ))}
+    </div>
+  </nav>
+</section>
+
+<script>
+  // Слайдшоу: новий слайд піднімається знизу і накриває попередній
+  const slides = document.querySelectorAll<HTMLElement>('.hero__slide');
+  const SLIDE_DURATION = 6000; // мс показу слайду
+  const TRANSITION_MS = 1500;  // тривалість анімації переходу
+
+  if (slides.length > 1) {
+    let currentIdx = 0;
+
+    // Початковий стан: перший слайд показаний, решта внизу
+    slides.forEach((slide, i) => {
+      if (i === 0) {
+        slide.style.transform = 'translateY(0)';
+        slide.style.zIndex = '2';
+      } else {
+        slide.style.transform = 'translateY(100%)';
+        slide.style.zIndex = '0';
+      }
+    });
+
+    function showNext() {
+      const nextIdx = (currentIdx + 1) % slides.length;
+      const current = slides[currentIdx];
+      const next = slides[nextIdx];
+
+      // Поточний — під, новий — над і з анімацією піднімається
+      current.style.zIndex = '1';
+      next.style.zIndex = '2';
+      next.style.transition = '';
+      requestAnimationFrame(() => {
+        next.style.transform = 'translateY(0)';
+      });
+
+      // Після завершення — поточний повертається донизу (без анімації)
+      setTimeout(() => {
+        current.style.transition = 'none';
+        current.style.transform = 'translateY(100%)';
+        current.style.zIndex = '0';
+        currentIdx = nextIdx;
+      }, TRANSITION_MS + 50);
+    }
+
+    setInterval(showNext, SLIDE_DURATION + TRANSITION_MS);
+  }
+</script>
+
+<style>
+  .hero {
+    background: #FFFDFB;
+  }
+
+  .hero__image-wrap {
+    position: relative;
+    width: 100%;
+    height: 70vh;
+    min-height: 480px;
+    max-height: 720px;
+    overflow: hidden;
+  }
+
+  /* Контейнер слайдів */
+  .hero__slides {
+    position: absolute;
+    inset: 0;
+  }
+  .hero__slide {
+    position: absolute;
+    inset: 0;
+    transform: translateY(100%);
+    transition: transform 1.5s cubic-bezier(0.65, 0, 0.35, 1);
+    will-change: transform;
+  }
+  .hero__slide-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    object-position: center top;
+    border-radius: 0 !important;
+  }
+
+  .hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.25) 0%,
+      rgba(0, 0, 0, 0.15) 40%,
+      rgba(0, 0, 0, 0.65) 100%
+    );
+    pointer-events: none;
+  }
+
+  .hero__text {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 4;
+    padding: 48px 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    color: #fff;
+  }
+  .hero__title {
+    font-size: clamp(2rem, 5vw, 3.75rem);
+    line-height: 1.05;
+    font-weight: 600;
+    margin: 0 0 16px;
+    letter-spacing: -0.02em;
+    max-width: 22ch;
+    color: #fff !important;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+  .hero__subtitle {
+    font-size: clamp(1rem, 1.6vw, 1.25rem);
+    line-height: 1.45;
+    margin: 0;
+    max-width: 48ch;
+    opacity: 0.95;
+    color: #fff !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Сітка карток (без змін) */
+  .hero__nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+  .hero__nav-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .hero__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 24px 24px;
+    background: #fff;
+    border: 1px solid rgba(40, 42, 43, 0.08);
+    border-radius: 12px;
+    text-decoration: none;
+    color: #282A2B;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    overflow: hidden;
+  }
+  .hero__card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: #c0392b;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .hero__card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(40, 42, 43, 0.08);
+    border-color: rgba(192, 57, 43, 0.15);
+  }
+  .hero__card:hover::before { transform: scaleX(1); }
+  .hero__card-icon { color: #c0392b; margin-bottom: 16px; display: flex; }
+  .hero__card-count {
+    font-size: 2.25rem;
+    font-weight: 600;
+    line-height: 1;
+    color: #282A2B;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+  .hero__card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0 0 6px;
+    color: #282A2B;
+  }
+  .hero__card-desc {
+    font-size: 0.875rem;
+    color: rgba(40, 42, 43, 0.6);
+    line-height: 1.4;
+    margin: 0 0 16px;
+    flex: 1;
+  }
+  .hero__card-arrow {
+    color: rgba(40, 42, 43, 0.3);
+    align-self: flex-end;
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+  .hero__card:hover .hero__card-arrow {
+    color: #c0392b;
+    transform: translateX(4px);
+  }
+
+  @media (max-width: 900px) {
+    .hero__nav-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .hero__image-wrap { height: 60vh; min-height: 380px; }
+    .hero__text { padding: 32px 20px; }
+    .hero__nav { padding: 32px 20px 56px; }
+    .hero__nav-grid { grid-template-columns: 1fr; gap: 12px; }
+    .hero__card { padding: 24px 20px; }
+  }
+
+  /* Поважаємо налаштування «зменшити рух» */
+  @media (prefers-reduced-motion: reduce) {
+    .hero__slide {
+      transition: none !important;
+    }
+  }
+</style>

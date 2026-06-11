@@ -1,0 +1,61 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import FactsSlideshow from '../components/FactsSlideshow.astro';
+import { getLocaleFromUrl } from '../i18n/translations';
+
+const locale = getLocaleFromUrl(Astro.url);
+const title = locale === 'uk'
+  ? 'Цікаві факти про петриківський розпис'
+  : 'Interesting facts about Petrykivka painting';
+const description = locale === 'uk'
+  ? '11 цікавих фактів про петриківський розпис — українське декоративне мистецтво.'
+  : '11 interesting facts about Petrykivka painting — Ukrainian decorative art.';
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="UTF-8">
+    <BaseHead title={title} description={description} />
+  </head>
+  <body>
+    <Header />
+    <main class="hp-main">
+      <div class="facts-page">
+        <h1 class="facts-page__title">{title}</h1>
+        <FactsSlideshow />
+      </div>
+    </main>
+    <Footer />
+
+    <style>
+      .hp-main {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 0;
+      }
+      .facts-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 64px 24px 96px;
+      }
+      .facts-page__title {
+        font-size: clamp(1.75rem, 3vw, 2.5rem);
+        font-weight: 600;
+        color: #282A2B;
+        margin: 0 0 40px;
+        padding-left: 16px;
+        border-left: 3px solid #c0392b;
+        line-height: 1.2;
+      }
+      @media (max-width: 640px) {
+        .facts-page {
+          padding: 40px 16px 64px;
+        }
+      }
+    </style>
+  </body>
+</html>

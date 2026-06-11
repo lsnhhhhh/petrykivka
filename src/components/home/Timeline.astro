@@ -1,0 +1,123 @@
+---
+import HomepageSection from './HomepageSection.astro';
+import { sectionTitles, timeline } from '../../data/homepage';
+
+interface Props {
+  locale: 'uk' | 'en';
+}
+
+const { locale } = Astro.props;
+
+const events = [...timeline].sort((a, b) => a.yearSort - b.yearSort);
+---
+
+<HomepageSection title={sectionTitles.timeline[locale]}>
+  <div class="tl">
+    <div class="tl__track">
+      {events.map((event) => (
+        <div class:list={['tl__item', event.highlight && 'tl__item--highlight']}>
+          <div class="tl__year">{event.year}</div>
+          <div class="tl__bar">
+            <span class="tl__dot"></span>
+          </div>
+          <div class="tl__event">{event.event[locale]}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+</HomepageSection>
+
+<style>
+  .tl {
+    position: relative;
+    margin: 0 -24px;
+  }
+  /* Градієнти-індикатори що можна скролити */
+  .tl::before,
+  .tl::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 16px;
+    width: 36px;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .tl::before {
+    left: 0;
+    background: linear-gradient(to right, #FFFDFB, transparent);
+  }
+  .tl::after {
+    right: 0;
+    background: linear-gradient(to left, #FFFDFB, transparent);
+  }
+
+  .tl__track {
+    display: flex;
+    overflow-x: auto;
+    padding: 12px 24px 24px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(40, 42, 43, 0.2) transparent;
+  }
+  .tl__track::-webkit-scrollbar {
+    height: 6px;
+  }
+  .tl__track::-webkit-scrollbar-track {
+    background: rgba(40, 42, 43, 0.04);
+    border-radius: 3px;
+  }
+  .tl__track::-webkit-scrollbar-thumb {
+    background: rgba(40, 42, 43, 0.2);
+    border-radius: 3px;
+  }
+
+  .tl__item {
+    flex: 0 0 240px;
+    text-align: center;
+    scroll-snap-align: start;
+  .tl__year {
+    font-size: 1.375rem;
+    font-weight: 600;
+    color: #c0392b;
+    line-height: 1;
+    margin-bottom: 22px;
+    letter-spacing: -0.01em;
+    padding: 0 8px;
+  }
+
+  /* Горизонтальна лінія, що з'єднує точки */
+  .tl__bar {
+    border-top: 1px solid rgba(40, 42, 43, 0.18);
+    display: flex;
+    justify-content: center;
+    margin-bottom: 22px;
+  .tl__dot {
+    display: block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #c0392b;
+    border: 2px solid #c0392b;
+    margin-top: -7px;
+    box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1);
+    transition: transform 0.2s ease;
+  }
+
+  .tl__event {
+    font-size: 0.7rem;
+    line-height: 1.3;
+    color: rgba(40, 42, 43, 0.72);
+    padding: 0 12px;
+  }
+  .tl__item--highlight .tl__event {
+    color: #282A2B;
+    font-weight: 500;
+  }
+
+  @media (max-width: 640px) {
+    .tl__item { flex: 0 0 180px; }
+    .tl__year { font-size: 1.25rem; }
+  }
+  }
+</style>

@@ -1,4 +1,46 @@
 ---
-import Page from '../index.astro';
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import Hero from '../../components/home/Hero.astro';
+import About from '../../components/home/About.astro';
+import KeyFigures from '../../components/home/KeyFigures.astro';
+import Masterpieces from '../../components/home/Masterpieces.astro';
+import Timeline from '../../components/home/Timeline.astro';
+import Sources from '../../components/home/Sources.astro';
+import Today from '../../components/home/Today.astro';
+import { getLocaleFromUrl } from '../../i18n/translations';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
+
+const locale = getLocaleFromUrl(Astro.url);
 ---
-<Page />
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="UTF-8">
+    <BaseHead title={SITE_TITLE[locale]} description={SITE_DESCRIPTION[locale]} />
+  </head>
+  <body>
+    <Header />
+    <main class="hp-main">
+      <Hero locale={locale} />
+      <About locale={locale} />
+      <KeyFigures locale={locale} />
+      <Masterpieces locale={locale} />
+      <Timeline locale={locale} />
+      <Sources locale={locale} />
+      <Today locale={locale} />
+    </main>
+    <Footer />
+
+    <style>
+      .hp-main {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </body>
+</html>

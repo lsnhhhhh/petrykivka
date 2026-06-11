@@ -53,6 +53,7 @@ const masters = defineCollection({
       })),
     })).optional(),
     locale: localeSchema,
+    homepageFeatured: z.boolean().optional(),
   }),
 });
 
@@ -77,6 +78,8 @@ const books = defineCollection({
     externalUrl: z.string().optional(),
     pdfUrl: z.string().optional(),
     locale: localeSchema,
+    featured: z.boolean().optional(),
+    featuredOrder: z.number().optional(),
   }),
 });
 
@@ -141,6 +144,7 @@ const materials = defineCollection({
       caption: z.string().optional(),
     })).optional(),
     locale: localeSchema,
+    homepageFeatured: z.boolean().optional(),
   }),
 });
 
@@ -159,7 +163,27 @@ const artworks = defineCollection({
     image: image(),
     description: z.string().optional(),
     locale: localeSchema,
+    featured: z.boolean().optional(),
+    featuredOrder: z.number().optional(),
+    featuredCaption: z.object({
+      uk: z.string(),
+      en: z.string(),
+    }).optional(),
   }),
 });
 
-export const collections = { blog, masters, books, centers, materials, artworks };
+const news = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/news' }),
+  schema: z.object({
+    date: z.string(),
+    type: z.enum(['exhibition', 'article', 'event', 'workshop', 'video', 'media']),
+    title: z.string(),
+    source: z.string(),
+    url: z.string().url(),
+    description: z.string().optional(),
+    image: z.string().optional(),
+    locale: z.enum(['uk', 'en']),
+  }),
+});
+
+export const collections = { blog, masters, books, centers, materials, artworks, news };
