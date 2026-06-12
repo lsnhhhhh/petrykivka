@@ -117,12 +117,14 @@ const labels = locale === 'uk'
       <div class="artwork-hero">
         <a class="glightbox" data-type="image">
           <Image
-            id="artwork-main-img"
-            src={artwork.data.image}
-            alt={artwork.data.title}
-            widths={[720, 1440]}
-            sizes="(max-width: 720px) 100vw, 720px"
-            style="cursor: zoom-in; width: 100%; height: auto;"
+           id="artwork-main-img"
+           src={artwork.data.image}
+           alt={artwork.data.title}
+           widths={[720, 1200, 1800, 2400, 3200]}
+           sizes="(max-width: 720px) 100vw, 720px"
+           quality={95}
+           format="webp"
+           style="cursor: zoom-in; width: 100%; height: auto;"
           />
         </a>
       </div>
