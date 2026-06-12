@@ -1,0 +1,254 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { getLocaleFromUrl } from '../../i18n/translations';
+
+const locale = getLocaleFromUrl(Astro.url);
+
+const newsImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/news/**/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG}',
+  { eager: true }
+);
+
+function resolveImage(img: any): ImageMetadata | null {
+  if (!img) return null;
+  if (typeof img !== 'string') return img as ImageMetadata;
+  const absolutePath = img.replace(/^\.\.\/\.\.\/\.\.\//, '/src/');
+  return newsImages[absolutePath]?.default ?? null;
+}
+
+const newsTypeLabels: Record<string, Record<string, string>> = {
+  uk: {
+    exhibition: 'Виставка', article: 'Стаття', event: 'Подія',
+    workshop: 'Майстер-клас', video: 'Відео', media: 'Медіа',
+  },
+  en: {
+    exhibition: 'Exhibition', article: 'Article', event: 'Event',
+    workshop: 'Workshop', video: 'Video', media: 'Media',
+  },
+};
+
+const allNews = await getCollection('news');
+const sortedNews = allNews
+  .filter((n) => n.data.locale === locale)
+  .sort((a, b) => String(b.data.date).localeCompare(String(a.data.date)));
+
+function formatDate(dateStr: string, loc: 'uk' | 'en') {
+  const date = new Date(dateStr);
+  if (loc === 'uk') {
+    const months = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня',
+                    'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'];
+    return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+  }
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+const title = locale === 'uk' ? 'Петриківка сьогодні: новини' : 'Petrykivka today: news';
+const description = locale === 'uk'
+  ? 'Архів новин про петриківський розпис — виставки, статті, події, медіа.'
+  : 'News archive about Petrykivka painting — exhibitions, articles, events, media.';
+const emptyText = locale === 'uk' ? 'Поки що немає новин.' : 'No news yet.';
+---
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="UTF-8">
+    <BaseHead title={title} description={description} />
+  </head>
+  <body>
+    <Header />
+    <main class="hp-main">
+      <div class="news-page">
+        <h1 class="news-page__title">{title}</h1>
+
+        {sortedNews.length > 0 && (
+          <div class="news-list">
+            {sortedNews.map((item) => {
+              const img = resolveImage(item.data.image);
+              return (
+                <a href={item.data.url} class="news-card" target="_blank" rel="noopener noreferrer">
+                  {img && (
+                    <div class="news-card__image-wrap">
+                      <Image
+                        src={img}
+                        alt={item.data.title}
+                        widths={[300, 500]}
+                        sizes="(max-width: 640px) 90vw, 33vw"
+                        class="news-card__image"
+                      />
+                    </div>
+                  )}
+                  <div class="news-card__body">
+                    <div class="news-card__top">
+                      <span class="news-card__type">{newsTypeLabels[locale][item.data.type]}</span>
+                      <time class="news-card__date">{formatDate(String(item.data.date), locale)}</time>
+                    </div>
+                    <h3 class="news-card__title">{item.data.title}</h3>
+                    {item.data.description && (
+                      <p class="news-card__desc">{item.data.description}</p>
+                    )}
+                    <div class="news-card__bottom">
+                      <span class="news-card__source">{item.data.source}</span>
+                      <svg class="news-card__icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                        <polyline points="15 3 21 3 21 9"/>
+                        <line x1="10" y1="14" x2="21" y2="3"/>
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        )}
+
+        {sortedNews.length === 0 && (
+          <p class="news-empty">{emptyText}</p>
+        )}
+      </div>
+    </main>
+    <Footer />
+
+    <style>
+      .hp-main {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 0;
+      }
+      .news-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 64px 24px 96px;
+      }
+      .news-page__title {
+        font-size: clamp(1.75rem, 3vw, 2.5rem);
+        font-weight: 600;
+        color: #282A2B;
+        margin: 0 0 40px;
+        padding-left: 16px;
+        border-left: 3px solid #c0392b;
+        line-height: 1.2;
+      }
+      .news-list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+      .news-card {
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+        border: 1px solid rgba(40, 42, 43, 0.08);
+        border-radius: 10px;
+        overflow: hidden;
+        text-decoration: none;
+        color: inherit;
+        transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      }
+      .news-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(40, 42, 43, 0.07);
+        border-color: rgba(192, 57, 43, 0.2);
+      }
+      .news-card__image-wrap {
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        background: #F0E6D6;
+      }
+      .news-card__image {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover;
+        border-radius: 0 !important;
+      }
+      .news-card__body {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 20px 22px;
+        flex: 1;
+      }
+      .news-card__top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .news-card__type {
+        font-size: 0.6875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #c0392b;
+        padding: 4px 10px;
+        background: rgba(192, 57, 43, 0.08);
+        border-radius: 4px;
+      }
+      .news-card__date {
+        font-size: 0.8125rem;
+        color: rgba(40, 42, 43, 0.5);
+      }
+      .news-card__title {
+        font-size: 1.0625rem;
+        font-weight: 600;
+        margin: 0;
+        line-height: 1.35;
+        color: #282A2B;
+        transition: color 0.15s ease;
+      }
+      .news-card:hover .news-card__title {
+        color: #c0392b;
+      }
+      .news-card__desc {
+        font-size: 0.875rem;
+        color: rgba(40, 42, 43, 0.65);
+        line-height: 1.5;
+        margin: 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .news-card__bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: auto;
+        padding-top: 6px;
+      }
+      .news-card__source {
+        font-size: 0.8125rem;
+        color: rgba(40, 42, 43, 0.7);
+        font-weight: 500;
+      }
+      .news-card__icon {
+        color: rgba(40, 42, 43, 0.35);
+        flex-shrink: 0;
+      }
+      .news-card:hover .news-card__icon {
+        color: #c0392b;
+      }
+      .news-empty {
+        color: rgba(40, 42, 43, 0.5);
+        font-style: italic;
+        margin: 0;
+        text-align: center;
+        padding: 4rem 0;
+      }
+      @media (max-width: 1000px) {
+        .news-list { grid-template-columns: repeat(2, 1fr); }
+      }
+      @media (max-width: 640px) {
+        .news-list { grid-template-columns: 1fr; }
+        .news-page { padding: 40px 16px 64px; }
+      }
+    </style>
+  </body>
+</html>

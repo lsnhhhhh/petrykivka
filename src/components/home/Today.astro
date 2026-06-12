@@ -72,6 +72,8 @@ const hasNews = sortedNews.length > 0;
 <HomepageSection
   title={sectionTitles.today[locale]}
   subtitle={subtitle[locale]}
+  viewAllHref={locale === 'uk' ? '/news' : '/en/news'}
+  viewAllText={locale === 'uk' ? 'Всі новини' : 'All news'}
 >
   {hasNews && (
     <div class="today-news">
