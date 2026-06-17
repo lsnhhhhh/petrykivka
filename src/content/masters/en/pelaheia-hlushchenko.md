@@ -15,6 +15,7 @@
 - 'textiles'
 - 'book graphics'
 - 'varnish painting'
+photo: '../../../assets/masters/pelaheia-hlushchenko.jpg'
 ---
 ## Biography
 

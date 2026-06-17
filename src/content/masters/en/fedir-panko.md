@@ -22,6 +22,7 @@
 - 'innovator'
 - 'portrait'
 - 'cossacks'
+photo: '../../../assets/masters/fedir-panko.jpg'
 ---
 ## Biography
 

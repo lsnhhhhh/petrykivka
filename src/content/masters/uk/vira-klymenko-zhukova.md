@@ -14,6 +14,7 @@ tags:
   - 'КЕКХЗ'
   - 'підлаковий розпис'
   - 'завідувач цеху'
+photo: '../../../assets/masters/vira-klymenko-zhukova.jpg'
 ---
 ## Біографія
 

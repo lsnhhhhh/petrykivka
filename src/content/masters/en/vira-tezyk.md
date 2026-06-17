@@ -12,6 +12,7 @@
 - 'paper'
 - 'egg tempera'
 - 'squirrel brush'
+photo: '../../../assets/masters/vira-tezyk.jpg'
 ---
 ## Biography
  

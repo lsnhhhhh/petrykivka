@@ -1,8 +1,9 @@
 ---
 'locale': 'en'
 'name': 'Olena Skytsyuk'
-'category': 'Друге покоління'
+'category': 'Третє покоління'
 'center': 'Petrykivka'
+photo: '../../../assets/masters/olena-skytsyuk.jpg'
 ---
 ## Biography
  

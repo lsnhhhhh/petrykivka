@@ -3,6 +3,7 @@ locale: uk
 name: 'Тамара Вакуленко'
 category: 'Четверте покоління'
 center: 'Петриківка'
+photo: '../../../assets/masters/tamara-vakulenko.jpg'
 ---
 ## Творчість
  

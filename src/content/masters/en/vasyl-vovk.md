@@ -11,6 +11,7 @@
 - 'painting'
 - 'panel'
 - 'wedding'
+photo: '../../../assets/masters/vasyl-vovk.jpg'
 ---
 ## Biography
 

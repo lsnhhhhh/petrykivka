@@ -1,7 +1,6 @@
 ---
 name: Анатолій Чернуський
 category: Третє покоління
-photo: ../../../assets/masters/Slide 16_9 - 49.png
 born: 1940-і
 died: ''
 period: Друга половина XX — початок XXI ст.
@@ -15,6 +14,7 @@ tags:
   - дерево
   - папір
   - династія
+photo: '../../../assets/masters/anatolii-chernuskyi.jpg'
 locale: uk
 ---
 

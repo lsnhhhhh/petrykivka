@@ -17,6 +17,7 @@
 - 'embroidery'
 - 'panel'
 - 'birds'
+photo: '../../../assets/masters/mariia-shyshatska.jpg'
 ---
 ## Biography
 

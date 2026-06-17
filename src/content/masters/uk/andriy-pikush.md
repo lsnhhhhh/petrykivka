@@ -4,6 +4,7 @@ name: 'Андрій Пікуш'
 category: 'Третє покоління'
 center: 'Петриківка'
 tags: ['рослинний орнамент']
+photo: '../../../assets/masters/andriy-pikush.jpg'
 ---
 
 ## Біографія

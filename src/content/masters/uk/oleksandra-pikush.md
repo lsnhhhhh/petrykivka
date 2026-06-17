@@ -3,6 +3,7 @@ locale: uk
 name: 'Олександра Пікуш'
 category: 'Друге покоління'
 center: 'Петриківка'
+photo: '../../../assets/masters/oleksandra-pikush.jpg'
 ---
 ## Біографія
  

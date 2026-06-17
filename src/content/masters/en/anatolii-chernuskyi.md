@@ -1,7 +1,6 @@
 ---
 'name': 'Anatolii Chernuskyi'
 'category': 'Третє покоління'
-'photo': '../../../assets/masters/Slide 16_9 - 49.png'
 'born': '1940-і'
 'died': ''
 'period': 'The second half of the 20th and early 21st centuries.'
@@ -15,6 +14,7 @@
 - 'tree'
 - 'paper'
 - 'dynasty'
+'photo': '../../../assets/masters/anatolii-chernuskyi.jpg'
 'locale': 'en'
 ---
 ## Biography

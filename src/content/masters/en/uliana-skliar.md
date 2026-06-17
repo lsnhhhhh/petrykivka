@@ -3,6 +3,7 @@
 'name': 'Uliana Skliar'
 'category': 'Четверте покоління'
 'center': 'Petrykivka'
+photo: '../../../assets/masters/uliana-skliar.jpg'
 ---
 ## Biography
  

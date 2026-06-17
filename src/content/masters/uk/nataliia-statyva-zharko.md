@@ -3,6 +3,7 @@ locale: uk
 name: 'Наталія Статива-Жарко'
 category: 'Четверте покоління'
 center: 'Петриківка'
+photo: '../../../assets/masters/nataliia-statyva-zharko.jpg'
 ---
 ## Біографія
  

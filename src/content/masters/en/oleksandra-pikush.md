@@ -3,6 +3,7 @@
 'name': 'Oleksandra Pikush'
 'category': 'Друге покоління'
 'center': 'Petrykivka'
+photo: '../../../assets/masters/oleksandra-pikush.jpg'
 ---
 ## Biography
  

@@ -14,6 +14,7 @@ tags:
   - 'дерево'
   - 'папір'
   - 'головний художник'
+photo: '../../../assets/masters/volodymyr-hlushchenko.jpg'
 ---
 ## Біографія
 

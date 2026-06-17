@@ -10,6 +10,7 @@
 - 'ornament'
 - 'painting'
 - 'bouquet'
+photo: '../../../assets/masters/nadiia-tymoshenko.jpg'
 ---
 ## Biography
 

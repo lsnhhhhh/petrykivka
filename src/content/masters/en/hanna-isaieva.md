@@ -14,6 +14,7 @@
 - 'panel'
 - 'symmetry'
 - 'ornament'
+photo: '../../../assets/masters/hanna-isaieva.jpg'
 ---
 ## Biography
 

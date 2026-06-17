@@ -14,6 +14,7 @@
 - 'flavor'
 - 'druzhba factory'
 - 'panel'
+photo: '../../../assets/masters/yavdokha-kliupa.jpg'
 ---
 ## Biography
 

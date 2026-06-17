@@ -12,6 +12,7 @@
 - 'Experimental workshop'
 - 'Petrykivka Center'
 - 'dynasty'
+photo: '../../../assets/masters/nina-turchyn.jpg'
 ---
 ## Biography
 

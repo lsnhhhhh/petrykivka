@@ -3,6 +3,7 @@
 'name': 'Tetiana Harkava'
 'category': 'Четверте покоління'
 'center': 'Petrykivka'
+photo: '../../../assets/masters/tetiana-harkava.jpg'
 ---
 ## Biography
  

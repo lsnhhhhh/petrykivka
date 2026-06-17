@@ -18,6 +18,7 @@
 - 'KEKHZ'
 - 'varnish painting'
 - 'dynasty'
+photo: '../../../assets/masters/vira-pavlenko.jpg'
 ---
 ## Biography
 

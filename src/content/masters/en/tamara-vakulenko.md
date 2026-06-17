@@ -3,6 +3,7 @@
 'name': 'Tamara Vakulenko'
 'category': 'Четверте покоління'
 'center': 'Petrykivka'
+photo: '../../../assets/masters/tamara-vakulenko.jpg'
 ---
 ## Artistic Practice
  

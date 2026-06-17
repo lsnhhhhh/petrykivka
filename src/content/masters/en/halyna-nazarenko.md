@@ -13,6 +13,7 @@
 - 'church painting'
 - 'popularization'
 - 'international exhibitions'
+photo: '../../../assets/masters/halyna-nazarenko.jpg'
 ---
 ## Biography
 

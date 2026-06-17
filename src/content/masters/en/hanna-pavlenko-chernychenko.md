@@ -17,6 +17,7 @@
 - 'stained glass window'
 - 'book graphics'
 - 'dynasty'
+photo: '../../../assets/masters/hanna-pavlenko-chernychenko.jpg'
 ---
 ## Biography
 

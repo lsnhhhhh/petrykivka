@@ -3,6 +3,7 @@ locale: uk
 name: 'Ганна Самарська'
 category: 'Третє покоління'
 center: 'Петриківка'
+photo: '../../../assets/masters/hanna-samarska.jpg'
 ---
 ## Біографія
  

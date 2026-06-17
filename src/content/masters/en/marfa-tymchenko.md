@@ -16,6 +16,7 @@
 - 'porcelain'
 - 'monumental painting'
 - 'national artist'
+photo: '../../../assets/masters/marfa-tymchenko.jpg'
 ---
 ## Biography
 

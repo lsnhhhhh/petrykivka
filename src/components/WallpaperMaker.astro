@@ -1,0 +1,1189 @@
+---
+import type { Locale } from '../i18n/translations';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const strings = {
+  uk: {
+    title: 'Створи свої петриківські шпалери',
+    subtitle: 'Обери квіти, фон і формат — згенеруй унікальні шпалери для свого пристрою.',
+    devNote: 'Тестова версія — використовує пробний набір квіток. Невдовзі додамо більше.',
+    formatLabel: '1. Формат',
+    formats: { phone: 'Телефон', tablet: 'Планшет', desktop: 'Десктоп', square: 'Квадрат' },
+    flowersLabel: '2. Квіти',
+    flowersHint: 'тап щоб увімкнути/вимкнути, перетягни щоб переставити',
+    sizeLabel: '3. Розмір квіток',
+    sizes: { small: 'Малі', medium: 'Середні', larger: 'Більші', big: 'Великі' },
+    compositionLabel: '4. Композиція',
+    patterns: { grid: 'Сітка', spiral: 'Спіраль', ring: 'Коло' },
+    shuffleBtn: 'Перемішати композицію',
+    densityLabel: '5. Щільність',
+    densities: { sparse: 'Рідко', medium: 'Помірно', dense: 'Щільно' },
+    bgLabel: '6. Фон',
+    tintLabel: '7. Колір квітів',
+    tintHint: 'тап повторно щоб повернутися до оригіналу',
+    downloadBtn: 'Завантажити',
+    loading: 'Завантажую квіти…',
+    modalTitle: 'Дякуємо за створення!',
+    modalBody: 'Петриківський розпис — унікальне українське мистецтво, занесене ЮНЕСКО до списку нематеріальної культурної спадщини. Поділись посиланням на цей сайт, щоб про петриківку дізналося більше людей.',
+    modalCopyBtn: 'Скопіювати посилання на сайт',
+    modalCopiedBtn: 'Дякуємо! Посилання скопійовано',
+    modalClose: 'Закрити',
+  },
+  en: {
+    title: 'Create your own Petrykivka wallpaper',
+    subtitle: 'Pick flowers, background and format — generate a unique wallpaper for your device.',
+    devNote: 'Test version using a sample set of flowers. More coming soon.',
+    formatLabel: '1. Format',
+    formats: { phone: 'Phone', tablet: 'Tablet', desktop: 'Desktop', square: 'Square' },
+    flowersLabel: '2. Flowers',
+    flowersHint: 'tap to toggle, drag to reorder',
+    sizeLabel: '3. Flower size',
+    sizes: { small: 'Small', medium: 'Medium', larger: 'Larger', big: 'Big' },
+    compositionLabel: '4. Composition',
+    patterns: { grid: 'Grid', spiral: 'Spiral', ring: 'Ring' },
+    shuffleBtn: 'Shuffle composition',
+    densityLabel: '5. Density',
+    densities: { sparse: 'Sparse', medium: 'Medium', dense: 'Dense' },
+    bgLabel: '6. Background',
+    tintLabel: '7. Flower color',
+    tintHint: 'tap again to revert to original',
+    downloadBtn: 'Download',
+    loading: 'Loading flowers…',
+    modalTitle: 'Thank you for creating!',
+    modalBody: 'Petrykivka painting is a unique Ukrainian art form, inscribed on the UNESCO list of Intangible Cultural Heritage. Share a link to this site so more people can discover Petrykivka.',
+    modalCopyBtn: 'Copy link to the site',
+    modalCopiedBtn: 'Thank you! Link copied',
+    modalClose: 'Close',
+  },
+}[locale];
+---
+
+<section class="wallpaper-maker">
+  <div class="wm-header">
+    <h1 class="wm-title">{strings.title}</h1>
+    <p class="wm-subtitle">{strings.subtitle}</p>
+    <p class="wm-devnote">{strings.devNote}</p>
+  </div>
+
+  <div class="wm-grid">
+    <div class="wm-preview-wrap">
+      <div class="wm-canvas-stage">
+        <div class="wm-device wm-device--phone" id="wm-device-wrap">
+          <canvas id="wm-canvas" aria-label="Wallpaper preview"></canvas>
+          <div class="wm-loading" id="wm-loading">{strings.loading}</div>
+        </div>
+      </div>
+      <div class="wm-actions">
+        <button class="wm-btn wm-btn--primary" id="wm-download" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>{strings.downloadBtn}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="wm-controls">
+      <div class="wm-section">
+        <div class="wm-section-label">{strings.formatLabel}</div>
+        <div class="wm-segmented" id="wm-format">
+          <button data-val="phone" class="wm-seg active" type="button">{strings.formats.phone}</button>
+          <button data-val="tablet" class="wm-seg" type="button">{strings.formats.tablet}</button>
+          <button data-val="desktop" class="wm-seg" type="button">{strings.formats.desktop}</button>
+          <button data-val="square" class="wm-seg" type="button">{strings.formats.square}</button>
+        </div>
+      </div>
+
+      <div class="wm-section">
+        <div class="wm-section-label">
+          {strings.flowersLabel}
+          <span class="wm-hint">— {strings.flowersHint}</span>
+        </div>
+        <div class="wm-flowers" id="wm-flowers"></div>
+      </div>
+
+      <div class="wm-section">
+        <div class="wm-section-label">{strings.sizeLabel}</div>
+        <div class="wm-segmented" id="wm-size">
+          <button data-val="small" class="wm-seg" type="button">{strings.sizes.small}</button>
+          <button data-val="medium" class="wm-seg active" type="button">{strings.sizes.medium}</button>
+          <button data-val="larger" class="wm-seg" type="button">{strings.sizes.larger}</button>
+          <button data-val="big" class="wm-seg" type="button">{strings.sizes.big}</button>
+        </div>
+      </div>
+
+      <div class="wm-section">
+        <div class="wm-section-label">{strings.compositionLabel}</div>
+        <div class="wm-segmented" id="wm-pattern">
+          <button data-val="grid" class="wm-seg active" type="button">{strings.patterns.grid}</button>
+          <button data-val="spiral" class="wm-seg" type="button">{strings.patterns.spiral}</button>
+          <button data-val="ring" class="wm-seg" type="button">{strings.patterns.ring}</button>
+        </div>
+        <button class="wm-shuffle-inline" id="wm-shuffle" type="button">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+          <span>{strings.shuffleBtn}</span>
+        </button>
+      </div>
+
+      <div class="wm-section">
+        <div class="wm-section-label">{strings.densityLabel}</div>
+        <div class="wm-segmented" id="wm-density">
+          <button data-val="sparse" class="wm-seg" type="button">{strings.densities.sparse}</button>
+          <button data-val="medium" class="wm-seg active" type="button">{strings.densities.medium}</button>
+          <button data-val="dense" class="wm-seg" type="button">{strings.densities.dense}</button>
+        </div>
+      </div>
+
+      <div class="wm-section">
+        <div class="wm-section-label">{strings.bgLabel}</div>
+        <div class="wm-bgpalette" id="wm-bgpalette"></div>
+      </div>
+
+      <div class="wm-section">
+        <div class="wm-section-label">
+          {strings.tintLabel}
+          <span class="wm-hint">— {strings.tintHint}</span>
+        </div>
+        <div class="wm-tintpalette" id="wm-tintpalette"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Thank-you modal — shows after download -->
+  <div class="wm-modal" id="wm-modal" hidden>
+    <div class="wm-modal-backdrop" id="wm-modal-backdrop"></div>
+    <div class="wm-modal-card" role="dialog" aria-modal="true" aria-labelledby="wm-modal-title">
+      <button class="wm-modal-close" id="wm-modal-close" type="button" aria-label={strings.modalClose}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <img class="wm-modal-icon" src="/wallpaper-flowers/1-big-flower-red.png" alt="" />
+      <h3 class="wm-modal-title" id="wm-modal-title">{strings.modalTitle}</h3>
+      <p class="wm-modal-body">{strings.modalBody}</p>
+      <button class="wm-modal-cta" id="wm-modal-copy" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        <span>{strings.modalCopyBtn}</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .wallpaper-maker { max-width: 1240px; margin: 0 auto; padding: 48px 24px 96px; color: #282A2B; position: relative; }
+  .wm-header { margin-bottom: 36px; }
+  .wm-title {
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 600;
+    margin: 0 0 12px;
+    padding-left: 16px;
+    border-left: 3px solid #c0392b;
+    line-height: 1.2;
+  }
+  .wm-subtitle { margin: 0 0 8px; color: rgba(40,42,43,0.7); font-size: 1.05rem; line-height: 1.5; max-width: 720px; }
+  .wm-devnote { margin: 0; font-size: 0.85rem; color: rgba(40,42,43,0.5); font-style: italic; max-width: 720px; }
+
+  .wm-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 380px;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .wm-preview-wrap { position: sticky; top: 24px; }
+  .wm-canvas-stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #F8F4EE;
+    border-radius: 20px;
+    padding: 32px 24px;
+    min-height: 360px;
+  }
+
+  .wm-device {
+    display: inline-flex;
+    position: relative;
+    background: #1c1c1c;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.18), 0 8px 16px rgba(0,0,0,0.10);
+    transition: padding 0.2s ease, border-radius 0.2s ease;
+  }
+  .wm-device--phone   { padding: 12px; border-radius: 40px; }
+  .wm-device--phone canvas   { border-radius: 28px; }
+  .wm-device--tablet  { padding: 14px; border-radius: 28px; }
+  .wm-device--tablet canvas  { border-radius: 16px; }
+  .wm-device--desktop { padding: 12px; border-radius: 20px; }
+  .wm-device--desktop canvas { border-radius: 10px; }
+  .wm-device--square  { padding: 12px; border-radius: 40px; }
+  .wm-device--square canvas  { border-radius: 28px; }
+
+  #wm-canvas {
+    display: block;
+    aspect-ratio: var(--canvas-ratio, 9/19.5);
+    max-width: 100%;
+    max-height: 65vh;
+    width: auto;
+    height: auto;
+    background: #F8F4EE;
+  }
+  .wm-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.75);
+    font-style: italic;
+    pointer-events: none;
+    z-index: 1;
+    border-radius: inherit;
+    background: rgba(0,0,0,0.04);
+  }
+
+  .wm-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .wm-btn {
+    flex: 0 1 240px;
+    min-width: 200px;
+    padding: 14px 32px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .wm-btn--primary {
+    background: #c0392b;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(192,57,43,0.22);
+  }
+  .wm-btn--primary:hover {
+    background: #a32d20;
+    transform: translateY(-1px);
+    box-shadow: 0 12px 32px rgba(192,57,43,0.28);
+  }
+  .wm-btn:active { transform: translateY(0); }
+
+  .wm-controls { display: flex; flex-direction: column; gap: 24px; }
+  .wm-section-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(40,42,43,0.55);
+    margin-bottom: 10px;
+  }
+  .wm-hint { font-weight: 400; text-transform: none; letter-spacing: 0; color: rgba(40,42,43,0.4); }
+
+  .wm-segmented {
+    display: flex;
+    background: rgba(40,42,43,0.06);
+    border-radius: 12px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .wm-seg {
+    flex: 1;
+    padding: 8px 10px;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: rgba(40,42,43,0.7);
+    transition: all 0.15s ease;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  .wm-seg:hover { color: #282A2B; }
+  .wm-seg.active {
+    background: #fff;
+    color: #c0392b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    font-weight: 500;
+  }
+
+  .wm-shuffle-inline {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid rgba(40,42,43,0.12);
+    font-size: 0.875rem;
+    color: rgba(40,42,43,0.75);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: inherit;
+    transition: all 0.15s ease;
+  }
+  .wm-shuffle-inline:hover {
+    border-color: #c0392b;
+    color: #c0392b;
+    background: rgba(192,57,43,0.03);
+  }
+  .wm-shuffle-inline:active { transform: scale(0.98); }
+
+  /* Modal */
+  .wm-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: wm-fade-in 0.2s ease;
+  }
+  .wm-modal[hidden] { display: none; }
+  .wm-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(20,20,20,0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .wm-modal-card {
+    position: relative;
+    background: #fff;
+    border-radius: 24px;
+    padding: 36px 32px 32px;
+    max-width: 440px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.35);
+    animation: wm-slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .wm-modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(40,42,43,0.06);
+    border: none;
+    cursor: pointer;
+    color: rgba(40,42,43,0.7);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+  }
+  .wm-modal-close:hover { background: rgba(40,42,43,0.12); color: #282A2B; }
+  .wm-modal-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 16px;
+    object-fit: contain;
+    display: block;
+    animation: wm-modal-icon-in 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .wm-modal-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0 0 12px;
+    color: #282A2B;
+    line-height: 1.25;
+  }
+  .wm-modal-body {
+    color: rgba(40,42,43,0.7);
+    line-height: 1.55;
+    margin: 0 0 24px;
+    font-size: 0.95rem;
+  }
+  .wm-modal-cta {
+    width: 100%;
+    padding: 14px 24px;
+    border-radius: 999px;
+    background: #c0392b;
+    color: #fff;
+    border: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.18s ease;
+    font-family: inherit;
+    box-shadow: 0 8px 24px rgba(192,57,43,0.22);
+  }
+  .wm-modal-cta:hover {
+    background: #a32d20;
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px rgba(192,57,43,0.28);
+  }
+  .wm-modal-cta.wm-modal-cta--copied {
+    background: #2d8a4e;
+    box-shadow: 0 8px 24px rgba(45,138,78,0.22);
+    transform: none;
+  }
+  @keyframes wm-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes wm-slide-up {
+    from { opacity: 0; transform: translateY(24px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes wm-modal-icon-in {
+    0% { opacity: 0; transform: scale(0.4) rotate(-15deg); }
+    60% { transform: scale(1.1) rotate(8deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+  }
+
+  @media (max-width: 940px) {
+    .wm-grid { grid-template-columns: 1fr; gap: 32px; }
+    .wm-preview-wrap { position: static; }
+    #wm-canvas { max-height: 55vh; }
+  }
+  @media (max-width: 500px) {
+    .wallpaper-maker { padding: 32px 16px 64px; }
+    .wm-canvas-stage { padding: 20px 12px; }
+    .wm-modal-card { padding: 32px 24px 24px; }
+    .wm-modal-title { font-size: 1.25rem; }
+  }
+</style>
+
+<style is:global>
+  .wm-bgpalette, .wm-tintpalette {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+  .wm-tintpalette { grid-template-columns: repeat(6, 1fr); }
+  .wm-bg-swatch, .wm-tint-swatch {
+    aspect-ratio: 1;
+    width: 100%;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+    padding: 0;
+  }
+  .wm-bg-swatch:hover, .wm-tint-swatch:hover { transform: scale(1.08); }
+  .wm-bg-swatch.active, .wm-tint-swatch.active {
+    border-color: #c0392b;
+    transform: scale(1.06);
+  }
+  .wm-tint-swatch.wm-tint-original {
+    background: conic-gradient(from 0deg,
+      #c0392b, #d97826, #d9a030, #3d7a4a, #1b5e8e, #7b5a8e, #c0392b);
+  }
+
+  .wm-flowers {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+    gap: 6px;
+  }
+  .wm-flower-mini {
+    aspect-ratio: 1;
+    padding: 3px;
+    background: transparent;
+    border: 1.5px solid rgba(40,42,43,0.08);
+    border-radius: 12px;
+    cursor: grab;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .wm-flower-mini:hover { border-color: rgba(40,42,43,0.2); }
+  .wm-flower-mini.selected {
+    border-color: #c0392b;
+    background: rgba(192,57,43,0.05);
+  }
+  .wm-flower-mini.wm-dragging {
+    opacity: 0.35;
+    cursor: grabbing;
+  }
+  .wm-flower-mini.wm-drop-target {
+    border-color: #c0392b;
+    background: rgba(192,57,43,0.12);
+    transform: scale(1.06);
+  }
+  .wm-flower-mini canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    opacity: 0.4;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    pointer-events: none;
+  }
+  .wm-flower-mini.selected canvas {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  @media (max-width: 500px) {
+    .wm-bgpalette { grid-template-columns: repeat(6, 1fr); }
+    .wm-tintpalette { grid-template-columns: repeat(6, 1fr); }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    'use strict';
+
+    const canvas = document.getElementById('wm-canvas');
+    const ctx = canvas.getContext('2d');
+    const loadingHint = document.getElementById('wm-loading');
+    const deviceWrap = document.getElementById('wm-device-wrap');
+    const flowersEl = document.getElementById('wm-flowers');
+    const STORAGE_KEY = 'petrykivka-wm-state-v2';
+
+    const FORMATS = {
+      phone:   { w: 1290, h: 2796, ratio: '9/19.5' },
+      tablet:  { w: 1640, h: 2360, ratio: '1640/2360' },
+      desktop: { w: 2560, h: 1440, ratio: '16/9' },
+      square:  { w: 1500, h: 1500, ratio: '1/1' },
+    };
+
+    const DENSITY_MULT = { sparse: 0.6, medium: 1.0, dense: 1.55 };
+    const SIZE_MULT = { small: 0.35, medium: 0.55, larger: 0.80, big: 1.10 };
+
+    const SOLIDS = [
+      { id: 'cream',    color: '#F8F4EE' },
+      { id: 'white',    color: '#FFFDFB' },
+      { id: 'sand',     color: '#E8DCC4' },
+      { id: 'rose',     color: '#F4E0E2' },
+      { id: 'sky',      color: '#D6E3EA' },
+      { id: 'mint',     color: '#D6E5D8' },
+      { id: 'navy',     color: '#1B2F4A' },
+      { id: 'dgreen',   color: '#1F3826' },
+      { id: 'burgundy', color: '#3D1A1F' },
+    ];
+    const GRADIENTS = [
+      { id: 'sunset',   stops: ['#FFB6B9', '#FAE3D9'] },
+      { id: 'ocean',    stops: ['#84B1C9', '#C7E2DB'] },
+      { id: 'lavender', stops: ['#C5A6D9', '#F4D9E2'] },
+      { id: 'golden',   stops: ['#E89F4C', '#F5D27A'] },
+      { id: 'aurora',   stops: ['#3D7A4A', '#7B5A8E', '#D9777C'] },
+      { id: 'sky-soft', stops: ['#A8C7E2', '#F4E0CB'] },
+      { id: 'sunrise',  stops: ['#7A1A1A', '#E89F4C', '#F5D27A'] },
+      { id: 'forest',   stops: ['#1F3826', '#5C8A4A'] },
+      { id: 'plum',     stops: ['#3D1A1F', '#7B3A4F'] },
+      { id: 'meadow',   stops: ['#5C8A4A', '#E8B500', '#F4E0CB'] },
+      { id: 'dusk',     stops: ['#1B2F4A', '#7B5A8E'] },
+      { id: 'cherry',   stops: ['#C0392B', '#D9777C', '#F4E0E2'] },
+    ];
+    const ALL_BGS = [...SOLIDS, ...GRADIENTS];
+
+    const TINTS = [
+      { id: 'original' },
+      { id: 'red',      color: '#c0392b' },
+      { id: 'burgundy', color: '#7a1a1a' },
+      { id: 'orange',   color: '#d97826' },
+      { id: 'gold',     color: '#c9a04f' },
+      { id: 'green',    color: '#3d7a4a' },
+      { id: 'dgreen',   color: '#1f3826' },
+      { id: 'blue',     color: '#1b5e8e' },
+      { id: 'navy',     color: '#1b2f4a' },
+      { id: 'purple',   color: '#7b5a8e' },
+      { id: 'sepia',    color: '#8b5a3c' },
+      { id: 'mono',     color: '#3a3a3a' },
+    ];
+    const TINTS_BY_ID = Object.fromEntries(TINTS.map(t => [t.id, t]));
+
+    function bgCss(bg) {
+      if (bg.color) return bg.color;
+      return `linear-gradient(180deg, ${bg.stops.join(', ')})`;
+    }
+    function paintBg(targetCtx, bg, w, h) {
+      if (bg.color) {
+        targetCtx.fillStyle = bg.color;
+      } else {
+        const g = targetCtx.createLinearGradient(0, 0, 0, h);
+        bg.stops.forEach((c, i) => g.addColorStop(i / (bg.stops.length - 1), c));
+        targetCtx.fillStyle = g;
+      }
+      targetCtx.fillRect(0, 0, w, h);
+    }
+
+    const FILE_DEFS = [
+      '1-big-flower-red',
+      '3-medium-flower-red',
+      '4-big-flower-red',
+      '6-medium-flower-red',
+      '7-big-flower-red',
+      '8-medium-flower-orange',
+      '11-medium-flower-red',
+      '12-medium-flower-red',
+      '15-big-flower-orange',
+      '16-big-flower-green',
+      '18-big-flower-blue',
+      '19-small-flower-blue',
+      '25-medium-leaf-green',
+      '27-medium-leaf-green',
+      '31-big-bird-red',
+    ];
+    const FLOWERS = FILE_DEFS.map(name => {
+      const parts = name.split('-').filter(p => p.length > 0);
+      return {
+        id: parts[0],
+        type: parts[2],
+        color: parts[3],
+        src: `/wallpaper-flowers/${name}.png`,
+      };
+    });
+    const FLOWERS_BY_ID = Object.fromEntries(FLOWERS.map(f => [f.id, f]));
+    const imageMap = new Map();
+    let imagesReady = false;
+
+    let cachedTintId = null;
+    const tintedImages = new Map();
+
+    function buildTintedCanvas(flower, tintColor) {
+      const src = imageMap.get(flower.id);
+      if (!src || !src.complete || src.naturalWidth === 0) return null;
+      const c = document.createElement('canvas');
+      c.width = src.naturalWidth;
+      c.height = src.naturalHeight;
+      const cctx = c.getContext('2d');
+      cctx.drawImage(src, 0, 0);
+      cctx.globalCompositeOperation = 'color';
+      cctx.fillStyle = tintColor;
+      cctx.fillRect(0, 0, c.width, c.height);
+      cctx.globalCompositeOperation = 'destination-in';
+      cctx.drawImage(src, 0, 0);
+      return c;
+    }
+    function getRenderImage(flower) {
+      const tint = TINTS_BY_ID[state.tint];
+      if (!tint || !tint.color) return imageMap.get(flower.id);
+      if (cachedTintId !== state.tint) {
+        tintedImages.clear();
+        cachedTintId = state.tint;
+      }
+      let c = tintedImages.get(flower.id);
+      if (!c) {
+        c = buildTintedCanvas(flower, tint.color);
+        if (c) tintedImages.set(flower.id, c);
+      }
+      return c;
+    }
+    function loadAllImages() {
+      return Promise.all(FLOWERS.map(f => new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          imageMap.set(f.id, img);
+          const pc = pickerCanvases.get(f.id);
+          if (pc) drawPickerThumb(pc, f.id);
+          resolve();
+        };
+        img.onerror = () => { console.warn('Failed to load', f.src); resolve(); };
+        img.src = f.src;
+      })));
+    }
+    function drawFlowerAt(targetCtx, cx, cy, r, rotation, flower) {
+      const img = getRenderImage(flower);
+      if (!img) return;
+      if (img instanceof HTMLImageElement && (!img.complete || img.naturalWidth === 0)) return;
+      targetCtx.save();
+      targetCtx.translate(cx, cy);
+      targetCtx.rotate(rotation);
+      targetCtx.drawImage(img, -r, -r, r * 2, r * 2);
+      targetCtx.restore();
+    }
+    function flowerRadius(baseUnit) {
+      return baseUnit * SIZE_MULT[state.size];
+    }
+    function sizeScale() {
+      return SIZE_MULT[state.size] / SIZE_MULT.medium;
+    }
+
+    function pickRandomThree() {
+      const shuffled = FLOWERS.slice().sort(() => Math.random() - 0.5);
+      return new Set(shuffled.slice(0, 3).map(f => f.id));
+    }
+
+    let state = {
+      format: 'phone',
+      pattern: 'grid',
+      density: 'medium',
+      size: 'medium',
+      bgId: 'cream',
+      seed: Math.floor(Math.random() * 1e9),
+      selected: pickRandomThree(),
+      tint: 'original',
+      paletteOrder: FLOWERS.map(f => f.id),
+    };
+
+    // === Persistence via localStorage ===
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          format: state.format, pattern: state.pattern, density: state.density,
+          size: state.size, bgId: state.bgId, tint: state.tint, seed: state.seed,
+          selected: [...state.selected], paletteOrder: state.paletteOrder,
+        }));
+      } catch (e) { /* quota or disabled */ }
+    }
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const s = JSON.parse(raw);
+        if (s.format && FORMATS[s.format]) state.format = s.format;
+        if (s.pattern && ['grid','spiral','ring'].includes(s.pattern)) state.pattern = s.pattern;
+        if (s.density && DENSITY_MULT[s.density]) state.density = s.density;
+        if (s.size && SIZE_MULT[s.size]) state.size = s.size;
+        if (s.bgId && ALL_BGS.find(b => b.id === s.bgId)) state.bgId = s.bgId;
+        if (s.tint && TINTS_BY_ID[s.tint]) state.tint = s.tint;
+        if (typeof s.seed === 'number') state.seed = s.seed;
+        if (Array.isArray(s.selected) && s.selected.length) {
+          const valid = s.selected.filter(id => FLOWERS_BY_ID[id]);
+          if (valid.length) state.selected = new Set(valid);
+        }
+        if (Array.isArray(s.paletteOrder)) {
+          const valid = s.paletteOrder.filter(id => FLOWERS_BY_ID[id]);
+          const missing = FLOWERS.map(f => f.id).filter(id => !valid.includes(id));
+          state.paletteOrder = [...valid, ...missing];
+        }
+      } catch (e) { /* corrupt — ignore */ }
+    }
+
+    function getBg() { return ALL_BGS.find(b => b.id === state.bgId) || ALL_BGS[0]; }
+    function getActiveFlowers() {
+      return state.paletteOrder
+        .filter(id => state.selected.has(id))
+        .map(id => FLOWERS_BY_ID[id])
+        .filter(f => f);
+    }
+
+    function mulberry32(seed) {
+      let s = seed >>> 0;
+      return function () {
+        s = (s + 0x6D2B79F5) >>> 0;
+        let t = s;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    // === Patterns — spacing scales with both size and density ===
+    function drawGrid(targetCtx, w, h, items, rand) {
+      const baseUnit = Math.min(w, h) / 10;
+      const fr = flowerRadius(baseUnit);
+      const mult = DENSITY_MULT[state.density];
+      const cellSize = baseUnit * (1.7 / Math.sqrt(mult)) * sizeScale();
+      const offX = -cellSize * (0.5 + rand() * 0.5);
+      const offY = -cellSize * (0.5 + rand() * 0.5);
+      const cols = Math.ceil((w - offX) / cellSize) + 1;
+      const rows = Math.ceil((h - offY) / cellSize) + 1;
+      let i = 0;
+      for (let r = 0; r < rows; r++) {
+        const stagger = (r % 2 === 0) ? 0 : cellSize / 2;
+        for (let c = 0; c < cols; c++) {
+          const cx = offX + c * cellSize + cellSize / 2 + stagger;
+          const cy = offY + r * cellSize + cellSize / 2;
+          const item = items[i % items.length];
+          const rot = rand() * Math.PI * 2;
+          drawFlowerAt(targetCtx, cx, cy, fr, rot, item);
+          i++;
+        }
+      }
+    }
+
+    function drawSpiral(targetCtx, w, h, items, rand) {
+      const baseUnit = Math.min(w, h) / 10;
+      const fr = flowerRadius(baseUnit);
+      const mult = DENSITY_MULT[state.density];
+      const scale = sizeScale();
+      const cx0 = w / 2, cy0 = h / 2;
+      const maxR = Math.sqrt(w * w + h * h) / 2 + baseUnit * 0.5;
+      const a = baseUnit * 0.3 * scale;
+      const b = (baseUnit * 0.7 / mult) * scale;
+      const arcStep = (baseUnit * 1.2 / mult) * scale;
+      drawFlowerAt(targetCtx, cx0, cy0, fr, rand() * Math.PI * 2, items[0]);
+      let i = 1;
+      let theta = baseUnit * 0.5 / Math.max(a, baseUnit * 0.2);
+      let safety = 0;
+      while (safety < 1500) {
+        safety++;
+        const r = a + b * theta;
+        if (r > maxR) break;
+        const x = cx0 + r * Math.cos(theta);
+        const y = cy0 + r * Math.sin(theta);
+        const item = items[i % items.length];
+        drawFlowerAt(targetCtx, x, y, fr, theta + Math.PI / 2, item);
+        theta += arcStep / Math.max(r, baseUnit * 0.3);
+        i++;
+      }
+    }
+
+    function drawRing(targetCtx, w, h, items, rand) {
+      const baseUnit = Math.min(w, h) / 10;
+      const fr = flowerRadius(baseUnit);
+      const mult = DENSITY_MULT[state.density];
+      const scale = sizeScale();
+      const cx0 = w / 2, cy0 = h / 2;
+      const maxR = Math.sqrt(w * w + h * h) / 2 + baseUnit * 0.8;
+      const ringSpacing = (baseUnit * 1.4 / mult) * scale;
+      const onRingSpacing = (baseUnit * 1.3 / mult) * scale;
+      drawFlowerAt(targetCtx, cx0, cy0, fr, rand() * Math.PI * 2, items[0]);
+      for (let ringR = ringSpacing; ringR < maxR; ringR += ringSpacing) {
+        const circumference = 2 * Math.PI * ringR;
+        const count = Math.max(4, Math.floor(circumference / onRingSpacing));
+        const offsetAng = rand() * Math.PI * 2;
+        for (let i = 0; i < count; i++) {
+          const ang = offsetAng + (i / count) * Math.PI * 2;
+          const x = cx0 + ringR * Math.cos(ang);
+          const y = cy0 + ringR * Math.sin(ang);
+          if (x < -fr * 2 || x > w + fr * 2 || y < -fr * 2 || y > h + fr * 2) continue;
+          const item = items[i % items.length];
+          drawFlowerAt(targetCtx, x, y, fr, ang + Math.PI / 2, item);
+        }
+      }
+    }
+
+    function drawWatermark(targetCtx, w, h) {
+      const baseUnit = Math.min(w, h);
+      const fontSize = Math.round(baseUnit * 0.022);
+      const text = 'petrykivka.org';
+      targetCtx.save();
+      targetCtx.font = `600 ${fontSize}px -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", system-ui, sans-serif`;
+      targetCtx.textAlign = 'center';
+      targetCtx.textBaseline = 'middle';
+      const textW = targetCtx.measureText(text).width;
+      const padX = fontSize * 1.1;
+      const padY = fontSize * 0.55;
+      const pillW = textW + padX * 2;
+      const pillH = fontSize + padY * 2;
+      const pillX = (w - pillW) / 2;
+      const pillY = h - pillH - baseUnit * 0.04;
+      const radius = pillH / 2;
+      targetCtx.fillStyle = 'rgba(28, 28, 28, 0.55)';
+      if (typeof targetCtx.roundRect === 'function') {
+        targetCtx.beginPath();
+        targetCtx.roundRect(pillX, pillY, pillW, pillH, radius);
+        targetCtx.fill();
+      } else {
+        targetCtx.beginPath();
+        targetCtx.moveTo(pillX + radius, pillY);
+        targetCtx.arcTo(pillX + pillW, pillY, pillX + pillW, pillY + pillH, radius);
+        targetCtx.arcTo(pillX + pillW, pillY + pillH, pillX, pillY + pillH, radius);
+        targetCtx.arcTo(pillX, pillY + pillH, pillX, pillY, radius);
+        targetCtx.arcTo(pillX, pillY, pillX + pillW, pillY, radius);
+        targetCtx.closePath();
+        targetCtx.fill();
+      }
+      targetCtx.fillStyle = 'rgba(255, 255, 255, 0.96)';
+      targetCtx.fillText(text, w / 2, pillY + pillH / 2);
+      targetCtx.restore();
+    }
+
+    function composeScene(targetCtx, w, h, withWatermark) {
+      paintBg(targetCtx, getBg(), w, h);
+      const items = getActiveFlowers();
+      if (items.length === 0) return;
+      const rand = mulberry32(state.seed);
+      if (state.pattern === 'grid')        drawGrid(targetCtx, w, h, items, rand);
+      else if (state.pattern === 'spiral') drawSpiral(targetCtx, w, h, items, rand);
+      else if (state.pattern === 'ring')   drawRing(targetCtx, w, h, items, rand);
+      if (withWatermark) drawWatermark(targetCtx, w, h);
+    }
+
+    function render() {
+      const fmt = FORMATS[state.format];
+      canvas.width = fmt.w;
+      canvas.height = fmt.h;
+      canvas.style.setProperty('--canvas-ratio', fmt.ratio);
+      if (!imagesReady) {
+        paintBg(ctx, getBg(), fmt.w, fmt.h);
+        return;
+      }
+      composeScene(ctx, fmt.w, fmt.h, false);
+      saveState();
+      updateDeviceFrame();
+    }
+    function updateDeviceFrame() {
+      deviceWrap.className = 'wm-device wm-device--' + state.format;
+    }
+
+    function buildBgPalette() {
+      const el = document.getElementById('wm-bgpalette');
+      el.innerHTML = '';
+      ALL_BGS.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'wm-bg-swatch';
+        btn.style.background = bgCss(opt);
+        btn.dataset.id = opt.id;
+        btn.title = opt.id;
+        if (opt.id === state.bgId) btn.classList.add('active');
+        btn.addEventListener('click', () => {
+          el.querySelectorAll('.wm-bg-swatch').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          state.bgId = opt.id;
+          render();
+        });
+        el.appendChild(btn);
+      });
+    }
+    buildBgPalette();
+
+    function buildTintPalette() {
+      const el = document.getElementById('wm-tintpalette');
+      el.innerHTML = '';
+      TINTS.forEach(t => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'wm-tint-swatch' + (t.id === 'original' ? ' wm-tint-original' : '');
+        btn.dataset.id = t.id;
+        btn.title = t.id;
+        if (t.color) btn.style.background = t.color;
+        if (t.id === state.tint) btn.classList.add('active');
+        btn.addEventListener('click', () => {
+          // Toggle: click active tint → revert to original
+          if (state.tint === t.id && t.id !== 'original') {
+            state.tint = 'original';
+          } else {
+            state.tint = t.id;
+          }
+          el.querySelectorAll('.wm-tint-swatch').forEach(b => {
+            b.classList.toggle('active', b.dataset.id === state.tint);
+          });
+          refreshPickerThumbs();
+          render();
+        });
+        el.appendChild(btn);
+      });
+    }
+    buildTintPalette();
+
+    const PICKER_THUMB = 96;
+    const pickerCanvases = new Map();
+    function drawPickerThumb(c, flowerId) {
+      const cctx = c.getContext('2d');
+      cctx.clearRect(0, 0, c.width, c.height);
+      const flower = FLOWERS_BY_ID[flowerId];
+      if (!flower) return;
+      const img = getRenderImage(flower);
+      if (!img) return;
+      if (img instanceof HTMLImageElement && (!img.complete || img.naturalWidth === 0)) return;
+      cctx.drawImage(img, 0, 0, c.width, c.height);
+    }
+    function refreshPickerThumbs() {
+      pickerCanvases.forEach((c, id) => drawPickerThumb(c, id));
+    }
+
+    let dragSrcId = null;
+    let suppressClick = false;
+    function buildFlowerPicker() {
+      flowersEl.innerHTML = '';
+      pickerCanvases.clear();
+      state.paletteOrder.forEach(id => {
+        const flower = FLOWERS_BY_ID[id];
+        if (!flower) return;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'wm-flower-mini' + (state.selected.has(id) ? ' selected' : '');
+        btn.dataset.id = id;
+        btn.draggable = true;
+        btn.title = `${flower.type} (${flower.color})`;
+        const c = document.createElement('canvas');
+        c.width = c.height = PICKER_THUMB;
+        pickerCanvases.set(id, c);
+        if (imagesReady) drawPickerThumb(c, id);
+        btn.appendChild(c);
+
+        btn.addEventListener('click', () => {
+          if (suppressClick) return;
+          if (state.selected.has(id)) {
+            state.selected.delete(id);
+            btn.classList.remove('selected');
+          } else {
+            state.selected.add(id);
+            btn.classList.add('selected');
+          }
+          render();
+        });
+        btn.addEventListener('dragstart', (e) => {
+          dragSrcId = id;
+          btn.classList.add('wm-dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          try { e.dataTransfer.setData('text/plain', id); } catch (_) {}
+        });
+        btn.addEventListener('dragend', () => {
+          btn.classList.remove('wm-dragging');
+          document.querySelectorAll('.wm-drop-target').forEach(b => b.classList.remove('wm-drop-target'));
+          dragSrcId = null;
+          suppressClick = true;
+          setTimeout(() => { suppressClick = false; }, 50);
+        });
+        btn.addEventListener('dragover', (e) => {
+          if (!dragSrcId || dragSrcId === id) return;
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          btn.classList.add('wm-drop-target');
+        });
+        btn.addEventListener('dragleave', () => {
+          btn.classList.remove('wm-drop-target');
+        });
+        btn.addEventListener('drop', (e) => {
+          e.preventDefault();
+          btn.classList.remove('wm-drop-target');
+          if (dragSrcId && dragSrcId !== id) reorderPalette(dragSrcId, id);
+        });
+
+        flowersEl.appendChild(btn);
+      });
+    }
+    function reorderPalette(srcId, targetId) {
+      const arr = state.paletteOrder;
+      const srcIdx = arr.indexOf(srcId);
+      if (srcIdx === -1) return;
+      arr.splice(srcIdx, 1);
+      const targetIdx = arr.indexOf(targetId);
+      arr.splice(targetIdx, 0, srcId);
+      const srcEl = flowersEl.querySelector(`[data-id="${srcId}"]`);
+      const targetEl = flowersEl.querySelector(`[data-id="${targetId}"]`);
+      if (srcEl && targetEl) flowersEl.insertBefore(srcEl, targetEl);
+      render();
+    }
+
+    function bindSegmented(containerId, stateKey) {
+      const el = document.getElementById(containerId);
+      el.addEventListener('click', (e) => {
+        const btn = e.target.closest('.wm-seg');
+        if (!btn) return;
+        el.querySelectorAll('.wm-seg').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state[stateKey] = btn.dataset.val;
+        render();
+      });
+    }
+    bindSegmented('wm-format', 'format');
+    bindSegmented('wm-pattern', 'pattern');
+    bindSegmented('wm-density', 'density');
+    bindSegmented('wm-size', 'size');
+
+    document.getElementById('wm-shuffle').addEventListener('click', () => {
+      state.seed = Math.floor(Math.random() * 1e9);
+      render();
+    });
+
+    // === Download + thank-you modal ===
+    const modal = document.getElementById('wm-modal');
+    const modalCta = document.getElementById('wm-modal-copy');
+    const originalCtaHtml = modalCta.innerHTML;
+
+    function showModal() {
+      // Reset CTA state in case it was previously copied
+      modalCta.classList.remove('wm-modal-cta--copied');
+      modalCta.innerHTML = originalCtaHtml;
+      modal.hidden = false;
+    }
+    function closeModal() {
+      modal.hidden = true;
+    }
+
+    document.getElementById('wm-modal-close').addEventListener('click', closeModal);
+    document.getElementById('wm-modal-backdrop').addEventListener('click', closeModal);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal.hidden) closeModal();
+    });
+
+    modalCta.addEventListener('click', async () => {
+      const cleanUrl = window.location.origin + window.location.pathname;
+      let copied = false;
+      try {
+        await navigator.clipboard.writeText(cleanUrl);
+        copied = true;
+      } catch (e) { /* fall through */ }
+      if (!copied) {
+        const input = document.createElement('input');
+        input.value = cleanUrl;
+        input.style.cssText = 'position:fixed;opacity:0;left:-9999px;';
+        document.body.appendChild(input);
+        input.select();
+        try { document.execCommand('copy'); copied = true; } catch (_) {}
+        input.remove();
+      }
+      if (copied) {
+        modalCta.classList.add('wm-modal-cta--copied');
+        // Localized "copied" text
+        const lang = document.documentElement.lang;
+        const copiedTxt = lang === 'en' ? 'Thank you! Link copied' : 'Дякуємо! Посилання скопійовано';
+        modalCta.innerHTML =
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+          '<span>' + copiedTxt + '</span>';
+        setTimeout(closeModal, 1500);
+      }
+    });
+
+    document.getElementById('wm-download').addEventListener('click', () => {
+      const fmt = FORMATS[state.format];
+      const off = document.createElement('canvas');
+      off.width = fmt.w;
+      off.height = fmt.h;
+      const offCtx = off.getContext('2d');
+      composeScene(offCtx, fmt.w, fmt.h, true);
+      off.toBlob((blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `petrykivka.org-${state.format}-${Date.now()}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        // Show thank-you modal right after download is triggered
+        showModal();
+      }, 'image/png');
+    });
+
+    function applyStateToUI() {
+      [['wm-format','format'],['wm-pattern','pattern'],['wm-density','density'],['wm-size','size']].forEach(([id, key]) => {
+        document.querySelectorAll(`#${id} .wm-seg`).forEach(b => {
+          b.classList.toggle('active', b.dataset.val === state[key]);
+        });
+      });
+      document.querySelectorAll('.wm-bg-swatch').forEach(b => {
+        b.classList.toggle('active', b.dataset.id === state.bgId);
+      });
+      document.querySelectorAll('.wm-tint-swatch').forEach(b => {
+        b.classList.toggle('active', b.dataset.id === state.tint);
+      });
+    }
+
+    // Clean any stale query string (we no longer encode state in URL)
+    if (window.location.search) {
+      history.replaceState(null, '', window.location.pathname);
+    }
+
+    loadState();
+    buildFlowerPicker();
+    applyStateToUI();
+    updateDeviceFrame();
+    render();
+
+    loadAllImages().then(() => {
+      imagesReady = true;
+      if (loadingHint) loadingHint.style.display = 'none';
+      refreshPickerThumbs();
+      render();
+    });
+  })();
+</script>

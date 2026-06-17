@@ -3,6 +3,7 @@ locale: uk
 name: 'Лідія Булавін'
 category: 'Третє покоління'
 center: 'Петриківка'
+photo: '../../../assets/masters/lidiia-bulavin.jpg'
 ---
 ## Біографія
  

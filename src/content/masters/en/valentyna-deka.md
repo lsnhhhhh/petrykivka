@@ -6,6 +6,7 @@
 'period': ''
 'center': 'Petrykivka'
 'locale': 'en'
+photo: '../../../assets/masters/valentyna-deka.jpg'
 ---
 ## Biography
  

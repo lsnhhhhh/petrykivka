@@ -1,8 +1,9 @@
 ---
 locale: uk
 name: 'Олена Скицюк'
-category: 'Друге покоління'
+category: 'Третє покоління'
 center: 'Петриківка'
+photo: '../../../assets/masters/olena-skytsyuk.jpg'
 ---
 
 ## Біографія

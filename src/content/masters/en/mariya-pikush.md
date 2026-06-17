@@ -5,6 +5,7 @@
 'center': 'Petrykivka'
 'tags':
 - 'floral ornament'
+photo: '../../../assets/masters/mariya-pikush.jpg'
 ---
 ## Biography
  

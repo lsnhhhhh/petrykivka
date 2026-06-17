@@ -11,6 +11,7 @@ tags:
   - 'мальовка'
   - 'панно'
   - 'весілля'
+photo: '../../../assets/masters/vasyl-vovk.jpg'
 ---
 ## Біографія
 

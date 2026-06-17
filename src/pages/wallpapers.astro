@@ -1,0 +1,26 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import WallpaperMaker from '../components/WallpaperMaker.astro';
+---
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8">
+    <BaseHead
+      title="Створи свої петриківські шпалери"
+      description="Створи унікальні шпалери з петриківським розписом для свого телефону, планшета чи комп'ютера."
+    />
+  </head>
+  <body>
+    <Header />
+    <main class="wm-main">
+      <WallpaperMaker locale="uk" />
+    </main>
+    <Footer />
+    <style>
+      .wm-main { width: 100%; max-width: none; margin: 0; padding: 0; }
+    </style>
+  </body>
+</html>

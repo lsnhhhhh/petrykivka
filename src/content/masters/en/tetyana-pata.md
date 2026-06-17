@@ -23,7 +23,7 @@ tags:
   - 'school founder'
   - 'ornament'
   - 'panel'
-photo: '../../../assets/masters/tetyana-pata/photo.jpg'
+photo: '../../../assets/masters/tetyana-pata.jpg'
 galleryGroups:
   - title: 'Works by Tetiana Pata'
     items:

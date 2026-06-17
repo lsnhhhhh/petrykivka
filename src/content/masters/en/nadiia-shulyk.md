@@ -14,6 +14,7 @@
 - 'embroidery'
 - 'alfresco painting'
 - 'shop Skazka'
+photo: '../../../assets/masters/nadiia-shulyk.jpg'
 ---
 ## Biography
 

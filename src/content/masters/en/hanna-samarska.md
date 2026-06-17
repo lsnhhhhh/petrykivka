@@ -3,6 +3,7 @@
 'name': 'Hanna Samarska'
 'category': 'Третє покоління'
 'center': 'Petrykivka'
+photo: '../../../assets/masters/hanna-samarska.jpg'
 ---
 ## Biography
  

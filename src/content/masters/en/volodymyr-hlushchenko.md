@@ -14,6 +14,7 @@
 - 'tree'
 - 'paper'
 - 'chief artist'
+photo: '../../../assets/masters/volodymyr-hlushchenko.jpg'
 ---
 ## Biography
 

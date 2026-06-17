@@ -10,6 +10,7 @@ tags:
   - 'орнамент'
   - 'мальовка'
   - 'букет'
+photo: '../../../assets/masters/nadiia-tymoshenko.jpg'
 ---
 ## Біографія
 

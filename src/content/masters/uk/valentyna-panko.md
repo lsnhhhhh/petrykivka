@@ -3,6 +3,7 @@ locale: uk
 name: 'Валентина Панко'
 category: 'Четверте покоління'
 center: 'Петриківка'
+photo: '../../../assets/masters/valentyna-panko.jpg'
 ---
 ## Біографія
  

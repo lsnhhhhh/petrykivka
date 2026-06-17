@@ -3,6 +3,7 @@
 'name': 'Nataliia Statyva Zharko'
 'category': 'Четверте покоління'
 'center': 'Petrykivka'
+photo: '../../../assets/masters/nataliia-statyva-zharko.jpg'
 ---
 ## Biography
  

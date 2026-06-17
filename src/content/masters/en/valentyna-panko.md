@@ -3,6 +3,7 @@
 'name': 'Valentyna Panko'
 'category': 'Четверте покоління'
 'center': 'Petrykivka'
+photo: '../../../assets/masters/valentyna-panko.jpg'
 ---
 ## Biography
  

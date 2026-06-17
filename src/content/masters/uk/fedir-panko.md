@@ -22,6 +22,7 @@ tags:
   - 'новатор'
   - 'портрет'
   - 'козацтво'
+photo: '../../../assets/masters/fedir-panko.jpg'
 ---
 ## Біографія
 

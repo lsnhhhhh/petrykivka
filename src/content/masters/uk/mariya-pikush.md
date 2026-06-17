@@ -4,6 +4,7 @@ name: 'Марія Пікуш'
 category: 'Третє покоління'
 center: 'Петриківка'
 tags: ['рослинний орнамент']
+photo: '../../../assets/masters/mariya-pikush.jpg'
 ---
 
 ## Біографія

@@ -14,6 +14,7 @@ tags:
   - 'колорит'
   - 'фабрика Дружба'
   - 'панно'
+photo: '../../../assets/masters/yavdokha-kliupa.jpg'
 ---
 ## Біографія
 

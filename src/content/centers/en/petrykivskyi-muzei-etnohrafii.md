@@ -1,10 +1,10 @@
 ---
 locale: en
-name: 'Петриківський музей етнографії'
-category: 'Музеї'
-location: 'смт Петриківка, Дніпропетровська область'
+name: 'Petrykivka Ethnographic Museum'
+category: 'Museums'
+location: 'Petrykivka village, Dnipropetrovsk Region, Ukraine'
 masters:
-  - 'Ганна Самарська'
-  - 'Володимир Глущенко'
+  - 'Hanna Samarska'
+  - 'Volodymyr Hlushchenko'
 ---
-Містить велику колекцію петриківського розпису, перш за все вироби Фабрики петриківського розпису, а також різноманітні роботи подаровані в музей майстрами. Одна велика експозиційна зала музею повністю присвячена петриківському розпису, зокрема містить особливо велику кількість робіт Ганни Самарської та Володимира Глущенка.
+Houses a large collection of Petrykivka painting, primarily items from the Petrykivka Painting Factory, as well as various works donated to the museum by the masters themselves. One large hall of the museum is fully dedicated to Petrykivka painting and notably includes a particularly large number of works by Hanna Samarska and Volodymyr Hlushchenko.

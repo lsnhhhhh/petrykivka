@@ -3,6 +3,7 @@
 'name': 'Lidiia Bulavin'
 'category': 'Третє покоління'
 'center': 'Petrykivka'
+photo: '../../../assets/masters/lidiia-bulavin.jpg'
 ---
 ## Biography
  

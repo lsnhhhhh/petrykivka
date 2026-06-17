@@ -3,6 +3,7 @@ locale: uk
 name: 'Марія Яненко'
 category: 'Четверте покоління'
 center: 'Петриківка'
+photo: '../../../assets/masters/mariia-ianenko.jpg'
 ---
 ## Біографія
  

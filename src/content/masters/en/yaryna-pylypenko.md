@@ -11,6 +11,7 @@
 - 'painting'
 - 'wall painting'
 - 'panel'
+photo: '../../../assets/masters/yaryna-pylypenko.jpg'
 ---
 ## Biography
 

@@ -15,6 +15,7 @@
 - 'genre painting'
 - 'wedding train'
 - 'panel'
+photo: '../../../assets/masters/nadiya-bilokin.jpg'
 ---
 ## Biography
 

@@ -17,6 +17,7 @@
 - 'druzhba factory'
 - 'ornament'
 - 'dynasty'
+photo: '../../../assets/masters/zoia-kudish.jpg'
 ---
 ## Biography
 

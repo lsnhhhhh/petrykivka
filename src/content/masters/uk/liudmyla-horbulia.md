@@ -3,6 +3,7 @@ locale: uk
 name: 'Людмила Горбуля'
 category: 'Третє покоління'
 center: 'Петриківка'
+photo: '../../../assets/masters/liudmyla-horbulia.jpg'
 ---
 ## Біографія
  

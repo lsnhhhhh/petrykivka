@@ -23,6 +23,7 @@
 - 'poster'
 - 'museum'
 - 'innovator'
+photo: '../../../assets/masters/vasyl-sokolenko.jpg'
 ---
 ## Biography
 

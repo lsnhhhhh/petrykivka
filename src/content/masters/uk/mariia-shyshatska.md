@@ -17,6 +17,7 @@ tags:
   - 'вишивка'
   - 'панно'
   - 'птахи'
+photo: '../../../assets/masters/mariia-shyshatska.jpg'
 ---
 ## Біографія
 

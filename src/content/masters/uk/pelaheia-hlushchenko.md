@@ -15,6 +15,7 @@ tags:
   - 'текстиль'
   - 'книжкова графіка'
   - 'підлаковий розпис'
+photo: '../../../assets/masters/pelaheia-hlushchenko.jpg'
 ---
 ## Біографія
 

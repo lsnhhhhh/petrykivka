@@ -14,6 +14,7 @@
 - 'schedule'
 - 'ornament'
 - 'dynasty'
+photo: '../../../assets/masters/tamara-kudish.jpg'
 ---
 ## Biography
 

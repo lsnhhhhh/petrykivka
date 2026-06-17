@@ -88,10 +88,14 @@ const centers = defineCollection({
   schema: ({ image }) => z.object({
     name: z.string(),
     category: z.enum([
-      'Школи',
-      'Музеї',
-      'Приватні колекції',
-      'Організації та установи',
+     'Школи',
+     'Музеї',
+     'Приватні колекції',
+     'Організації та установи',
+     'Schools',
+     'Museums',
+     'Private Collections',
+     'Organizations & Institutions',
     ]),
     location: z.string().optional(),
     founded: z.string().optional(),

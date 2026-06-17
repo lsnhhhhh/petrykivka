@@ -15,6 +15,7 @@ tags:
   - орнамент
   - птахи
   - панно
+photo: '../../../assets/masters/halyna-prudnikova.jpg'
 locale: uk
 ---
 

@@ -11,6 +11,7 @@
 - 'druzhba factory'
 - 'educator'
 - 'ornament'
+photo: '../../../assets/masters/ivan-zavhorodnii.jpg'
 ---
 ## Biography
 

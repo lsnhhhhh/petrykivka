@@ -23,6 +23,7 @@ tags:
   - 'плакат'
   - 'музей'
   - 'новатор'
+photo: '../../../assets/masters/vasyl-sokolenko.jpg'
 ---
 ## Біографія
 

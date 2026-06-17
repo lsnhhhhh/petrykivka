@@ -3,6 +3,7 @@ locale: uk
 name: 'Уляна Скляр'
 category: 'Четверте покоління'
 center: 'Петриківка'
+photo: '../../../assets/masters/uliana-skliar.jpg'
 ---
 ## Біографія
  

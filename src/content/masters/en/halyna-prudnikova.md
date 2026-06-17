@@ -15,6 +15,7 @@
 - 'ornament'
 - 'birds'
 - 'panel'
+photo: '../../../assets/masters/halyna-prudnikova.jpg'
 'locale': 'en'
 ---
 ## Biography

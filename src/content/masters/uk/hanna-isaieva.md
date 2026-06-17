@@ -14,6 +14,7 @@ tags:
   - 'панно'
   - 'симетрія'
   - 'орнамент'
+photo: '../../../assets/masters/hanna-isaieva.jpg'
 ---
 ## Біографія
 

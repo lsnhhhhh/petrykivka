@@ -14,6 +14,7 @@ tags:
   - 'графік'
   - 'орнамент'
   - 'династія'
+photo: '../../../assets/masters/tamara-kudish.jpg'
 ---
 ## Біографія
 

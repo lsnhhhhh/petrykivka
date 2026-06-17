@@ -11,6 +11,7 @@ tags:
   - 'фабрика Дружба'
   - 'педагог'
   - 'орнамент'
+photo: '../../../assets/masters/ivan-zavhorodnii.jpg'
 ---
 ## Біографія
 

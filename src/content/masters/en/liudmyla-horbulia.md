@@ -3,6 +3,7 @@
 'name': 'Liudmyla Horbulia'
 'category': 'Третє покоління'
 'center': 'Petrykivka'
+photo: '../../../assets/masters/liudmyla-horbulia.jpg'
 ---
 ## Biography
  

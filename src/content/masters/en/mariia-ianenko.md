@@ -3,6 +3,7 @@
 'name': 'Mariia Ianenko'
 'category': 'Четверте покоління'
 'center': 'Petrykivka'
+photo: '../../../assets/masters/mariia-ianenko.jpg'
 ---
 ## Biography
  

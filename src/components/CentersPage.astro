@@ -16,24 +16,16 @@ const { locale } = Astro.props;
 const allCenters = await getCollection('centers');
 const centers = filterByLocale(allCenters, locale);
 
-const categories = [
-  'Школи',
-  'Музеї',
-  'Приватні колекції',
-  'Організації та установи',
+const categoryMappings = [
+  { uk: 'Школи',                    en: 'Schools' },
+  { uk: 'Музеї',                    en: 'Museums' },
+  { uk: 'Приватні колекції',        en: 'Private Collections' },
+  { uk: 'Організації та установи',  en: 'Organizations & Institutions' },
 ];
 
-const categoryNamesEn: Record<string, string> = {
-  'Школи': 'Schools',
-  'Музеї': 'Museums',
-  'Приватні колекції': 'Private Collections',
-  'Організації та установи': 'Organizations & Institutions',
-};
-
-const centersByCategory = categories.map(category => ({
-  category,
-  displayName: locale === 'en' ? (categoryNamesEn[category] || category) : category,
-  centers: centers.filter(c => c.data.category === category),
+const centersByCategory = categoryMappings.map(({ uk, en }) => ({
+  displayName: locale === 'en' ? en : uk,
+  centers: centers.filter(c => c.data.category === uk || c.data.category === en),
 })).filter(group => group.centers.length > 0);
 ---
 <!doctype html>

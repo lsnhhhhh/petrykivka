@@ -17,6 +17,7 @@ tags:
   - 'вітраж'
   - 'книжкова графіка'
   - 'династія'
+photo: '../../../assets/masters/hanna-pavlenko-chernychenko.jpg'
 ---
 ## Біографія
 

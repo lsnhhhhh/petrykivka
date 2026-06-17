@@ -5,6 +5,7 @@ born: ''
 died: ''
 period: ''
 center: Петриківка
+photo: '../../../assets/masters/valentyna-deka.jpg'
 locale: uk
 ---
 

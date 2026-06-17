@@ -18,6 +18,7 @@ tags:
   - 'КЕКХЗ'
   - 'підлаковий розпис'
   - 'династія'
+photo: '../../../assets/masters/vira-pavlenko.jpg'
 ---
 ## Біографія
 

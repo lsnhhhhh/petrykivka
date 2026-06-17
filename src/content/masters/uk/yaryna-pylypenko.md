@@ -11,6 +11,7 @@ tags:
   - 'мальовка'
   - 'настінний розпис'
   - 'панно'
+photo: '../../../assets/masters/yaryna-pylypenko.jpg'
 ---
 ## Біографія
 

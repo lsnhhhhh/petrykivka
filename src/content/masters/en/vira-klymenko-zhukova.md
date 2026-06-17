@@ -14,6 +14,7 @@
 - 'KEKHZ'
 - 'varnish painting'
 - 'shop manager'
+photo: '../../../assets/masters/vira-klymenko-zhukova.jpg'
 ---
 ## Biography
 

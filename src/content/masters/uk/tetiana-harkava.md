@@ -3,6 +3,7 @@ locale: uk
 name: 'Тетяна Гарькава'
 category: 'Четверте покоління'
 center: 'Петриківка'
+photo: '../../../assets/masters/tetiana-harkava.jpg'
 ---
 ## Біографія
  

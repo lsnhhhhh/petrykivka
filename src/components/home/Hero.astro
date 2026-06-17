@@ -51,6 +51,18 @@ const icons: Record<string, string> = {
   books: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
   materials: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>`,
 };
+
+// Wallpaper CTA strings
+const wallpaperCta = {
+  badge: { uk: 'Новинка', en: 'New' },
+  title: { uk: 'Створи свої шпалери', en: 'Create your own wallpaper' },
+  desc: {
+    uk: 'З квітів петриківського розпису — для телефону, планшета чи комп\'ютера',
+    en: 'From Petrykivka painting flowers — for your phone, tablet, or computer',
+  },
+  action: { uk: 'Створити шпалери', en: 'Start creating' },
+};
+const wallpaperHref = locale === 'uk' ? '/wallpapers' : '/en/wallpapers';
 ---
 
 <section class="hero">
@@ -91,6 +103,27 @@ const icons: Record<string, string> = {
         </a>
       ))}
     </div>
+
+    <a href={wallpaperHref} class="hero__cta">
+      <div class="hero__cta-flowers" aria-hidden="true">
+        <img src="/wallpaper-flowers/16-big-flower-green.png" class="hero__cta-flower hero__cta-flower--1" alt="" loading="lazy" />
+        <img src="/wallpaper-flowers/18-big-flower-blue.png" class="hero__cta-flower hero__cta-flower--2" alt="" loading="lazy" />
+        <img src="/wallpaper-flowers/8-medium-flower-orange.png" class="hero__cta-flower hero__cta-flower--3" alt="" loading="lazy" />
+        <img src="/wallpaper-flowers/27-medium-leaf-green.png" class="hero__cta-flower hero__cta-flower--4" alt="" loading="lazy" />
+      </div>
+      <div class="hero__cta-body">
+        <span class="hero__cta-badge">{wallpaperCta.badge[locale]}</span>
+        <h3 class="hero__cta-title">{wallpaperCta.title[locale]}</h3>
+        <p class="hero__cta-desc">{wallpaperCta.desc[locale]}</p>
+      </div>
+      <div class="hero__cta-action">
+        <span class="hero__cta-action-text">{wallpaperCta.action[locale]}</span>
+        <svg class="hero__cta-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </div>
+    </a>
   </nav>
 </section>
 
@@ -290,8 +323,157 @@ const icons: Record<string, string> = {
     transform: translateX(4px);
   }
 
+  /* ============================================================
+     Wallpaper CTA banner — under the nav grid
+     ============================================================ */
+  .hero__cta {
+    position: relative;
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    padding: 40px 44px;
+    background: linear-gradient(135deg, #c0392b 0%, #8a2418 100%);
+    border-radius: 14px;
+    text-decoration: none;
+    color: #fff;
+    overflow: hidden;
+    box-shadow: 0 12px 36px rgba(192, 57, 43, 0.22);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    min-height: 180px;
+  }
+  .hero__cta:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 48px rgba(192, 57, 43, 0.32);
+  }
+
+  .hero__cta-flowers {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .hero__cta-flower {
+    position: absolute;
+    filter: brightness(1.5) saturate(0.35);
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    user-select: none;
+  }
+  .hero__cta-flower--1 {
+    width: 180px;
+    top: -40px;
+    right: 240px;
+    opacity: 0.28;
+    transform: rotate(20deg);
+  }
+  .hero__cta-flower--2 {
+    width: 120px;
+    bottom: -35px;
+    right: 440px;
+    opacity: 0.22;
+    transform: rotate(-15deg);
+  }
+  .hero__cta-flower--3 {
+    width: 80px;
+    top: 25%;
+    right: 32%;
+    opacity: 0.25;
+    transform: rotate(40deg);
+  }
+  .hero__cta-flower--4 {
+    width: 100px;
+    bottom: 15%;
+    right: 18%;
+    opacity: 0.20;
+    transform: rotate(-25deg);
+  }
+  .hero__cta:hover .hero__cta-flower {
+    opacity: 0.32;
+    transform: rotate(0deg) scale(1.05);
+  }
+
+  .hero__cta-body {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    max-width: 58%;
+  }
+  .hero__cta-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.20);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .hero__cta-title {
+    font-size: clamp(1.5rem, 2.4vw, 1.875rem);
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: #fff;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .hero__cta-desc {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    line-height: 1.5;
+    max-width: 50ch;
+  }
+
+  .hero__cta-action {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    background: rgba(255, 255, 255, 0.20);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+    color: #fff;
+    transition: background 0.2s ease, transform 0.2s ease;
+    white-space: nowrap;
+  }
+  .hero__cta:hover .hero__cta-action {
+    background: rgba(255, 255, 255, 0.30);
+  }
+  .hero__cta-arrow {
+    transition: transform 0.2s ease;
+  }
+  .hero__cta:hover .hero__cta-arrow {
+    transform: translateX(4px);
+  }
+
   @media (max-width: 900px) {
     .hero__nav-grid { grid-template-columns: repeat(2, 1fr); }
+    .hero__cta {
+      padding: 32px 28px;
+      gap: 20px;
+      flex-direction: column;
+      align-items: flex-start;
+      min-height: 0;
+    }
+    .hero__cta-body { max-width: 100%; }
+    .hero__cta-action {
+      align-self: stretch;
+      justify-content: center;
+    }
+    .hero__cta-flower--3 { display: none; }
+    .hero__cta-flower--4 { right: 6%; opacity: 0.16; }
+    .hero__cta-flower--1 { right: 80px; }
+    .hero__cta-flower--2 { right: 240px; }
   }
   @media (max-width: 640px) {
     .hero__image-wrap { height: 60vh; min-height: 380px; }
@@ -299,11 +481,22 @@ const icons: Record<string, string> = {
     .hero__nav { padding: 32px 20px 56px; }
     .hero__nav-grid { grid-template-columns: 1fr; gap: 12px; }
     .hero__card { padding: 24px 20px; }
+    .hero__cta {
+      padding: 28px 22px;
+      margin-top: 12px;
+    }
+    .hero__cta-flower--4 { display: none; }
+    .hero__cta-flower--1 { width: 120px; right: 30px; top: -25px; }
+    .hero__cta-flower--2 { width: 70px; right: 50%; bottom: -20px; }
   }
 
   /* Поважаємо налаштування «зменшити рух» */
   @media (prefers-reduced-motion: reduce) {
-    .hero__slide {
+    .hero__slide,
+    .hero__cta,
+    .hero__cta-flower,
+    .hero__cta-action,
+    .hero__cta-arrow {
       transition: none !important;
     }
   }
