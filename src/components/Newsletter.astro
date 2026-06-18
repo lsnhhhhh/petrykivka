@@ -227,18 +227,23 @@ const s = strings[locale];
   }
 
   @media (max-width: 768px) {
-    .newsletter__inner {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 1rem;
-    }
-    .newsletter__row {
-      flex-direction: column;
-    }
-    .newsletter__btn {
-      width: 100%;
-    }
+  .newsletter__inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
   }
+  .newsletter__text,
+  .newsletter__form {
+    flex: 0 0 auto;  /* ← головне: не брати 280/340px як висоту */
+    width: 100%;
+  }
+  .newsletter__row {
+    flex-direction: column;
+  }
+  .newsletter__btn {
+    width: 100%;
+  }
+}
 
   @media (prefers-reduced-motion: reduce) {
     .newsletter__input,
