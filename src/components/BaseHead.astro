@@ -4,6 +4,7 @@ import type { ImageMetadata } from 'astro';
 import FallbackImage from '../assets/blog-placeholder-1.jpg';
 import { SITE_TITLE } from '../consts';
 import { getLocaleFromUrl } from '../i18n/translations';
+import GoogleAnalytics from './GoogleAnalytics.astro';
 
 interface Props {
   title: string;
@@ -69,3 +70,6 @@ const fullTitle = title === siteTitle ? title : `${title} | ${siteTitle}`;
 <meta property="twitter:title" content={fullTitle} />
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={new URL(image.src, Astro.url)} />
+
+<!-- Google Analytics -->
+<GoogleAnalytics />
