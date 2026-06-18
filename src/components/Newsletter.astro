@@ -1,0 +1,247 @@
+---
+// src/components/Newsletter.astro
+const path = Astro.url.pathname;
+const locale = path === '/en' || path.startsWith('/en/') ? 'en' : 'uk';
+
+const strings = {
+  uk: {
+    heading: 'Підписатися на новини',
+    sub: 'Оновлення проєкту. Без спаму.',
+    placeholder: 'Ваш email',
+    button: 'Підписатися',
+    sending: 'Надсилаємо…',
+    success: 'Дякуємо! Ви підписані 🌸',
+    invalid: 'Введіть коректний email',
+    error: 'Щось пішло не так. Спробуйте ще раз',
+  },
+  en: {
+    heading: 'Subscribe to updates',
+    sub: 'News, materials, masters and project updates. No spam.',
+    placeholder: 'Your email',
+    button: 'Subscribe',
+    sending: 'Sending…',
+    success: 'Thank you! You are subscribed 🌸',
+    invalid: 'Please enter a valid email',
+    error: 'Something went wrong. Please try again',
+  },
+};
+const s = strings[locale];
+---
+
+<section class="newsletter">
+  <div class="newsletter__inner">
+    <div class="newsletter__text">
+      <h3 class="newsletter__heading">{s.heading}</h3>
+      <p class="newsletter__sub">{s.sub}</p>
+    </div>
+
+    <form
+      name="newsletter"
+      method="POST"
+      data-netlify="true"
+      netlify-honeypot="bot-field"
+      class="newsletter__form"
+      id="newsletter-form"
+    >
+      <input type="hidden" name="form-name" value="newsletter" />
+      <input type="hidden" name="locale" value={locale} />
+      <p class="newsletter__hp">
+        <label>Не заповнюйте це поле: <input name="bot-field" /></label>
+      </p>
+
+      <div class="newsletter__row">
+        <input
+          type="email"
+          name="email"
+          required
+          placeholder={s.placeholder}
+          aria-label={s.placeholder}
+          class="newsletter__input"
+          id="newsletter-email"
+        />
+        <button type="submit" class="newsletter__btn" id="newsletter-btn">{s.button}</button>
+      </div>
+      <p class="newsletter__status" id="newsletter-status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+
+  <script
+    define:vars={{
+      sending: s.sending,
+      success: s.success,
+      invalid: s.invalid,
+      error: s.error,
+      btnLabel: s.button,
+    }}
+  >
+    (function () {
+      const form = document.getElementById('newsletter-form');
+      const input = document.getElementById('newsletter-email');
+      const btn = document.getElementById('newsletter-btn');
+      const status = document.getElementById('newsletter-status');
+      if (!form) return;
+
+      const setStatus = (msg, type) => {
+        status.textContent = msg;
+        status.className = 'newsletter__status' + (type ? ' is-' + type : '');
+      };
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const email = (input.value || '').trim();
+        // проста, але робоча валідація
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          setStatus(invalid, 'error');
+          input.focus();
+          return;
+        }
+
+        btn.disabled = true;
+        const original = btn.textContent;
+        btn.textContent = sending;
+        setStatus('', '');
+
+        try {
+          const body = new URLSearchParams(new FormData(form)).toString();
+          const res = await fetch('/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body,
+          });
+          if (res.ok) {
+            form.reset();
+            setStatus(success, 'success');
+          } else {
+            setStatus(error, 'error');
+          }
+        } catch (err) {
+          setStatus(error, 'error');
+        } finally {
+          btn.disabled = false;
+          btn.textContent = original || btnLabel;
+        }
+      });
+    })();
+  </script>
+</section>
+
+<style>
+  .newsletter {
+  border-bottom: 1px solid rgba(var(--gray-light), 0.9);
+  padding: 2.2rem 0;
+  margin-bottom: 2.5rem;
+}
+  .newsletter__inner {
+   max-width: 960px;
+   margin: 0 auto;
+   padding: 0 1.5rem;
+   display: flex;
+   flex-wrap: wrap;
+   align-items: center;
+   justify-content: space-between;
+   gap: 1.5rem;
+  }
+  .newsletter__text {
+   flex: 1 1 280px;
+   min-width: 0;
+   text-align: left;
+  }
+  .newsletter__heading {
+    margin: 0 0 0.35rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: rgb(var(--black));
+  }
+  .newsletter__sub {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: rgba(var(--black), 0.65);
+  }
+  .newsletter__form {
+    flex: 1 1 340px;
+  }
+  /* honeypot — ховаємо від людей */
+  .newsletter__hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .newsletter__row {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .newsletter__input {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid rgba(var(--gray-light), 1);
+    border-radius: 8px;
+    background: #fff;
+    font: inherit;
+    font-size: 0.95rem;
+    color: rgb(var(--black));
+    transition: border-color 0.15s ease;
+  }
+  .newsletter__input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .newsletter__btn {
+    flex: 0 0 auto;
+    padding: 0.7rem 1.3rem;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.15s ease, opacity 0.15s ease;
+  }
+  .newsletter__btn:hover {
+    background: #a5301f;
+  }
+  .newsletter__btn:active {
+    transform: translateY(1px);
+  }
+  .newsletter__btn:disabled {
+    opacity: 0.7;
+    cursor: default;
+  }
+  .newsletter__status {
+    margin: 0.6rem 0 0;
+    min-height: 1.2em;
+    font-size: 0.85rem;
+  }
+  .newsletter__status.is-success {
+    color: #2e7d32;
+  }
+  .newsletter__status.is-error {
+    color: var(--accent);
+  }
+
+  @media (max-width: 560px) {
+    .newsletter__inner {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .newsletter__row {
+      flex-direction: column;
+    }
+    .newsletter__btn {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .newsletter__input,
+    .newsletter__btn {
+      transition: none;
+    }
+  }
+</style>

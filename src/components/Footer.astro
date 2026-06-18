@@ -1,10 +1,12 @@
 ---
 import { getLocaleFromUrl, t, getLocalizedPath } from '../i18n/translations';
+import Newsletter from './Newsletter.astro';
 
 const locale = getLocaleFromUrl(Astro.url);
 const today = new Date();
 ---
 <footer>
+  <Newsletter />
   <div class="footer-inner">
     <nav class="footer-links">
       <a href={getLocalizedPath('/blog', locale)}>{t(locale, 'nav.blog')}</a>
