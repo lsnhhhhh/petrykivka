@@ -1,5 +1,6 @@
 ---
 import HomepageSection from './HomepageSection.astro';
+import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import { sectionTitles, keyFigures } from '../../data/homepage';
 
@@ -11,6 +12,17 @@ const { locale } = Astro.props;
 
 const allMasters = await getCollection('masters');
 const masters = allMasters.filter((m) => m.data.locale === locale);
+
+// Фото майстрів з src/assets/masters/ — мапимо по імені файлу (= slug)
+const masterImageModules = import.meta.glob<{ default: ImageMetadata }>(
+  '../../assets/masters/*.{jpg,jpeg,png,webp}',
+  { eager: true }
+);
+const masterImages: Record<string, ImageMetadata> = {};
+for (const path in masterImageModules) {
+  const filename = path.split('/').pop()!.replace(/\.(jpg|jpeg|png|webp)$/i, '');
+  masterImages[filename] = masterImageModules[path].default;
+}
 
 function getSlugOnly(id: string) {
   return id.includes('/') ? id.split('/').pop()! : id;
@@ -52,6 +64,7 @@ const figures = keyFigures
       name: master.data.name,
       period: getMasterPeriod(master),
       initials: getInitials(master.data.name),
+      photo: masterImages[fig.slug] ?? null,
     };
   })
   .filter((x): x is NonNullable<typeof x> => x !== null);
@@ -69,7 +82,17 @@ const viewAllHref = locale === 'uk' ? '/masters' : '/en/masters';
     {figures.map((figure) => (
       <a href={masterUrl(figure.slug)} class="figure">
         <div class="figure__photo">
-          <span class="figure__initials">{figure.initials}</span>
+          {figure.photo ? (
+            <Image
+              src={figure.photo}
+              alt={figure.name}
+              width={600}
+              height={450}
+              class="figure__img"
+            />
+          ) : (
+            <span class="figure__initials">{figure.initials}</span>
+          )}
         </div>
         <div class="figure__info">
           <h3 class="figure__name">{figure.name}</h3>
@@ -111,6 +134,15 @@ const viewAllHref = locale === 'uk' ? '/masters' : '/en/masters';
   .figure:hover .figure__photo {
     box-shadow: 0 14px 32px rgba(40, 42, 43, 0.12);
   }
+  .figure__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
+  }
   .figure__photo::after {
     content: '';
     position: absolute;
@@ -129,6 +161,7 @@ const viewAllHref = locale === 'uk' ? '/masters' : '/en/masters';
     background: #c0392b;
     transform: translateX(-50%) scaleX(0);
     transition: transform 0.3s ease;
+    z-index: 1;
   }
   .figure:hover .figure__photo::before {
     transform: translateX(-50%) scaleX(1);

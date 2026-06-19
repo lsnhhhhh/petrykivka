@@ -122,43 +122,43 @@ export const keyFigures: KeyFigure[] = [
   {
     slug: 'tetyana-pata',
     role: {
-      uk: 'Авторка класичних композицій 1930-х',
-      en: 'Author of the classical 1930s compositions',
+      uk: 'Корифей та одна із засновниць класичного петриківського розпису',
+      en: 'Corypheus and one of the founders of classical Petrykivka painting',
     },
   },
   {
     slug: 'nadiya-bilokin',
     role: {
-      uk: 'Майстриня першого покоління',
-      en: 'Master of the first generation',
+      uk: 'Класик петриківського розпису та одна з перших самобутніх майстринь',
+      en: 'A classic of Petrykivka painting and one of the first original masters',
     },
   },
   {
     slug: 'vasyl-sokolenko',
     role: {
-      uk: 'Учень школи Пати, друге покоління',
-      en: 'Pata\'s student, second generation',
+      uk: 'Один із найважливіших майстрів-новаторів та патріархів петриківського розпису',
+      en: 'One of the most important master innovators and patriarchs of Petrykivka painting',
     },
   },
   {
     slug: 'fedir-panko',
     role: {
-      uk: 'Відродив традицію у 1970-х',
-      en: 'Revived the tradition in the 1970s',
+      uk: 'Провідний класик, реформатор та педагогів петриківського розпису',
+      en: 'Leading classicist, reformer and teacher of Petrykivka painting',
     },
   },
   {
     slug: 'andriy-pikush',
     role: {
-      uk: 'Сучасний продовжувач традиції',
-      en: 'Contemporary continuator of the tradition',
+      uk: 'Провідний сучасний майстер, реформатор та громадський діяч петриківського розпису',
+      en: 'Leading modern master, reformer and public figure of Petrykivka painting',
     },
   },
   {
     slug: 'halyna-nazarenko',
     role: {
-      uk: 'Майстриня третього покоління',
-      en: 'Master of the third generation',
+      uk: 'Найвідоміша, найактивніша та затребувана  сучасна майстриня петриківського розпису',
+      en: 'The most famous, most active and sought-after modern master of Petrykivka painting',
     },
   },
 ];

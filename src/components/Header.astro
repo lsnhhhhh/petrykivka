@@ -14,7 +14,12 @@ const switchPath = locale === 'uk'
 
 <header>
   <nav>
-    <h2><a href={locale === 'en' ? '/en' : '/'}>{title}</a></h2>
+    <h2 class="site-logo">
+      <a href={locale === 'en' ? '/en' : '/'}>
+        <img id="logo-flower" class="logo-flower" width="32" height="32" alt="" aria-hidden="true" decoding="async" />
+        <span class="site-logo__text">{title}</span>
+      </a>
+    </h2>
     <button class="burger" id="burger" aria-label="Меню">
       <span></span>
       <span></span>
@@ -55,6 +60,33 @@ const switchPath = locale === 'uk'
   </nav>
 </header>
 
+<script is:inline>
+  (function () {
+    const flowers = [
+      '1-big-flower-red.png',
+      '3-medium-flower-red.png',
+      '4-big-flower-red.png',
+      '6-medium-flower-red.png',
+      '7-big-flower-red.png',
+      '11-medium-flower-red.png',
+      '12-medium-flower-red.png',
+      '15-big-flower-orange.png',
+      '16-big-flower-green.png',
+      '18-big-flower-blue.png',
+      '19-small-flower-blue.png',
+      '25-medium-leaf-green.png',
+      '27-medium-leaf-green.png',
+      '8-medium-flower-orange.png',
+      '31-big-bird-red.png'
+    ];
+    const img = document.getElementById('logo-flower');
+    if (img) {
+      const pick = flowers[Math.floor(Math.random() * flowers.length)];
+      img.src = '/wallpaper-flowers/' + pick;
+    }
+  })();
+</script>
+
 <style is:global>
   header {
     margin: 0;
@@ -82,6 +114,29 @@ const switchPath = locale === 'uk'
     text-decoration: none;
     color: rgb(15, 18, 25);
   }
+
+  /* Логотип з квіткою */
+  header .site-logo a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+  header .logo-flower {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    flex-shrink: 0;
+    border-radius: 0;
+    transition: transform 0.7s ease;
+  }
+  header .site-logo a:hover .logo-flower {
+    transform: rotate(360deg);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    header .logo-flower { transition: none; }
+    header .site-logo a:hover .logo-flower { transform: none; }
+  }
+
   header nav {
     display: flex;
     align-items: center;

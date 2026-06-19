@@ -37,6 +37,13 @@
 	font-style: italic;
 	font-display: swap;
 }
+@font-face {
+	font-family: "Yeseva One";
+	src: url("/fonts/YesevaOne-Regular.woff2") format("woff2");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
 body {
 	font-family: "Fixel", sans-serif;
 	margin: 0;
@@ -62,6 +69,8 @@ h3,
 h4,
 h5,
 h6 {
+	font-family: "Yeseva One", serif;
+	font-weight: 400;
 	margin: 0 0 0.5rem 0;
 	color: rgb(var(--black));
 	line-height: 1.2;
