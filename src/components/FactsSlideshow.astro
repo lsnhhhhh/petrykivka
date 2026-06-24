@@ -13,7 +13,7 @@ const factsUk = [
   { num: "№8", title: "Чорне тло — спадщина совєцької уніфікації", text: "Петриківський розпис на чорному тлі з'явився в 1950-х роках — його впровадили на фабриці «Дружба» для масового виробництва сувенірної продукції. Традиційно розпис виконується на білому фоні." },
   { num: "№9", title: "Культурна спадщина ЮНЕСКО", text: "5 грудня 2013 року петриківський розпис став першим українським елементом, внесеним до Репрезентативного списку нематеріальної культурної спадщини людства ЮНЕСКО." },
   { num: "№10", title: "Живе мистецтво, а не музейний експонат", text: "Петриківський розпис живе й розвивається сьогодні: у Петриківці працюють Центр народного мистецтва та школа Тетяни Пати, по всій Україні діють студії й дитячі гуртки, у світі регулярно відбуваються виставки та майстер-класи." },
-  { num: "", title: "Завантажте презентацію та діліться нею", text: "Ми зібрали всі ці факти у зручну презентацію Google Slides. Завантажуйте, діліться з друзями, використовуйте на уроках та лекціях — петриківський розпис заслуговує бути відомим.", isBonus: true, ctaText: "Відкрити презентацію", ctaHref: "https://docs.google.com/presentation/d/YOUR_PRESENTATION_ID/edit" },
+  { num: "", title: "Завантажте презентацію та діліться нею", text: "Ми зібрали всі ці факти у зручну презентацію Google Slides. Завантажуйте, діліться з друзями, використовуйте на уроках та лекціях — петриківський розпис заслуговує бути відомим.", isBonus: true, ctaText: "Відкрити презентацію", ctaHref: "https://drive.google.com/drive/folders/1CMOCj140pN7aSdsMaPL_DlHbdXf0TiXl?usp=sharing" },
 ];
 
 const factsEn = [
@@ -27,118 +27,246 @@ const factsEn = [
   { num: "#8", title: "Black Background — a Legacy of Soviet Standardization", text: "Petrykivka painting on black backgrounds appeared in the 1950s — it was introduced at the Druzhba factory for the mass production of souvenirs. Traditionally, the painting is executed on a white background." },
   { num: "#9", title: "UNESCO Cultural Heritage", text: "On December 5, 2013, Petrykivka painting became the first Ukrainian element inscribed on UNESCO's Representative List of the Intangible Cultural Heritage of Humanity." },
   { num: "#10", title: "Living Art, Not a Museum Piece", text: "Petrykivka painting is alive and thriving today: the Center of Folk Art and the Tetiana Pata School operate in Petrykivka, studios and children's clubs are active across Ukraine, and exhibitions and masterclasses are held regularly around the world." },
-  { num: "", title: "Download the Presentation and Share It", text: "We've gathered all these facts into a handy Google Slides presentation. Download it, share with friends, use it in classrooms and lectures — Petrykivka painting deserves to be known.", isBonus: true, ctaText: "Open presentation", ctaHref: "https://docs.google.com/presentation/d/YOUR_PRESENTATION_ID/edit" },
+  { num: "", title: "Download the Presentation and Share It", text: "We've gathered all these facts into a handy Google Slides presentation. Download it, share with friends, use it in classrooms and lectures — Petrykivka painting deserves to be known.", isBonus: true, ctaText: "Open presentation", ctaHref: "https://drive.google.com/drive/folders/1CMOCj140pN7aSdsMaPL_DlHbdXf0TiXl?usp=sharing" },
 ];
 
 const facts = locale === 'en' ? factsEn : factsUk;
-const factLabel = locale === 'en' ? 'Interesting fact about Petrykivka painting' : 'Цікавий факт про петриківський розпис';
+
+const pageTitle = locale === 'en'
+  ? 'Interesting Facts About Petrykivka Painting'
+  : 'Цікаві факти про петриківський розпис';
+const pageSubtitle = locale === 'en'
+  ? 'Ten short facts about one of the brightest phenomena of Ukrainian folk art — plus a bonus presentation you can share.'
+  : 'Десять коротких фактів про одне з найяскравіших явищ українського народного мистецтва — і бонусна презентація, якою можна ділитися.';
 const bonusLabel = locale === 'en' ? 'Bonus' : 'Бонус';
 
 const decorImages = [
-  { src: '/images/hero/flower-left.png', cls: 'decor decor--left' },
   { src: '/images/hero/flower-right.png', cls: 'decor decor--right' },
 ];
+
+// number badge for non-bonus cards (01, 02, …)
+let factCounter = 0;
 ---
 
-<section class="facts-hero">
+<section class="facts-page">
   {decorImages.map(img => (
-    <img src={img.src} alt="" aria-hidden="true" class={img.cls} data-parallax />
+    <img src={img.src} alt="" aria-hidden="true" class={img.cls} />
   ))}
 
-  <div class="facts-section">
-    <div class="facts-inner">
-      <div class="facts-track">
-        {facts.map((fact, i) => (
-          <div class="fact-slide" data-index={i}>
-            <p class="fact-num">{fact.isBonus ? bonusLabel : `${factLabel} ${fact.num}`}</p>
-            <h2 class="fact-title">{fact.title}</h2>
-            <p class="fact-text">{fact.text}</p>
-            {fact.ctaHref && (
-              <a href={fact.ctaHref} class="fact-cta" target="_blank" rel="noopener noreferrer">
-                <span>{fact.ctaText}</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                  <polyline points="15 3 21 3 21 9"></polyline>
-                  <line x1="10" y1="14" x2="21" y2="3"></line>
-                </svg>
-              </a>
-            )}
-          </div>
-        ))}
-      </div>
+  <p class="facts-page__subtitle">{pageSubtitle}</p>
 
-      <button class="facts-btn facts-btn--prev" aria-label={locale === 'en' ? 'Previous' : 'Назад'}>
-        <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-          <path d="M13 4l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-      <button class="facts-btn facts-btn--next" aria-label={locale === 'en' ? 'Next' : 'Вперед'}>
-        <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-          <path d="M7 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-
-      <div class="facts-dots">
-        {facts.map((_, i) => (
-          <button class={`facts-dot${i === 0 ? ' active' : ''}`} aria-label={`${locale === 'en' ? 'Fact' : 'Факт'} ${i + 1}`} data-dot={i} />
-        ))}
-      </div>
-    </div>
+  <div class="facts-list">
+    {facts.map((fact) => {
+      const ghost = fact.isBonus ? '' : String(++factCounter).padStart(2, '0');
+      return (
+        <article class={`fact-card${fact.isBonus ? ' fact-card--bonus' : ''}`}>
+          {ghost && <span class="fact-card__ghost" aria-hidden="true">{ghost}</span>}
+          {fact.isBonus
+            ? <span class="fact-card__num">{bonusLabel}</span>
+            : <img class="fact-flower" width="36" height="36" alt="" aria-hidden="true" decoding="async" />
+          }
+          <h2 class="fact-card__title">{fact.title}</h2>
+          <p class="fact-card__text">{fact.text}</p>
+          {fact.ctaHref && (
+            <a href={fact.ctaHref} class="fact-cta" target="_blank" rel="noopener noreferrer">
+              <span>{fact.ctaText}</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+            </a>
+          )}
+        </article>
+      );
+    })}
   </div>
 </section>
 
-<style is:global>
-  .facts-hero { position: relative; margin-bottom: 3rem; width: 100vw; left: 50%; margin-left: -50vw; padding: 0 0 1rem; overflow: visible; }
-  .facts-section { border: 1px solid rgb(229, 233, 240); border-radius: 16px; overflow: hidden; position: relative; z-index: 2; width: 960px; max-width: calc(100vw - 2rem); margin: 0 auto; background: #fff; }
-  .facts-inner { position: relative; overflow: hidden; }
-  .facts-track { display: flex; transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
-  .fact-slide { flex: 0 0 100%; padding: 4rem 7rem; text-align: center; min-height: 340px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; box-sizing: border-box; }
-  .fact-num { font-size: 0.8rem; color: rgb(96, 115, 159); letter-spacing: 0.05em; margin: 0; font-family: "Fixel", sans-serif; }
-  .fact-title { font-size: 2.2rem; font-weight: 700; line-height: 1.25; margin: 0; color: rgb(15, 18, 25); font-family: "Fixel", sans-serif; max-width: 680px; }
-  .fact-text { font-size: 1rem; color: rgb(96, 115, 159); line-height: 1.65; margin: 0; max-width: 640px; font-family: "Fixel", sans-serif; }
-  .fact-cta { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: #c0392b; color: #fff !important; text-decoration: none !important; border-radius: 8px; font-weight: 500; font-size: 0.95rem; margin-top: 0.75rem; transition: background 0.2s, transform 0.2s, box-shadow 0.2s; font-family: "Fixel", sans-serif; box-shadow: 0 2px 8px rgba(192, 57, 43, 0.25); }
-  .fact-cta:hover { background: #a02d20; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(192, 57, 43, 0.35); }
-  .facts-btn { position: absolute; top: 50%; transform: translateY(-60%); width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgb(229, 233, 240); background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; color: rgb(15, 18, 25); transition: border-color 0.2s, color 0.2s, box-shadow 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 0; z-index: 2; }
-  .facts-btn:hover { border-color: #c0392b; color: #c0392b; }
-  .facts-btn:disabled { opacity: 0.25; cursor: default; pointer-events: none; }
-  .facts-btn--prev { left: 1.5rem; }
-  .facts-btn--next { right: 1.5rem; }
-  .facts-dots { display: flex; justify-content: center; gap: 0.4rem; padding: 0 1rem 1.25rem; }
-  .facts-dot { width: 6px; height: 6px; border-radius: 50%; background: rgb(229, 233, 240); border: none; padding: 0; cursor: pointer; transition: background 0.2s, transform 0.2s; }
-  .facts-dot.active { background: #c0392b; transform: scale(1.4); }
-  .decor { position: absolute; z-index: 1; pointer-events: none; will-change: transform; }
-  .decor--left { left: 30px; top: 20px; width: 430px; }
-  .decor--right { right: -20px; top: -120px; width: 440px; }
-  @media (max-width: 1100px) { .decor--left, .decor--right { width: 260px; } }
-  @media (max-width: 720px) { .decor { display: none; } .fact-slide { padding: 2.5rem 2rem; min-height: 260px; } .fact-title { font-size: 1.5rem; } .facts-btn--prev { left: 0.5rem; } .facts-btn--next { right: 0.5rem; } }
-</style>
-
 <script is:inline>
-(function () {
-  const section = document.querySelector('.facts-section');
-  if (!section) return;
-  const track = section.querySelector('.facts-track');
-  const btnPrev = section.querySelector('.facts-btn--prev');
-  const btnNext = section.querySelector('.facts-btn--next');
-  const dots = section.querySelectorAll('.facts-dot');
-  const total = dots.length;
-  let current = 0, timer, paused = false;
-  function goTo(idx) {
-    current = ((idx % total) + total) % total;
-    track.style.transform = 'translateX(-' + (current * 100) + '%)';
-    dots.forEach((d, i) => d.classList.toggle('active', i === current));
-    btnPrev.disabled = current === 0;
-    btnNext.disabled = current === total - 1;
-  }
-  function startTimer() { clearInterval(timer); timer = setInterval(() => { if (!paused) goTo(current + 1); }, 7000); }
-  btnPrev.addEventListener('click', () => { goTo(current - 1); startTimer(); });
-  btnNext.addEventListener('click', () => { goTo(current + 1); startTimer(); });
-  dots.forEach((d, i) => d.addEventListener('click', () => { goTo(i); startTimer(); }));
-  section.addEventListener('mouseenter', () => { paused = true; });
-  section.addEventListener('mouseleave', () => { paused = false; });
-  let touchStartX = 0;
-  track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; paused = true; }, { passive: true });
-  track.addEventListener('touchend', e => { paused = false; const diff = e.changedTouches[0].clientX - touchStartX; if (Math.abs(diff) > 40) { goTo(diff < 0 ? current + 1 : current - 1); startTimer(); } });
-  goTo(0); startTimer();
-})();
+  (function () {
+    const flowers = [
+      '1-big-flower-red.png',
+      '3-medium-flower-red.png',
+      '4-big-flower-red.png',
+      '6-medium-flower-red.png',
+      '7-big-flower-red.png',
+      '11-medium-flower-red.png',
+      '12-medium-flower-red.png',
+      '15-big-flower-orange.png',
+      '16-big-flower-green.png',
+      '18-big-flower-blue.png',
+      '19-small-flower-blue.png',
+      '25-medium-leaf-green.png',
+      '27-medium-leaf-green.png',
+      '8-medium-flower-orange.png',
+      '31-big-bird-red.png'
+    ];
+    // shuffle so cards get distinct flowers
+    const shuffled = flowers.slice().sort(() => Math.random() - 0.5);
+    document.querySelectorAll('.fact-flower').forEach((img, i) => {
+      img.src = '/wallpaper-flowers/' + shuffled[i % shuffled.length];
+    });
+  })();
 </script>
+
+<style>
+  .facts-page {
+    max-width: 920px;
+    margin: 0 auto 3rem;
+    padding: 0 1rem;
+    font-family: "Fixel", sans-serif;
+  }
+
+  /* ---- Lede / subtitle ---- */
+  .facts-page__subtitle {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: rgb(96, 115, 159);
+    margin: 0 0 2.25rem;
+    max-width: 620px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---- Fact list ---- */
+  .facts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .fact-card {
+    position: relative;
+    background: #fff;
+    border: 1px solid rgb(229, 233, 240);
+    border-radius: 18px;
+    padding: 3.5rem 4rem;
+    overflow: hidden;
+    transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+  }
+  .fact-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 32px rgba(40, 42, 43, 0.08);
+    border-color: rgba(192, 57, 43, 0.35);
+  }
+
+  /* large faint slide number */
+  .fact-card__ghost {
+    position: absolute;
+    top: -1rem;
+    right: 1.25rem;
+    font-size: 8.5rem;
+    font-weight: 800;
+    line-height: 1;
+    color: rgba(192, 57, 43, 0.07);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .fact-card__num {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #c0392b;
+    background: rgba(192, 57, 43, 0.08);
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    margin-bottom: 1.25rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .fact-flower {
+    display: block;
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    border-radius: 0;
+    margin-bottom: 1.25rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .fact-card__title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0 0 1rem;
+    color: rgb(15, 18, 25);
+    position: relative;
+    z-index: 1;
+  }
+  .fact-card__text {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: rgb(96, 115, 159);
+    margin: 0;
+    max-width: 64ch;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---- Bonus card ---- */
+  .fact-card--bonus {
+    background: linear-gradient(135deg, #fdf3f1, #fbe9e6);
+    border-color: rgba(192, 57, 43, 0.25);
+  }
+  .fact-card--bonus .fact-card__num {
+    background: #c0392b;
+    color: #fff;
+  }
+
+  /* ---- CTA button ---- */
+  .fact-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: #c0392b;
+    color: #fff !important;
+    text-decoration: none !important;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-top: 1.25rem;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(192, 57, 43, 0.25);
+  }
+  .fact-cta:hover {
+    background: #a02d20;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(192, 57, 43, 0.35);
+  }
+
+  /* ---- Decorative flowers (fixed full-height side backdrop) ---- */
+  .decor {
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    width: auto;
+    z-index: -1;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.95;
+  }
+  .decor--left  { left: 0; }
+  .decor--right { right: 0; }
+
+  @media (max-width: 1100px) {
+    .decor { opacity: 0.4; }
+  }
+  @media (max-width: 760px) {
+    .decor { display: none; }
+    .fact-card { padding: 2.25rem 1.75rem; }
+    .fact-card__ghost { font-size: 5rem; top: -0.5rem; right: 0.5rem; }
+    .fact-card__title { font-size: 1.35rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fact-card, .fact-cta { transition: none; }
+  }
+</style>
