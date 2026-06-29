@@ -1,0 +1,213 @@
+---
+// src/components/RegistryProfile.astro
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import BaseHead from './BaseHead.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import { SITE_TITLE } from '../consts';
+import { STR, genLabel, genLabelFull, regionLabel, prettifyId, yearsLabel, formatDate, parseLink, type Locale } from '../data/registry-schema';
+
+interface Props { entry: CollectionEntry<'registry'>; locale: Locale; }
+const { entry, locale } = Astro.props;
+const d = entry.data;
+const S = STR[locale];
+
+const registry = await getCollection('registry');
+const registryIds = new Set(registry.map((m) => m.id));
+const nameById = new Map(registry.map((m) => [m.id, m.data.name]));
+
+const masters = await getCollection('masters');
+const bioSlugs = new Set(masters.filter((m) => m.id.startsWith(`${locale}/`)).map((m) => m.id.split('/').pop()));
+const hasBio = bioSlugs.has(entry.id);
+const bioUrl = (locale === 'en' ? '/en/masters/' : '/masters/') + entry.id;
+const registryUrl = locale === 'en' ? '/en/registry' : '/registry';
+
+// Осередки → активне посилання
+const centers = await getCollection('centers');
+const centerSlugByName = new Map<string, string>();
+centers.filter((c) => c.id.startsWith('uk/')).forEach((c) => centerSlugByName.set(c.data.name, c.id.split('/').pop() as string));
+const enCenterSlugs = new Set(centers.filter((c) => c.id.startsWith('en/')).map((c) => c.id.split('/').pop()));
+function centerLink(name: string) {
+  const slug = centerSlugByName.get(name);
+  if (!slug) return { name, url: null };
+  const url = locale === 'en' ? (enCenterSlugs.has(slug) ? '/en/centers/' + slug : '/centers/' + slug) : '/centers/' + slug;
+  return { name, url };
+}
+const centerLinks = d.center.map(centerLink);
+
+const yl = yearsLabel(d.born, d.died, locale);
+const birthPlace = [d.village, d.region, d.country].filter(Boolean).join(', ');
+const regionName = regionLabel(d.base, locale);
+const regionFilterUrl = `${registryUrl}?region=${d.base || 'petrykivka'}`;
+const activeStr = d.activeFrom ? `${d.activeFrom}${d.activeTo ? '–' + d.activeTo : ' – ' + (locale === 'en' ? 'present' : 'дотепер')}` : '';
+
+function personLink(id: string) {
+  const name = nameById.get(id) ?? prettifyId(id);
+  if (registryIds.has(id)) return { name, url: (locale === 'en' ? '/en/registry/' : '/registry/') + id };
+  if (bioSlugs.has(id)) return { name, url: (locale === 'en' ? '/en/masters/' : '/masters/') + id };
+  return { name, url: null };
+}
+const teachers = d.teachers.map(personLink);
+const students = d.students.map(personLink);
+const links = d.links.map(parseLink);
+
+const tagSections = [{ label: S.style, items: d.style }].filter((s) => s.items && s.items.length);
+const listSections = [
+  { label: S.occupation, items: d.occupation },
+  { label: S.exhibitions, items: d.exhibitions },
+  { label: S.awards, items: d.awards },
+  { label: S.collections, items: d.collections },
+  { label: S.books, items: d.books },
+  { label: S.articles, items: d.articles },
+  { label: S.family, items: d.family },
+].filter((s) => s.items && s.items.length);
+
+const initials = d.name.split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase();
+const updatedStr = formatDate(d.updated, locale);
+const metaDesc = `${d.name} — ${genLabel(d.generation, locale)}. ${d.style.slice(0, 3).join(', ')}`.trim();
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <BaseHead title={`${d.name} — ${SITE_TITLE[locale]}`} description={metaDesc} />
+  </head>
+  <body>
+    <Header />
+    <main class="rp">
+      <a id="rp-back" class="rp__back" href={registryUrl}>{S.backToRegistry}</a>
+
+      <header class="rp__head">
+        <div class="rp__avatar">
+          <span class="rp__initials">{initials}</span>
+          {d.photo && <img src={`/registry-photos/${d.photo}`} alt={d.name} onerror="this.remove()" />}
+        </div>
+        <div class="rp__intro">
+          <h1 class="rp__name">{d.name}</h1>
+          <p class="rp__years">{yl.text} · {genLabelFull(d.generation, locale)}</p>
+          <a class="rp__region" href={regionFilterUrl}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            {regionName}
+          </a>
+          {hasBio && <a class="rp__biocta" href={bioUrl}>{S.fullBio}</a>}
+        </div>
+      </header>
+
+      <div class="rp__grid">
+        {birthPlace && (<div class="rp__field"><dt>{S.birthPlace}</dt><dd>{birthPlace}</dd></div>)}
+        {d.currentPlace && (<div class="rp__field"><dt>{S.currentPlace}</dt><dd>{d.currentPlace}</dd></div>)}
+        {centerLinks.length > 0 ? (
+          <div class="rp__field"><dt>{S.center}</dt>
+            <dd>{centerLinks.map((c, i) => (<>{i > 0 && ', '}{c.url ? <a href={c.url}>{c.name}</a> : c.name}</>))}</dd>
+          </div>
+        ) : (
+          <div class="rp__field"><dt>{S.center}</dt><dd>{S.outsideCenters}</dd></div>
+        )}
+        {d.school && (<div class="rp__field"><dt>{S.school}</dt><dd>{d.school}</dd></div>)}
+        {activeStr && (<div class="rp__field"><dt>{S.active}</dt><dd>{activeStr}</dd></div>)}
+        {teachers.length > 0 && (
+          <div class="rp__field"><dt>{S.teachers}</dt>
+            <dd>{teachers.map((p, i) => (<>{i > 0 && ', '}{p.url ? <a href={p.url}>{p.name}</a> : p.name}</>))}</dd>
+          </div>
+        )}
+        {students.length > 0 && (
+          <div class="rp__field"><dt>{S.students}</dt>
+            <dd>{students.map((p, i) => (<>{i > 0 && ', '}{p.url ? <a href={p.url}>{p.name}</a> : p.name}</>))}</dd>
+          </div>
+        )}
+        {d.website && (<div class="rp__field"><dt>{S.website}</dt><dd><a href={d.website} target="_blank" rel="noopener">{d.website.replace(/^https?:\/\/(www\.)?/, '')}</a></dd></div>)}
+      </div>
+
+      {tagSections.map((sec) => (
+        <section class="rp__section">
+          <h2 class="rp__h2">{sec.label}</h2>
+          <div class="rp__tags">{sec.items.map((t) => <span class="rp__tag">{t}</span>)}</div>
+        </section>
+      ))}
+
+      {listSections.map((sec) => (
+        <section class="rp__section">
+          <h2 class="rp__h2">{sec.label}</h2>
+          <ul class="rp__list">{sec.items.map((it) => <li>{it}</li>)}</ul>
+        </section>
+      ))}
+
+      {links.length > 0 && (
+        <section class="rp__section">
+          <h2 class="rp__h2">{S.links}</h2>
+          <ul class="rp__links">
+            {links.map((l) => (<li>{l.url ? <a href={l.url} target="_blank" rel="noopener">{l.label}</a> : l.label}</li>))}
+          </ul>
+        </section>
+      )}
+
+      {d.notes && (
+        <section class="rp__section">
+          <h2 class="rp__h2">{S.notes}</h2>
+          <p class="rp__notes">{d.notes}</p>
+        </section>
+      )}
+
+      {updatedStr && <p class="rp__updated">{S.updated}: {updatedStr}</p>}
+    </main>
+    <Footer />
+
+    <script is:inline>
+      (function () {
+        const back = document.getElementById('rp-back');
+        if (!back) return;
+        const from = new URLSearchParams(location.search).get('from');
+        if (from) back.setAttribute('href', back.getAttribute('href') + '?' + from);
+      })();
+    </script>
+
+    <style>
+      .rp { width: 880px; max-width: calc(100% - 2rem); margin: 0 auto; padding: 2.5rem 1rem 4rem; }
+      .rp__back { display: inline-block; margin-bottom: 1.75rem; color: var(--accent); text-decoration: none; font-weight: 600; }
+      .rp__back:hover { text-decoration: underline; }
+
+      /* фото по ВЕРХНЬОМУ краю */
+      .rp__head { display: flex; gap: 1.75rem; align-items: flex-start; margin-bottom: 2rem; padding-bottom: 1.75rem; border-bottom: 1px solid rgb(var(--gray-light)); flex-wrap: wrap; }
+      .rp__avatar { position: relative; flex: 0 0 110px; width: 110px; height: 110px; border-radius: 50%; overflow: hidden; background: rgb(var(--gray-light)); display: grid; place-items: center; }
+      .rp__avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 0; }
+      .rp__initials { font-size: 2.2rem; font-weight: 700; color: var(--accent); }
+      .rp__intro { flex: 1 1 260px; }
+      .rp__name { font-size: 2.1rem; font-weight: 800; margin: 0 0 0.35rem; color: rgb(var(--black)); letter-spacing: -0.01em; line-height: 1.1; }
+      .rp__years { margin: 0 0 0.6rem; color: rgba(var(--black), 0.7); font-size: 1.02rem; }
+      /* регіон творчості — субтильна клікабельна «пігулка» (веде у відфільтрований реєстр) */
+      .rp__region { display: inline-flex; align-items: center; gap: 0.35rem; margin: 0 0 0.85rem; padding: 0.28rem 0.65rem; border-radius: 999px; background: rgba(var(--black), 0.05); color: rgba(var(--black), 0.66); font-weight: 500; font-size: 0.86rem; text-decoration: none; transition: background 0.14s ease, color 0.14s ease; }
+      .rp__region:hover { background: rgba(192, 57, 43, 0.1); color: var(--accent); }
+      .rp__region svg { flex: 0 0 auto; opacity: 0.7; }
+      .rp__biocta { display: inline-block; margin-top: 0.5rem; font-weight: 600; font-size: 0.86rem; color: var(--accent); text-decoration: none; }
+      .rp__biocta:hover { text-decoration: underline; }
+
+      .rp__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 2.5rem; margin: 0 0 2rem; }
+      .rp__field { display: flex; flex-direction: column; gap: 0.15rem; margin: 0.4rem 0; }
+      .rp__field dt { font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(var(--black), 0.45); }
+      .rp__field dd { margin: 0; color: rgb(var(--black)); }
+      .rp__field a { color: var(--accent); text-decoration: none; }
+      .rp__field a:hover { text-decoration: underline; }
+
+      .rp__section { margin: 1.75rem 0; }
+      .rp__h2 { font-size: 1.15rem; font-weight: 700; margin: 0 0 0.7rem; color: rgb(var(--black)); }
+      .rp__tags { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+      .rp__tag { font-size: 0.85rem; padding: 0.3rem 0.65rem; border-radius: 999px; background: rgb(var(--gray-light)); color: rgba(var(--black), 0.82); }
+      .rp__list, .rp__links { margin: 0; padding-left: 1.2rem; line-height: 1.7; color: rgba(var(--black), 0.85); }
+      .rp__links a { color: var(--accent); text-decoration: none; }
+      .rp__links a:hover { text-decoration: underline; }
+      .rp__notes { line-height: 1.7; color: rgba(var(--black), 0.85); }
+      .rp__updated { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid rgb(var(--gray-light)); font-size: 0.82rem; color: rgba(var(--black), 0.45); }
+
+      @media (max-width: 640px) {
+        .rp__grid { grid-template-columns: 1fr; }
+        .rp__name { font-size: 1.8rem; }
+      }
+    </style>
+
+    <style is:global>
+      body > header { position: static !important; box-shadow: none !important; backdrop-filter: none !important; }
+      body > header:hover { box-shadow: none !important; }
+    </style>
+  </body>
+</html>

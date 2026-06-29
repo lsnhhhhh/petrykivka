@@ -1,5 +1,8 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import * as XLSX from 'xlsx';
 
 const localeSchema = z.enum(['uk', 'en']).default('uk');
 
@@ -190,4 +193,112 @@ const news = defineCollection({
   }),
 });
 
-export const collections = { blog, masters, books, centers, materials, artworks, news };
+
+const XLSX_URL = new URL('./data/masters-registry.xlsx', import.meta.url);
+ 
+const _list = (v?: string) => (v ?? '').split(';').map((s) => s.trim()).filter(Boolean);
+const _bool = (v?: string) => ['true', '1', 'так', 'yes', 'x'].includes((v ?? '').trim().toLowerCase());
+const _num = (v?: string) => { const m = String(v ?? '').match(/\d{4}/); return m ? parseInt(m[0], 10) : undefined; };
+const _str = (v?: string) => { const t = (v ?? '').trim(); return t === '' ? undefined : t; };
+ 
+function _transform(row: Record<string, string>) {
+  return {
+    name: row.name?.trim() ?? '',
+    gender: _str(row.gender),
+    generation: _str(row.generation) ?? 'unknown',
+    born: _str(row.born),
+    died: _str(row.died),
+    solo: _bool(row.solo),
+    village: _str(row.village),
+    region: _str(row.region),
+    country: _str(row.country) ?? 'Україна',
+    currentPlace: _str(row.current_place),
+    base: _str(row.base) ?? 'petrykivka',
+    center: _list(row.center),
+    nsum: _bool(row.nsum),
+    nsumSince: _str(row.nsum_since),
+    honoredArtist: _bool(row.honored_artist),
+    teachers: _list(row.teachers),
+    students: _list(row.students),
+    school: _str(row.school),
+    activeFrom: _num(row.active_from),
+    activeTo: _num(row.active_to),
+    occupation: _list(row.occupation),
+    style: _list(row.style),
+    exhibitions: _list(row.exhibitions),
+    awards: _list(row.awards),
+    collections: _list(row.collections),
+    books: _list(row.books),
+    articles: _list(row.articles),
+    family: _list(row.family),
+    links: _list(row.links),
+    website: _str(row.website),
+    photo: _str(row.photo),
+    signature: _str(row.signature),
+    updated: _str(row.updated),
+    notes: _str(row.notes),
+  };
+}
+ 
+// 3) Колекція:
+const registry = defineCollection({
+  loader: {
+    name: 'masters-registry',
+    load: async ({ store, parseData, generateDigest }) => {
+      const buf = readFileSync(fileURLToPath(XLSX_URL));
+      const wb = XLSX.read(buf, { type: 'buffer' });
+      const sheet = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json<Record<string, string>>(sheet, { defval: '', raw: false });
+      store.clear();
+      const seen = new Set<string>();
+      for (const row of rows) {
+        const id = String(row.id ?? '').trim();
+        if (!id) continue;
+        if (seen.has(id)) { console.warn(`[registry] duplicate id "${id}" — пропускаю`); continue; }
+        seen.add(id);
+        const parsed = await parseData({ id, data: _transform(row) });
+        store.set({ id, data: parsed, digest: generateDigest(parsed) });
+      }
+      console.log(`[registry] завантажено майстрів: ${seen.size}`);
+    },
+  },
+  // Поля "м'які" (string), щоб одруківка в одному з сотень рядків НЕ ламала білд.
+  schema: z.object({
+    name: z.string(),
+    gender: z.string().optional(),
+    generation: z.string().default('unknown'),
+    born: z.string().optional(),
+    died: z.string().optional(),
+    solo: z.boolean().default(false),
+    village: z.string().optional(),
+    region: z.string().optional(),
+    country: z.string().default('Україна'),
+    currentPlace: z.string().optional(),
+    base: z.string().default('petrykivka'),
+    center: z.array(z.string()).default([]),
+    nsum: z.boolean().default(false),
+    nsumSince: z.string().optional(),
+    honoredArtist: z.boolean().default(false),
+    teachers: z.array(z.string()).default([]),
+    students: z.array(z.string()).default([]),
+    school: z.string().optional(),
+    activeFrom: z.number().optional(),
+    activeTo: z.number().optional(),
+    occupation: z.array(z.string()).default([]),
+    style: z.array(z.string()).default([]),
+    exhibitions: z.array(z.string()).default([]),
+    awards: z.array(z.string()).default([]),
+    collections: z.array(z.string()).default([]),
+    books: z.array(z.string()).default([]),
+    articles: z.array(z.string()).default([]),
+    family: z.array(z.string()).default([]),
+    links: z.array(z.string()).default([]),
+    website: z.string().optional(),
+    photo: z.string().optional(),
+    signature: z.string().optional(),
+    updated: z.string().optional(),
+    notes: z.string().optional(),
+  }),
+});
+
+export const collections = { blog, masters, books, centers, materials, artworks, news, registry };

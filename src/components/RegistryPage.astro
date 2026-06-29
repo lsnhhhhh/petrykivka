@@ -1,0 +1,375 @@
+---
+// src/components/RegistryPage.astro
+import { getCollection } from 'astro:content';
+import BaseHead from './BaseHead.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import MastersTabs from './MastersTabs.astro';
+import { SITE_TITLE } from '../consts';
+import { STR, STATUS, REGIONS, GENERATIONS, genLabel, genLabelFull, regionLabel, styleLabel, prettifyId, yearsLabel, type Locale } from '../data/registry-schema';
+
+interface Props { locale: Locale; }
+const { locale } = Astro.props;
+const S = STR[locale];
+
+const registry = (await getCollection('registry')).sort((a, b) =>
+  a.data.name.localeCompare(b.data.name, 'uk')
+);
+const all = registry.map((m) => m.data);
+
+// — Покоління (з періодом активності) —
+const genOrder = Object.keys(GENERATIONS);
+const genFacet = [...new Set(all.map((m) => m.generation))]
+  .sort((a, b) => genOrder.indexOf(a) - genOrder.indexOf(b))
+  .map((v) => ({ value: v, label: genLabelFull(v, locale), count: all.filter((m) => m.generation === v).length }));
+
+// — Регіон творчості (4 групи) —
+const regOrder = Object.keys(REGIONS);
+const regionFacet = [...new Set(all.map((m) => m.base || 'petrykivka'))]
+  .sort((a, b) => regOrder.indexOf(a) - regOrder.indexOf(b))
+  .map((v) => ({ value: v, label: regionLabel(v, locale), count: all.filter((m) => (m.base || 'petrykivka') === v).length }));
+
+const multiFacet = (pick: (m: typeof all[number]) => string[], label?: (v: string) => string) =>
+  [...new Set(all.flatMap(pick))]
+    .map((v) => ({ value: v, label: label ? label(v) : v, count: all.filter((m) => pick(m).includes(v)).length }))
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, 'uk'));
+
+// — Осередок (+ синтетичний «Поза осередками») —
+const centerFacet = multiFacet((m) => m.center);
+const noCenter = all.filter((m) => m.center.length === 0).length;
+if (noCenter > 0) centerFacet.push({ value: '__none__', label: S.outsideCenters, count: noCenter });
+
+// — Стиль (короткі мітки) —
+const styleFacet = multiFacet((m) => m.style, (v) => styleLabel(v, locale));
+
+// — Статус —
+const statusFacet = [
+  { value: 'nsum', label: STATUS.nsum[locale], count: all.filter((m) => m.nsum).length },
+  { value: 'honored', label: STATUS.honored[locale], count: all.filter((m) => m.honoredArtist).length },
+];
+
+const LABELS: Record<string, Record<string, string>> = {
+  gen: Object.fromEntries(genFacet.map((f) => [f.value, f.label])),
+  region: Object.fromEntries(regionFacet.map((f) => [f.value, f.label])),
+  center: Object.fromEntries(centerFacet.map((f) => [f.value, f.label])),
+  status: Object.fromEntries(statusFacet.map((f) => [f.value, f.label])),
+  style: Object.fromEntries(styleFacet.map((f) => [f.value, f.label])),
+};
+const PAGER_I18N = { page: S.page, of: S.of, prev: S.prev, next: S.next };
+
+const cards = registry.map((m) => {
+  const d = m.data;
+  const yl = yearsLabel(d.born, d.died, locale);
+  return {
+    name: d.name,
+    initials: d.name.split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase(),
+    photo: d.photo,
+    years: yl.text,
+    genLabel: genLabel(d.generation, locale),
+    url: (locale === 'en' ? '/en/registry/' : '/registry/') + m.id,
+    attrs: {
+      'data-name': d.name.toLowerCase(),
+      'data-gen': d.generation,
+      'data-region': d.base || 'petrykivka',
+      'data-center': d.center.join(';'),
+      'data-nsum': d.nsum ? '1' : '0',
+      'data-honored': d.honoredArtist ? '1' : '0',
+      'data-style': d.style.join(';'),
+    },
+  };
+});
+
+const facetGroups = [
+  { key: 'gen', label: S.fGeneration, items: genFacet },
+  { key: 'region', label: S.fRegion, items: regionFacet },
+  { key: 'center', label: S.fCenter, items: centerFacet },
+  { key: 'style', label: S.fStyle, items: styleFacet },
+  { key: 'status', label: S.fStatus, items: statusFacet },
+].filter((g) => g.items.length > 0);
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <BaseHead title={`${S.title} — ${SITE_TITLE[locale]}`} description={S.subtitle} />
+  </head>
+  <body>
+    <Header />
+    <main class="reg">
+      <MastersTabs locale={locale} active="registry" />
+
+      <header class="reg__head">
+        <h1 class="reg__title">{S.title}</h1>
+        <p class="reg__sub">{S.subtitle}</p>
+      </header>
+
+      <div class="reg__layout">
+        <aside class="reg__filters" aria-label={S.filters}>
+          <div class="reg__searchwrap">
+            <input id="reg-search" type="search" class="reg__search" placeholder={S.search} autocomplete="off" />
+          </div>
+          {facetGroups.map((g) => (
+            <details class="reg__facet" open={['gen', 'region'].includes(g.key)}>
+              <summary class="reg__facet-title">{g.label}</summary>
+              <div class="reg__opts">
+                {g.items.map((it) => (
+                  <label class="reg-opt">
+                    <input type="checkbox" class="reg-check" data-facet={g.key} value={it.value} />
+                    <span class="reg-opt__label">{it.label}</span>
+                    <span class="reg-opt__n">{it.count}</span>
+                  </label>
+                ))}
+              </div>
+            </details>
+          ))}
+        </aside>
+
+        <section class="reg__results">
+          <div class="reg__bar">
+            <span class="reg__count"><strong id="reg-count">{cards.length}</strong> {S.results}</span>
+            <button type="button" id="reg-reset" class="reg__reset">{S.reset}</button>
+          </div>
+          <div id="reg-tags" class="reg__tags"></div>
+
+          <ul id="reg-list" class="reg__grid">
+            {cards.map((c) => (
+              <li>
+                <a class="reg-card" href={c.url} data-href={c.url} {...c.attrs}>
+                  <span class="reg-card__avatar">
+                    <span class="reg-card__initials">{c.initials}</span>
+                    {c.photo && <img src={`/registry-photos/${c.photo}`} alt={c.name} loading="lazy" onerror="this.remove()" />}
+                  </span>
+                  <span class="reg-card__body">
+                    <span class="reg-card__name">{c.name}</span>
+                    <span class="reg-card__years">{c.years}</span>
+                    <span class="reg-card__gen">{c.genLabel}</span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <p id="reg-noresults" class="reg__noresults" style="display:none">{S.noResults}</p>
+          <nav id="reg-pager" class="reg__pager" aria-label="pagination"></nav>
+        </section>
+      </div>
+
+      <script id="reg-labels" type="application/json" set:html={JSON.stringify(LABELS)}></script>
+      <script id="reg-i18n" type="application/json" set:html={JSON.stringify(PAGER_I18N)}></script>
+    </main>
+    <Footer />
+
+    <script is:inline>
+      (function () {
+        const PAGE_SIZE = 30;
+        const list = document.getElementById('reg-list');
+        if (!list) return;
+        const cards = Array.from(list.querySelectorAll('.reg-card'));
+        const items = cards.map((c) => c.parentElement);
+        const checks = Array.from(document.querySelectorAll('.reg-check'));
+        const tagsBox = document.getElementById('reg-tags');
+        const pager = document.getElementById('reg-pager');
+        const countEl = document.getElementById('reg-count');
+        const noRes = document.getElementById('reg-noresults');
+        const searchEl = document.getElementById('reg-search');
+        const resetEl = document.getElementById('reg-reset');
+        const LABELS = JSON.parse(document.getElementById('reg-labels').textContent);
+        const T = JSON.parse(document.getElementById('reg-i18n').textContent);
+
+        const FACETS = ['gen', 'region', 'center', 'style', 'status'];
+        const ROWKEY = { gen: 'gen', region: 'region', center: 'center', style: 'style' };
+        const MULTI = { center: 1, style: 1 };
+
+        const state = { q: '', page: 1 };
+        FACETS.forEach((f) => (state[f] = new Set()));
+
+        function readURL() {
+          const p = new URLSearchParams(location.search);
+          state.q = p.get('q') || '';
+          FACETS.forEach((f) => { state[f] = new Set((p.get(f) || '').split(',').map((s) => s.trim()).filter(Boolean)); });
+          state.page = Math.max(1, parseInt(p.get('page') || '1', 10) || 1);
+        }
+        function writeURL() {
+          const p = new URLSearchParams();
+          if (state.q) p.set('q', state.q);
+          FACETS.forEach((f) => { if (state[f].size) p.set(f, [...state[f]].join(',')); });
+          if (state.page > 1) p.set('page', String(state.page));
+          const qs = p.toString();
+          history.replaceState(null, '', qs ? '?' + qs : location.pathname);
+        }
+
+        function matches(card) {
+          if (state.q && !(card.getAttribute('data-name') || '').includes(state.q.toLowerCase())) return false;
+          for (const f of FACETS) {
+            const sel = state[f];
+            if (!sel.size) continue;
+            if (f === 'status') {
+              let ok = false;
+              sel.forEach((s) => { if (card.getAttribute('data-' + s) === '1') ok = true; });
+              if (!ok) return false;
+              continue;
+            }
+            const raw = card.getAttribute('data-' + ROWKEY[f]) || '';
+            if (f === 'center') {
+              const vals = raw.split(';').filter(Boolean);
+              let ok = false;
+              sel.forEach((s) => { if (s === '__none__') { if (vals.length === 0) ok = true; } else if (vals.includes(s)) ok = true; });
+              if (!ok) return false;
+            } else if (MULTI[f]) {
+              const vals = raw.split(';').filter(Boolean);
+              let ok = false;
+              sel.forEach((s) => { if (vals.includes(s)) ok = true; });
+              if (!ok) return false;
+            } else if (!sel.has(raw)) return false;
+          }
+          return true;
+        }
+
+        function syncChecks() {
+          checks.forEach((ch) => { ch.checked = state[ch.dataset.facet] && state[ch.dataset.facet].has(ch.value); });
+          if (searchEl) searchEl.value = state.q;
+        }
+
+        function renderTags() {
+          const frag = document.createDocumentFragment();
+          const add = (facet, value, label) => {
+            const b = document.createElement('button');
+            b.className = 'reg-tag';
+            b.dataset.facet = facet; b.dataset.value = value;
+            b.innerHTML = label + ' <span aria-hidden="true">✕</span>';
+            frag.appendChild(b);
+          };
+          if (state.q) add('q', '', '“' + state.q + '”');
+          FACETS.forEach((f) => { state[f].forEach((v) => add(f, v, (LABELS[f] && LABELS[f][v]) || v)); });
+          tagsBox.innerHTML = '';
+          tagsBox.appendChild(frag);
+          resetEl.style.display = (state.q || FACETS.some((f) => state[f].size)) ? '' : 'none';
+        }
+
+        function renderPager(pages) {
+          pager.innerHTML = '';
+          if (pages <= 1) return;
+          const mk = (txt, page, disabled, current) => {
+            const b = document.createElement('button');
+            b.className = 'reg-page' + (current ? ' is-current' : '');
+            b.textContent = txt; b.disabled = !!disabled;
+            if (!disabled && !current) b.addEventListener('click', () => { state.page = page; writeURL(); apply(); window.scrollTo({ top: list.offsetTop - 90, behavior: 'smooth' }); });
+            return b;
+          };
+          pager.appendChild(mk(T.prev, state.page - 1, state.page === 1));
+          const info = document.createElement('span');
+          info.className = 'reg-page-info';
+          info.textContent = T.page + ' ' + state.page + ' ' + T.of + ' ' + pages;
+          pager.appendChild(info);
+          pager.appendChild(mk(T.next, state.page + 1, state.page === pages));
+        }
+
+        function apply() {
+          const matched = cards.filter(matches);
+          const total = matched.length;
+          const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+          if (state.page > pages) state.page = pages;
+          const start = (state.page - 1) * PAGE_SIZE;
+          const shown = new Set(matched.slice(start, start + PAGE_SIZE));
+          const fromQS = location.search.slice(1);
+          cards.forEach((card, i) => {
+            const vis = shown.has(card);
+            items[i].style.display = vis ? '' : 'none';
+            if (vis) {
+              const base = card.getAttribute('data-href');
+              card.setAttribute('href', fromQS ? base + '?from=' + encodeURIComponent(fromQS) : base);
+            }
+          });
+          countEl.textContent = total;
+          noRes.style.display = total ? 'none' : '';
+          renderPager(pages); renderTags(); syncChecks();
+        }
+
+        checks.forEach((ch) => ch.addEventListener('change', () => {
+          const f = ch.dataset.facet, v = ch.value;
+          ch.checked ? state[f].add(v) : state[f].delete(v);
+          state.page = 1; writeURL(); apply();
+        }));
+        let deb;
+        searchEl.addEventListener('input', () => {
+          clearTimeout(deb);
+          deb = setTimeout(() => { state.q = searchEl.value.trim(); state.page = 1; writeURL(); apply(); }, 180);
+        });
+        tagsBox.addEventListener('click', (e) => {
+          const b = e.target.closest('.reg-tag'); if (!b) return;
+          const f = b.dataset.facet;
+          if (f === 'q') state.q = ''; else state[f].delete(b.dataset.value);
+          state.page = 1; writeURL(); apply();
+        });
+        resetEl.addEventListener('click', () => { state.q = ''; FACETS.forEach((f) => state[f].clear()); state.page = 1; writeURL(); apply(); });
+
+        readURL(); apply();
+      })();
+    </script>
+
+    <style>
+      .reg { width: 1120px; max-width: calc(100% - 2rem); margin: 0 auto; padding: 2rem 1rem 4rem; }
+      .reg__head { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgb(var(--gray-light)); }
+      .reg__title { font-size: 2.4rem; font-weight: 800; margin: 0 0 0.5rem; color: rgb(var(--black)); letter-spacing: -0.01em; }
+      .reg__sub { margin: 0; max-width: 64ch; color: rgba(var(--black), 0.65); line-height: 1.55; }
+      .reg__layout { display: grid; grid-template-columns: 250px 1fr; gap: 2.5rem; align-items: start; }
+
+      .reg__filters { position: sticky; top: 20px; }
+      .reg__searchwrap { margin-bottom: 1rem; }
+      .reg__search { width: 100%; padding: 0.65rem 0.9rem; font: inherit; border: 1px solid rgb(var(--gray-light)); border-radius: 10px; background: #fff; }
+      .reg__search:focus { outline: none; border-color: var(--accent); }
+      .reg__facet { border-top: 1px solid rgb(var(--gray-light)); padding: 0.75rem 0; }
+      .reg__facet-title { cursor: pointer; font-weight: 600; font-size: 0.92rem; color: rgb(var(--black)); list-style: none; }
+      .reg__facet-title::-webkit-details-marker { display: none; }
+      .reg__facet-title::after { content: '＋'; float: right; color: rgba(var(--black), 0.4); }
+      .reg__facet[open] .reg__facet-title::after { content: '－'; }
+
+      .reg__opts { display: flex; flex-direction: column; gap: 0.1rem; margin-top: 0.6rem; }
+      .reg-opt { display: flex; align-items: center; gap: 0.55rem; padding: 0.3rem 0.25rem; border-radius: 7px; cursor: pointer; font-size: 0.9rem; color: rgba(var(--black), 0.85); }
+      .reg-opt:hover { background: rgba(var(--black), 0.035); }
+      .reg-opt input { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; flex: 0 0 auto; }
+      .reg-opt__label { flex: 1 1 auto; line-height: 1.3; }
+      .reg-opt__n { font-size: 0.8rem; color: rgba(var(--black), 0.4); font-variant-numeric: tabular-nums; }
+
+      .reg__bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; }
+      .reg__count { color: rgba(var(--black), 0.65); }
+      .reg__count strong { color: rgb(var(--black)); font-variant-numeric: tabular-nums; }
+      .reg__reset { font: inherit; font-size: 0.85rem; cursor: pointer; background: none; border: none; color: var(--accent); text-decoration: underline; display: none; }
+
+      .reg__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 1rem; }
+      .reg-card { display: flex; align-items: center; gap: 1rem; padding: 1.1rem 1.25rem; border: 1px solid rgb(var(--gray-light)); border-radius: 16px; background: #fff; text-decoration: none; color: inherit; transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease; }
+      .reg-card:hover { border-color: var(--accent); box-shadow: 0 6px 18px rgba(var(--black), 0.07); transform: translateY(-2px); }
+      .reg-card__avatar { position: relative; flex: 0 0 54px; width: 54px; height: 54px; border-radius: 50%; overflow: hidden; background: rgb(var(--gray-light)); display: grid; place-items: center; }
+      .reg-card__avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 0; }
+      .reg-card__initials { font-weight: 700; font-size: 0.95rem; color: var(--accent); }
+      .reg-card__body { min-width: 0; display: flex; flex-direction: column; gap: 0.12rem; }
+      .reg-card__name { font-weight: 700; font-size: 1.08rem; color: rgb(var(--black)); line-height: 1.25; }
+      .reg-card__years { font-size: 0.88rem; color: rgba(var(--black), 0.62); }
+      .reg-card__gen { font-size: 0.84rem; color: rgba(var(--black), 0.5); }
+      .reg__noresults { padding: 2rem 0; color: rgba(var(--black), 0.6); }
+
+      @media (max-width: 860px) {
+        .reg__layout { grid-template-columns: 1fr; gap: 1.5rem; }
+        .reg__filters { position: static; }
+        .reg__title { font-size: 2rem; }
+      }
+    </style>
+
+    <style is:global>
+      /* Хедер — звичайний заголовок: не липне, без тіні (зокрема й на ховер).
+         Для застосування на всьому сайті прибери box-shadow/position:sticky у Header.astro. */
+      body > header { position: static !important; box-shadow: none !important; backdrop-filter: none !important; }
+      body > header:hover { box-shadow: none !important; }
+
+      .reg__tags { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 1rem; }
+      .reg-tag { font: inherit; font-size: 0.8rem; cursor: pointer; padding: 0.28rem 0.55rem; border-radius: 999px; background: rgba(192, 57, 43, 0.1); border: 1px solid rgba(192, 57, 43, 0.25); color: var(--accent); }
+      .reg-tag:hover { background: rgba(192, 57, 43, 0.18); }
+      .reg-tag span { opacity: 0.7; margin-left: 0.2em; }
+      .reg__pager { display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-top: 2rem; }
+      .reg-page { font: inherit; cursor: pointer; padding: 0.45rem 0.9rem; border-radius: 8px; border: 1px solid rgb(var(--gray-light)); background: #fff; color: rgb(var(--black)); }
+      .reg-page:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+      .reg-page:disabled { opacity: 0.4; cursor: default; }
+      .reg-page-info { font-size: 0.9rem; color: rgba(var(--black), 0.65); font-variant-numeric: tabular-nums; }
+    </style>
+  </body>
+</html>

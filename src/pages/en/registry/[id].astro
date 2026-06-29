@@ -1,0 +1,16 @@
+---
+// src/pages/en/registry/[id].astro — EN профілі (той самий датасет, locale="en")
+import { getCollection } from 'astro:content';
+import RegistryProfile from '../../../components/RegistryProfile.astro';
+
+export async function getStaticPaths() {
+  const registry = await getCollection('registry');
+  return registry.map((entry) => ({
+    params: { id: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+---
+<RegistryProfile entry={entry} locale="en" />

@@ -1,0 +1,16 @@
+---
+// src/pages/registry/[id].astro — UK профілі майстрів реєстру
+import { getCollection } from 'astro:content';
+import RegistryProfile from '../../components/RegistryProfile.astro';
+
+export async function getStaticPaths() {
+  const registry = await getCollection('registry');
+  return registry.map((entry) => ({
+    params: { id: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+---
+<RegistryProfile entry={entry} locale="uk" />

@@ -1,0 +1,49 @@
+---
+// src/components/MastersTabs.astro
+// Перемикач "Біографії | Реєстр". Встав угорі MastersPage.astro і RegistryPage.astro.
+//   <MastersTabs locale={locale} active="bios" />      ← у MastersPage
+//   <MastersTabs locale={locale} active="registry" />  ← у RegistryPage
+import { STR, type Locale } from '../data/registry-schema';
+
+interface Props {
+  locale: Locale;
+  active: 'bios' | 'registry';
+}
+const { locale, active } = Astro.props;
+const S = STR[locale];
+
+const biosUrl = locale === 'en' ? '/en/masters' : '/masters';
+const registryUrl = locale === 'en' ? '/en/registry' : '/registry';
+---
+
+<nav class="masters-tabs" aria-label={S.title}>
+  <a href={biosUrl} class:list={['masters-tabs__tab', { 'is-active': active === 'bios' }]} aria-current={active === 'bios' ? 'page' : undefined}>{S.tabBios}</a>
+  <a href={registryUrl} class:list={['masters-tabs__tab', { 'is-active': active === 'registry' }]} aria-current={active === 'registry' ? 'page' : undefined}>{S.tabRegistry}</a>
+</nav>
+
+<style>
+  .masters-tabs {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    margin: 0 0 1.75rem;
+    background: rgb(var(--gray-light));
+    border-radius: 999px;
+  }
+  .masters-tabs__tab {
+    display: inline-block;
+    padding: 0.45rem 1.15rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    color: rgba(var(--black), 0.65);
+    transition: background-color 0.18s ease, color 0.18s ease;
+  }
+  .masters-tabs__tab:hover { color: rgb(var(--black)); }
+  .masters-tabs__tab.is-active {
+    background: #fff;
+    color: var(--accent);
+    box-shadow: 0 1px 3px rgba(var(--black), 0.12);
+  }
+</style>
