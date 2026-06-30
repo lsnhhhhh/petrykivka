@@ -76,7 +76,7 @@ const metaDesc = `${d.name} — ${genLabel(d.generation, locale)}. ${d.style.sli
   <body>
     <Header />
     <main class="rp">
-      <a id="rp-back" class="rp__back" href={registryUrl}>{S.backToRegistry}</a>
+      <a id="rp-back" class="back-link" href={registryUrl}>{S.backToRegistry}</a>
 
       <header class="rp__head">
         <div class="rp__avatar">
@@ -164,8 +164,9 @@ const metaDesc = `${d.name} — ${genLabel(d.generation, locale)}. ${d.style.sli
 
     <style>
       .rp { width: 880px; max-width: calc(100% - 2rem); margin: 0 auto; padding: 2.5rem 1rem 4rem; }
-      .rp__back { display: inline-block; margin-bottom: 1.75rem; color: var(--accent); text-decoration: none; font-weight: 600; }
-      .rp__back:hover { text-decoration: underline; }
+      /* Кнопка «← До реєстру» — той самий стиль, що й .back-link на інших сторінках сайту. */
+      .back-link { display: inline-block; margin-bottom: 1.5rem; color: rgb(96, 115, 159); text-decoration: none; font-size: 0.9rem; }
+      .back-link:hover { color: #c0392b; }
 
       /* фото по ВЕРХНЬОМУ краю */
       .rp__head { display: flex; gap: 1.75rem; align-items: flex-start; margin-bottom: 2rem; padding-bottom: 1.75rem; border-bottom: 1px solid rgb(var(--gray-light)); flex-wrap: wrap; }
@@ -206,8 +207,12 @@ const metaDesc = `${d.name} — ${genLabel(d.generation, locale)}. ${d.style.sli
     </style>
 
     <style is:global>
-      body > header { position: static !important; box-shadow: none !important; backdrop-filter: none !important; }
-      body > header:hover { box-shadow: none !important; }
+      /* Стоп-ґеп проти тіні хедера на сторінці реєстру/майстра.
+         СПРАВЖНЄ джерело тіні — у Header.astro (видно на сторінці майстра, де цих стилів немає).
+         Тут глушимо і box-shadow, і filter (drop-shadow), і на самому header, і на його прямих дітях (nav). */
+      body > header { position: static !important; }
+      header, header > * { box-shadow: none !important; backdrop-filter: none !important; filter: none !important; }
+      header:hover, header:hover > * { box-shadow: none !important; filter: none !important; }
     </style>
   </body>
 </html>

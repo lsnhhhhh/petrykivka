@@ -356,10 +356,11 @@ const facetGroups = [
     </style>
 
     <style is:global>
-      /* Хедер — звичайний заголовок: не липне, без тіні (зокрема й на ховер).
-         Для застосування на всьому сайті прибери box-shadow/position:sticky у Header.astro. */
-      body > header { position: static !important; box-shadow: none !important; backdrop-filter: none !important; }
-      body > header:hover { box-shadow: none !important; }
+      /* Стоп-ґеп проти тіні хедера. Справжнє джерело — у Header.astro (тінь видно й на сторінці майстра).
+         Глушимо box-shadow і filter (drop-shadow) на header та його прямих дітях (nav). */
+      body > header { position: static !important; }
+      header, header > * { box-shadow: none !important; backdrop-filter: none !important; filter: none !important; }
+      header:hover, header:hover > * { box-shadow: none !important; filter: none !important; }
 
       .reg__tags { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 1rem; }
       .reg-tag { font: inherit; font-size: 0.8rem; cursor: pointer; padding: 0.28rem 0.55rem; border-radius: 999px; background: rgba(192, 57, 43, 0.1); border: 1px solid rgba(192, 57, 43, 0.25); color: var(--accent); }
