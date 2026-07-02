@@ -6,6 +6,8 @@ location: 'Dnipro, Ukraine'
 masters:
   - 'Nadiya Bilokin'
   - 'Paraska Pavlenko'
+  - 'Yaryna Pylypenko'
 ---
+The collection of Volodymyr Makarovych Padun (1942–2016), a Dnipro-based artist, colorist, and educator known as a collector and researcher of the Ukrainian folk art of the Steppe Ukraine. The core of the collection consists of more than 45 historical drawings and original sketches by Petrykivka masters on paper, as well as authentic rushnyky (embroidered towels), clothing, jugs, and painted household items gathered during expeditions. The collection represents the original, "source" Petrykivka painting without Soviet-era layers.
 
-The collection of Volodymyr Padun (1942–2016), a Dnipro-based artist and well-known collector of Ukrainian folk art. The collection included a large number of paper-based Petrykivka paintings by older masters. Works from the collection were used in temporary exhibitions at the Dnipro Art Museum. In 2014, an illustrated catalog of works by Nadiya Bilokin, Yaryna Pylypenko, and Paraska Pavlenko from the private collections of Volodymyr Padun and Andriy Pikush was published.
+The gathered materials formed the basis of the large-scale exhibition "The Open Soul of Petrykivka" in Dnipro. Padun was a prominent representative of the underground "Ihren School": the ornamentation, plasticity, and pure, vivid colors of folk painting organically entered his own easel painting.

@@ -62,6 +62,16 @@ const foundedLabel = founded
       .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
       .gallery-grid img { border-radius: 0; }
       figcaption { font-size: 0.8rem; color: rgb(96,115,159); padding: 0.4rem 0; text-align: center; }
+      .artworks-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+      .artwork-card { text-decoration: none; color: inherit; display: block; transition: transform 0.2s; }
+      .artwork-card:hover { transform: translateY(-4px); }
+      .artwork-info { padding: 0.6rem 0; }
+      .artwork-master { font-size: 0.88rem; font-weight: 700; margin: 0; line-height: 1.3; }
+      .artwork-title { font-size: 0.82rem; font-style: italic; color: rgb(96, 115, 159); margin: 0.1rem 0 0; }
+      .artwork-year { font-size: 0.78rem; color: rgb(96, 115, 159); margin: 0.1rem 0 0; }
+      @media (max-width: 960px) { .artworks-grid { grid-template-columns: repeat(3, 1fr); } }
+      @media (max-width: 700px) { .artworks-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; } }
+      @media (max-width: 520px) { .artworks-grid { grid-template-columns: 1fr; gap: 1.25rem; } }
     </style>
   </head>
   <body>
@@ -156,21 +166,21 @@ const foundedLabel = founded
       {centerArtworks.length > 0 && (
         <section class="masters-section">
           <h2>{locale === 'uk' ? 'Роботи з колекції' : 'Works from collection'}</h2>
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+          <div class="artworks-grid">
             {centerArtworks.map(artwork => (
-              <a href={getContentUrl('gallery', artwork.id)} style="text-decoration: none; color: inherit; display: block;">
-                <figure style="margin: 0;">
-                  <Image
-                    src={artwork.data.image}
-                    alt={artwork.data.title}
-                    width={300}
-                    height={300}
-                    style="width: 100%; height: auto; object-fit: contain; display: block; border-radius: 0;"
-                  />
-                  <figcaption style="font-size: 0.8rem; color: rgb(96,115,159); padding: 0.4rem 0;">
-                    {artwork.data.title}{artwork.data.year ? `, ${artwork.data.year}` : ''}
-                  </figcaption>
-                </figure>
+              <a href={getContentUrl('gallery', artwork.id)} class="artwork-card">
+                <Image
+                  src={artwork.data.image}
+                  alt={artwork.data.title}
+                  widths={[300, 400]}
+                  sizes="(max-width: 600px) 50vw, 25vw"
+                  style="width: 100%; height: auto; display: block; border-radius: 0;"
+                />
+                <div class="artwork-info">
+                  <p class="artwork-master">{artwork.data.master}</p>
+                  <p class="artwork-title">{artwork.data.title}</p>
+                  {artwork.data.year && <p class="artwork-year">{artwork.data.year}</p>}
+                </div>
               </a>
             ))}
           </div>
