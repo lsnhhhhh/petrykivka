@@ -6,5 +6,5 @@ year: '2007'
 image: '../../../assets/artworks/mishchenko/51.jpg'
 medium: 'tempera on paper'
 dimensions: '19.5 × 27.5 cm'
-location: 'Collection of Yuriy Mishchenko and Nataliya Pavlenko'
+location: 'Yuriy Mishchenko and Natalia Pavlenko Collection'
 ---
