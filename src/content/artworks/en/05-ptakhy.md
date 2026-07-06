@@ -6,7 +6,7 @@ decade: "1960"
 subject: ["Birds"]
 medium: "Paper, tempera"
 dimensions: "approx. 20×20 cm"
-location: "Dmytro Yavornytsky Dnipropetrovsk Historical Museum"
+location: "Dmytro Yavornytskyi National Historical Museum"
 image: ../../../assets/artworks/jul/05.jpg
 description: "Material and technique: Paper, tempera. Dimensions: approx. 20×20 cm."
 locale: en

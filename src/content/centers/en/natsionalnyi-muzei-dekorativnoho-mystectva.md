@@ -1,6 +1,6 @@
 ---
 locale: en
-name: 'National Museum of Ukrainian Folk Decorative Art'
+name: 'The National Folk Decorative Art Museum'
 category: 'Museums'
 location: 'Kyiv, Ukraine'
 masters:
