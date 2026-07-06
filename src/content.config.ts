@@ -170,6 +170,7 @@ const artworks = defineCollection({
     image: image(),
     description: z.string().optional(),
     locale: localeSchema,
+    dateAdded: z.string().optional(),
     featured: z.boolean().optional(),
     featuredOrder: z.number().optional(),
     featuredCaption: z.object({

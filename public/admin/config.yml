@@ -125,6 +125,9 @@ collections:
         hint: "Кучерявка, Цибулинка, Зернятко..."
       - { label: "Опис", name: description, widget: text, required: false, i18n: true }
       - { label: "Текст", name: body, widget: markdown, required: false, i18n: true }
+      - { label: "Опис", name: description, widget: text, required: false, i18n: true }
+      - { label: "Текст", name: body, widget: markdown, required: false, i18n: true }
+      - { label: "Дата додавання", name: dateAdded, widget: hidden, default: "{{now}}" }
 
   # ====================== ОСЕРЕДКИ ======================
   - name: centers
