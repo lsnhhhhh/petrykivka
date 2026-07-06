@@ -117,8 +117,8 @@ const readOnlineLabel = locale === 'uk' ? 'Читати онлайн' : 'Read on
         .book-card:nth-child(n+2) { border-top: 1px solid rgb(229, 233, 240); }
       }
     </style>
-  </head>
-  <body>
+ </head>
+  <body class="books-page">
     <Header />
     <main>
       <h1>{t(locale, 'nav.books')}</h1>
@@ -160,8 +160,6 @@ const readOnlineLabel = locale === 'uk' ? 'Читати онлайн' : 'Read on
           </div>
         </section>
       ))}
-      <body class="books-page">
-    <Header />
     </main>
     <Footer />
   </body>
