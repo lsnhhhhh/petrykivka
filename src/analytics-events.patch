@@ -1,0 +1,195 @@
+diff --git a/src/components/GalleryPage.astro b/src/components/GalleryPage.astro
+index eae1b02..830e7fd 100644
+--- a/src/components/GalleryPage.astro
++++ b/src/components/GalleryPage.astro
+@@ -336,6 +336,10 @@ const galleryBase = locale === 'en' ? '/en/gallery' : '/gallery';
+             } else {
+               filters[filterKey].push(value);
+               opt.classList.add('selected');
++              window.trackEvent && window.trackEvent('gallery_filter', {
++                filter_type: filterKey,
++                filter_value: value,
++              });
+             }
+ 
+             toggle.classList.toggle('has-value', filters[filterKey].length > 0);
+diff --git a/src/components/GoogleAnalytics.astro b/src/components/GoogleAnalytics.astro
+index 264f976..670f6c6 100644
+--- a/src/components/GoogleAnalytics.astro
++++ b/src/components/GoogleAnalytics.astro
+@@ -12,4 +12,31 @@ const isProd = import.meta.env.PROD;
+       gtag('config', GA_ID);
+     </script>
+   </>
+-)}
+\ No newline at end of file
++)}
++<script is:inline>
++  // Universal helper for firing custom GA4 events from any page/component.
++  // Safe no-op if gtag isn't loaded (local dev, ad-blockers, etc.) so it
++  // never needs to be feature-detected at every call site.
++  window.trackEvent = function (name, params) {
++    try {
++      if (typeof window.gtag === 'function') {
++        window.gtag('event', name, params || {});
++      }
++    } catch (e) { /* ignore */ }
++  };
++
++  // Site-wide outbound link tracking (book externalUrl/pdfUrl, center websites,
++  // any other target="_blank" link) without needing to instrument every page.
++  document.addEventListener('click', function (e) {
++    var a = e.target && e.target.closest && e.target.closest('a[target="_blank"]');
++    if (!a || !a.href) return;
++    var domain = a.href;
++    try { domain = new URL(a.href).hostname; } catch (_) { /* ignore */ }
++    window.trackEvent('outbound_click', {
++      link_url: a.href,
++      link_domain: domain,
++      link_class: a.className || '(none)',
++      page_path: location.pathname,
++    });
++  }, true);
++</script>
+\ No newline at end of file
+diff --git a/src/components/Header.astro b/src/components/Header.astro
+index 43e8187..1f97ae5 100644
+--- a/src/components/Header.astro
++++ b/src/components/Header.astro
+@@ -46,11 +46,11 @@ const switchPath = locale === 'uk'
+           </svg>
+         </button>
+         <div class="lang-menu" id="lang-menu">
+-          <a href={locale === 'uk' ? currentPath : switchPath} class={`lang-option ${locale === 'uk' ? 'active' : ''}`}>
++          <a href={locale === 'uk' ? currentPath : switchPath} data-lang="uk" class={`lang-option ${locale === 'uk' ? 'active' : ''}`}>
+             <span class="lang-flag">🇺🇦</span>
+             <span>Українська</span>
+           </a>
+-          <a href={locale === 'en' ? currentPath : switchPath} class={`lang-option ${locale === 'en' ? 'active' : ''}`}>
++          <a href={locale === 'en' ? currentPath : switchPath} data-lang="en" class={`lang-option ${locale === 'en' ? 'active' : ''}`}>
+             <span class="lang-flag">🇬🇧</span>
+             <span>English</span>
+           </a>
+@@ -329,6 +329,16 @@ const switchPath = locale === 'uk'
+     langDropdown?.classList.toggle('open');
+   });
+ 
++  // Track only real switches (clicking the already-active language is a no-op)
++  document.querySelectorAll('.lang-option:not(.active)').forEach((opt) => {
++    opt.addEventListener('click', () => {
++      (window as any).trackEvent?.('language_switch', {
++        to_locale: (opt as HTMLElement).dataset.lang,
++        page_path: location.pathname,
++      });
++    });
++  });
++
+   document.addEventListener('click', (e) => {
+     if (!langDropdown?.contains(e.target as Node)) {
+       langDropdown?.classList.remove('open');
+diff --git a/src/components/RegistryPage.astro b/src/components/RegistryPage.astro
+index 4a3c546..dceecee 100644
+--- a/src/components/RegistryPage.astro
++++ b/src/components/RegistryPage.astro
+@@ -296,13 +296,23 @@ const facetGroups = [
+ 
+         checks.forEach((ch) => ch.addEventListener('change', () => {
+           const f = ch.dataset.facet, v = ch.value;
+-          ch.checked ? state[f].add(v) : state[f].delete(v);
++          if (ch.checked) {
++            state[f].add(v);
++            window.trackEvent && window.trackEvent('registry_filter', { facet: f, value: v });
++          } else {
++            state[f].delete(v);
++          }
+           state.page = 1; writeURL(); apply();
+         }));
+-        let deb;
++        let deb, trackDeb;
+         searchEl.addEventListener('input', () => {
+           clearTimeout(deb);
+           deb = setTimeout(() => { state.q = searchEl.value.trim(); state.page = 1; writeURL(); apply(); }, 180);
++          clearTimeout(trackDeb);
++          trackDeb = setTimeout(() => {
++            const q = searchEl.value.trim();
++            if (q) window.trackEvent && window.trackEvent('registry_search', { search_term: q });
++          }, 800);
+         });
+         tagsBox.addEventListener('click', (e) => {
+           const b = e.target.closest('.reg-tag'); if (!b) return;
+diff --git a/src/components/WallpaperMaker.astro b/src/components/WallpaperMaker.astro
+index 46e5cb4..144034c 100644
+--- a/src/components/WallpaperMaker.astro
++++ b/src/components/WallpaperMaker.astro
+@@ -1081,6 +1081,7 @@ const strings = {
+     document.getElementById('wm-shuffle').addEventListener('click', () => {
+       state.seed = Math.floor(Math.random() * 1e9);
+       render();
++      window.trackEvent && window.trackEvent('wallpaper_shuffle', { format: state.format });
+     });
+ 
+     // === Download + thank-you modal ===
+@@ -1121,6 +1122,9 @@ const strings = {
+         input.remove();
+       }
+       if (copied) {
++        window.trackEvent && window.trackEvent('wallpaper_link_copied', {
++          format: state.format,
++        });
+         modalCta.classList.add('wm-modal-cta--copied');
+         // Localized "copied" text
+         const lang = document.documentElement.lang;
+@@ -1149,6 +1153,17 @@ const strings = {
+         a.click();
+         document.body.removeChild(a);
+         URL.revokeObjectURL(url);
++        // Track the completed download — this is the key conversion event
++        // for the whole tool, so it carries the full config as params.
++        window.trackEvent && window.trackEvent('wallpaper_download', {
++          format: state.format,
++          composition: state.pattern,
++          density: state.density,
++          flower_size: state.size,
++          background: state.bgId,
++          tint: state.tint,
++          flower_count: state.selected.length,
++        });
+         // Show thank-you modal right after download is triggered
+         showModal();
+       }, 'image/png');
+diff --git a/src/pages/search.astro b/src/pages/search.astro
+index 1bfaf6d..75def7f 100644
+--- a/src/pages/search.astro
++++ b/src/pages/search.astro
+@@ -36,6 +36,30 @@ const locale = getLocaleFromUrl(Astro.url);
+           zero_results: 'No results found for [SEARCH_TERM]',
+         }
+       });
++
++      // Track search terms (debounced) and zero-result queries.
++      // Pagefind UI doesn't expose a JS callback, so we watch the DOM it renders into.
++      (function () {
++        var container = document.getElementById('search');
++        var trackDeb;
++        function currentTerm() {
++          var input = container.querySelector('input[type="text"], .pagefind-ui__search-input');
++          return input ? input.value.trim() : '';
++        }
++        var observer = new MutationObserver(function () {
++          clearTimeout(trackDeb);
++          trackDeb = setTimeout(function () {
++            var term = currentTerm();
++            if (!term) return;
++            var noResults = !!container.querySelector('.pagefind-ui__message');
++            var results = container.querySelectorAll('.pagefind-ui__result').length;
++            window.trackEvent && window.trackEvent(noResults && results === 0 ? 'site_search_no_results' : 'site_search', {
++              search_term: term,
++            });
++          }, 700);
++        });
++        observer.observe(container, { childList: true, subtree: true });
++      })();
+     </script>
+   </body>
+ </html>
+\ No newline at end of file
