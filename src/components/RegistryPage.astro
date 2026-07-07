@@ -296,13 +296,23 @@ const facetGroups = [
 
         checks.forEach((ch) => ch.addEventListener('change', () => {
           const f = ch.dataset.facet, v = ch.value;
-          ch.checked ? state[f].add(v) : state[f].delete(v);
+          if (ch.checked) {
+            state[f].add(v);
+            window.trackEvent && window.trackEvent('registry_filter', { facet: f, value: v });
+          } else {
+            state[f].delete(v);
+          }
           state.page = 1; writeURL(); apply();
         }));
-        let deb;
+        let deb, trackDeb;
         searchEl.addEventListener('input', () => {
           clearTimeout(deb);
           deb = setTimeout(() => { state.q = searchEl.value.trim(); state.page = 1; writeURL(); apply(); }, 180);
+          clearTimeout(trackDeb);
+          trackDeb = setTimeout(() => {
+            const q = searchEl.value.trim();
+            if (q) window.trackEvent && window.trackEvent('registry_search', { search_term: q });
+          }, 800);
         });
         tagsBox.addEventListener('click', (e) => {
           const b = e.target.closest('.reg-tag'); if (!b) return;

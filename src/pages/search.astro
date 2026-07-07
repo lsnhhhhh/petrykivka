@@ -36,6 +36,30 @@ const locale = getLocaleFromUrl(Astro.url);
           zero_results: 'No results found for [SEARCH_TERM]',
         }
       });
+
+      // Track search terms (debounced) and zero-result queries.
+      // Pagefind UI doesn't expose a JS callback, so we watch the DOM it renders into.
+      (function () {
+        var container = document.getElementById('search');
+        var trackDeb;
+        function currentTerm() {
+          var input = container.querySelector('input[type="text"], .pagefind-ui__search-input');
+          return input ? input.value.trim() : '';
+        }
+        var observer = new MutationObserver(function () {
+          clearTimeout(trackDeb);
+          trackDeb = setTimeout(function () {
+            var term = currentTerm();
+            if (!term) return;
+            var noResults = !!container.querySelector('.pagefind-ui__message');
+            var results = container.querySelectorAll('.pagefind-ui__result').length;
+            window.trackEvent && window.trackEvent(noResults && results === 0 ? 'site_search_no_results' : 'site_search', {
+              search_term: term,
+            });
+          }, 700);
+        });
+        observer.observe(container, { childList: true, subtree: true });
+      })();
     </script>
   </body>
 </html>

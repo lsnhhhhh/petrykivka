@@ -1081,6 +1081,7 @@ const strings = {
     document.getElementById('wm-shuffle').addEventListener('click', () => {
       state.seed = Math.floor(Math.random() * 1e9);
       render();
+      window.trackEvent && window.trackEvent('wallpaper_shuffle', { format: state.format });
     });
 
     // === Download + thank-you modal ===
@@ -1121,6 +1122,9 @@ const strings = {
         input.remove();
       }
       if (copied) {
+        window.trackEvent && window.trackEvent('wallpaper_link_copied', {
+          format: state.format,
+        });
         modalCta.classList.add('wm-modal-cta--copied');
         // Localized "copied" text
         const lang = document.documentElement.lang;
@@ -1149,6 +1153,17 @@ const strings = {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+        // Track the completed download — this is the key conversion event
+        // for the whole tool, so it carries the full config as params.
+        window.trackEvent && window.trackEvent('wallpaper_download', {
+          format: state.format,
+          composition: state.pattern,
+          density: state.density,
+          flower_size: state.size,
+          background: state.bgId,
+          tint: state.tint,
+          flower_count: state.selected.length,
+        });
         // Show thank-you modal right after download is triggered
         showModal();
       }, 'image/png');

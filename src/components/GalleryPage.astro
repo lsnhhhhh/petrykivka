@@ -336,6 +336,10 @@ const galleryBase = locale === 'en' ? '/en/gallery' : '/gallery';
             } else {
               filters[filterKey].push(value);
               opt.classList.add('selected');
+              window.trackEvent && window.trackEvent('gallery_filter', {
+                filter_type: filterKey,
+                filter_value: value,
+              });
             }
 
             toggle.classList.toggle('has-value', filters[filterKey].length > 0);

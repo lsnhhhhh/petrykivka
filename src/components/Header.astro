@@ -46,11 +46,11 @@ const switchPath = locale === 'uk'
           </svg>
         </button>
         <div class="lang-menu" id="lang-menu">
-          <a href={locale === 'uk' ? currentPath : switchPath} class={`lang-option ${locale === 'uk' ? 'active' : ''}`}>
+          <a href={locale === 'uk' ? currentPath : switchPath} data-lang="uk" class={`lang-option ${locale === 'uk' ? 'active' : ''}`}>
             <span class="lang-flag">🇺🇦</span>
             <span>Українська</span>
           </a>
-          <a href={locale === 'en' ? currentPath : switchPath} class={`lang-option ${locale === 'en' ? 'active' : ''}`}>
+          <a href={locale === 'en' ? currentPath : switchPath} data-lang="en" class={`lang-option ${locale === 'en' ? 'active' : ''}`}>
             <span class="lang-flag">🇬🇧</span>
             <span>English</span>
           </a>
@@ -327,6 +327,16 @@ const switchPath = locale === 'uk'
   langToggle?.addEventListener('click', (e) => {
     e.stopPropagation();
     langDropdown?.classList.toggle('open');
+  });
+
+  // Track only real switches (clicking the already-active language is a no-op)
+  document.querySelectorAll('.lang-option:not(.active)').forEach((opt) => {
+    opt.addEventListener('click', () => {
+      (window as any).trackEvent?.('language_switch', {
+        to_locale: (opt as HTMLElement).dataset.lang,
+        page_path: location.pathname,
+      });
+    });
   });
 
   document.addEventListener('click', (e) => {
