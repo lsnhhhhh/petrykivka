@@ -3,6 +3,8 @@ import { glob } from 'astro/loaders';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import * as XLSX from 'xlsx';
+import { defineCollection, z } from 'astro:content';
+import * as XLSX from 'xlsx';
 
 const localeSchema = z.enum(['uk', 'en']).default('uk');
 
@@ -302,4 +304,71 @@ const registry = defineCollection({
   }),
 });
 
-export const collections = { blog, masters, books, centers, materials, artworks, news, registry };
+const publicationsLoader = {
+  name: 'publications-registry-loader',
+  load: async ({ store, logger }: any) => {
+    const fs = await import('node:fs/promises');
+    const url = new URL('./data/publications-registry.xlsx', import.meta.url);
+    const buf = await fs.readFile(url);
+    const wb = XLSX.read(buf, { type: 'buffer' });
+    const sheet = wb.Sheets['publications'];
+    const rows: Record<string, any>[] = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+ 
+    store.clear();
+    for (const row of rows) {
+      if (!row.id) continue;
+      store.set({
+        id: String(row.id),
+        data: {
+          type: String(row.type || ''),
+          authors: String(row.authors || ''),
+          title: String(row.title || ''),
+          full_citation: String(row.full_citation || ''),
+          source: String(row.source || ''),
+          year: row.year ? Number(row.year) : undefined,
+          pages: String(row.pages || ''),
+          series: String(row.series || ''),
+          topic: String(row.topic || ''),
+          mentioned_persons: String(row.mentioned_persons || ''),
+          related_masters: String(row.related_masters || ''),
+          related_centers: String(row.related_centers || ''),
+          language: String(row.language || ''),
+          download_url: String(row.download_url || ''),
+          view_url: String(row.view_url || ''),
+          web_url: String(row.web_url || ''),
+          cover_url: String(row.cover_url || ''),
+          existing_book_id: String(row.existing_book_id || ''),
+          notes: String(row.notes || ''),
+        },
+      });
+    }
+    logger.info(`Publications registry: loaded ${rows.length} records`);
+  },
+};
+ 
+const publicationsRegistry = defineCollection({
+  loader: publicationsLoader,
+  schema: z.object({
+    type: z.string(),
+    authors: z.string().default(''),
+    title: z.string(),
+    full_citation: z.string(),
+    source: z.string().default(''),
+    year: z.number().optional(),
+    pages: z.string().default(''),
+    series: z.string().default(''),
+    topic: z.string().default('general'), // general | personalia
+    mentioned_persons: z.string().default(''), // '; '-роздільник
+    related_masters: z.string().default(''), // ';'-роздільник слагів masters
+    related_centers: z.string().default(''),
+    language: z.string().default(''),
+    download_url: z.string().default(''),
+    view_url: z.string().default(''),
+    web_url: z.string().default(''),
+    cover_url: z.string().default(''),
+    existing_book_id: z.string().default(''), // якщо запис вже є карткою в колекції books
+    notes: z.string().default(''),
+  }),
+});
+
+export const collections = { blog, masters, books, centers, materials, artworks, news, registry, publicationsRegistry };

@@ -41,6 +41,12 @@ const booksByCategory = categories.map(category => ({
 })).filter(group => group.books.length > 0);
 
 const readOnlineLabel = locale === 'uk' ? 'Читати онлайн' : 'Read online';
+
+// --- Таб-перемикач "Обрані видання | Реєстр публікацій" ---
+const booksUrl = locale === 'en' ? '/en/books' : '/books';
+const registryUrl = locale === 'en' ? '/en/publications' : '/publications';
+const tabBooksLabel = locale === 'uk' ? 'Обрані видання' : 'Featured books';
+const tabRegistryLabel = locale === 'uk' ? 'Реєстр публікацій' : 'Publications registry';
 ---
 <!doctype html>
 <html lang={locale}>
@@ -55,7 +61,17 @@ const readOnlineLabel = locale === 'uk' ? 'Читати онлайн' : 'Read on
        box-sizing: border-box;
      }
       h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-      .subtitle { color: rgb(96, 115, 159); font-size: 1.1rem; margin-bottom: 2rem; }
+      .subtitle { color: rgb(96, 115, 159); font-size: 1.1rem; margin-bottom: 1.5rem; }
+
+      .books-tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; border-bottom: 1px solid rgb(229, 233, 240); }
+      .books-tabs a {
+        text-decoration: none; padding: 0.6rem 0.2rem; margin-right: 1.5rem;
+        color: rgb(96, 115, 159); font-size: 1rem; font-weight: 600;
+        border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s;
+      }
+      .books-tabs a:hover { color: #c0392b; }
+      .books-tabs a.active { color: #c0392b; border-bottom-color: #c0392b; }
+
       .nav-anchors { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 3rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgb(229, 233, 240); }
       .nav-anchors a { text-decoration: none; padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.9rem; border: 1px solid rgb(229, 233, 240); color: rgb(0, 0, 0); transition: all 0.2s; }
       .nav-anchors a:hover { border-color: #c0392b; color: #c0392b; }
@@ -127,6 +143,11 @@ const readOnlineLabel = locale === 'uk' ? 'Читати онлайн' : 'Read on
           ? 'Бібліотека видань про петриківський розпис'
           : 'Library of publications about Petrykivka painting'}
       </p>
+
+      <nav class="books-tabs">
+        <a href={booksUrl} class="active">{tabBooksLabel}</a>
+        <a href={registryUrl}>{tabRegistryLabel}</a>
+      </nav>
 
       <nav class="nav-anchors">
         {booksByCategory.map(group => (

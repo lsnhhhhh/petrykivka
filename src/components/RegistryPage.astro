@@ -165,14 +165,6 @@ const facetGroups = [
         const list = document.getElementById('reg-list');
         if (!list) return;
 
-        // Рандомізуємо порядок карток при кожному завантаженні сторінки
-        const liNodes = Array.from(list.children);
-        for (let i = liNodes.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [liNodes[i], liNodes[j]] = [liNodes[j], liNodes[i]];
-        }
-        liNodes.forEach(li => list.appendChild(li));
-
         const cards = Array.from(list.querySelectorAll('.reg-card'));
         const items = cards.map((c) => c.parentElement);
         const checks = Array.from(document.querySelectorAll('.reg-check'));

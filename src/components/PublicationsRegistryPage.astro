@@ -1,0 +1,532 @@
+---
+// src/components/PublicationsRegistryPage.astro
+import { getCollection } from 'astro:content';
+import BaseHead from './BaseHead.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import {
+  TYPES, TYPE_GROUPS, TOPICS, decadeOf, decadeLabel,
+  availabilityOf, AVAILABILITY, STR, type Locale,
+} from '../data/publications-schema';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props as Props;
+const S = STR[locale];
+
+const all = await getCollection('publicationsRegistry');
+
+const items = all.map((entry) => {
+  const d = entry.data;
+  const decade = decadeOf(d.year);
+  const availability = availabilityOf(d);
+  return {
+    id: entry.id,
+    type: d.type,
+    typeLabel: TYPES[d.type as keyof typeof TYPES]?.[locale] || d.type,
+    authors: d.authors,
+    title: d.title,
+    full_citation: d.full_citation,
+    source: d.source,
+    year: d.year ?? null,
+    decade,
+    pages: d.pages,
+    topic: d.topic,
+    topicLabel: TOPICS[d.topic as keyof typeof TOPICS]?.[locale] || d.topic,
+    mentioned_persons: d.mentioned_persons ? d.mentioned_persons.split(';').map((s) => s.trim()).filter(Boolean) : [],
+    language: d.language,
+    download_url: d.download_url,
+    view_url: d.view_url,
+    web_url: d.web_url,
+    cover_url: d.cover_url,
+    existing_book_id: d.existing_book_id,
+    availability,
+  };
+});
+
+const decadesPresent = [...new Set(items.map((i) => i.decade).filter(Boolean))].sort();
+const languagesPresent = [...new Set(items.map((i) => i.language).filter(Boolean))].sort();
+
+const booksBase = locale === 'en' ? '/en/books' : '/books';
+const registryBase = locale === 'en' ? '/en/publications' : '/publications';
+const tabBooksLabel = locale === 'uk' ? 'Обрані видання' : 'Featured books';
+const tabRegistryLabel = locale === 'uk' ? 'Реєстр публікацій' : 'Publications registry';
+
+const pageTitle = `${S.pageTitle} — Петриківський розпис`;
+
+const colLabels = locale === 'uk'
+  ? { type: 'Тип', year: 'Рік', title: 'Назва', authors: 'Автор', topic: 'Тема', pages: 'Стор.', source: 'Джерело', links: 'Посилання' }
+  : { type: 'Type', year: 'Year', title: 'Title', authors: 'Author', topic: 'Topic', pages: 'Pages', source: 'Source', links: 'Links' };
+---
+<!doctype html>
+<html lang={locale}>
+<head>
+  <BaseHead title={pageTitle} description={S.pageIntro} />
+  <style>
+    /* ---- статична розмітка (сервер-рендерена, scoped ок) ---- */
+    .publications-page main {
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1rem 1.5rem 4rem;
+      box-sizing: border-box;
+    }
+    h1 { font-size: 2.4rem; margin-bottom: 0.4rem; }
+    .reg__intro { color: rgb(96, 115, 159); font-size: 1.05rem; max-width: 68ch; margin-bottom: 1.5rem; }
+
+    .reg-tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; border-bottom: 1px solid rgb(229, 233, 240); }
+    .reg-tabs a {
+      text-decoration: none; padding: 0.6rem 0.2rem; margin-right: 1.5rem;
+      color: rgb(96, 115, 159); font-size: 1rem; font-weight: 600;
+      border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s;
+    }
+    .reg-tabs a:hover { color: #c0392b; }
+    .reg-tabs a.active { color: #c0392b; border-bottom-color: #c0392b; }
+
+    .reg-toolbar { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.75rem; }
+    .reg__search {
+      flex: 1; min-width: 240px; padding: 0.6rem 1rem;
+      border: 1px solid rgb(222, 226, 233); border-radius: 8px; font-size: 0.95rem;
+      font-family: inherit;
+    }
+    .reg__search:focus { outline: none; border-color: #c0392b; }
+    .reg__count { font-size: 0.85rem; color: rgb(96, 115, 159); white-space: nowrap; }
+
+    .reg__layout { display: grid; grid-template-columns: 220px 1fr; gap: 2rem; align-items: start; margin-top: 1rem; }
+    @media (max-width: 900px) { .reg__layout { grid-template-columns: 1fr; } }
+
+    .reg__sidebar { position: sticky; top: 1rem; }
+    .clear-filters { font-size: 0.82rem; color: #c0392b; background: none; border: none; cursor: pointer; padding: 0; margin-bottom: 1.25rem; }
+    .facet { margin-bottom: 1.4rem; }
+    .facet__title { font-weight: 700; margin-bottom: 0.4rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em; color: rgb(96, 115, 159); }
+    .facet__option { display: flex; align-items: center; gap: 0.45rem; font-size: 0.9rem; padding: 0.2rem 0; cursor: pointer; color: rgb(40, 42, 43); }
+    .facet__option input { accent-color: #c0392b; }
+
+    .reg-table-wrap { border: 1px solid rgb(229, 233, 240); border-radius: 10px; overflow: hidden; }
+    .reg__empty { padding: 2.5rem; text-align: center; color: rgb(96, 115, 159); }
+    .reg__sentinel { height: 1px; }
+    .reg__loading-more { text-align: center; padding: 1rem; font-size: 0.85rem; color: rgb(96, 115, 159); }
+  </style>
+
+  <!--
+    Усе нижче стилізує елементи, які створюються в JS (document.createElement / innerHTML).
+    Astro не проставляє scope-хеш на такі елементи, тому scoped <style> їх не бачить —
+    обов'язково is:global (той самий підводний камінь, що й у WallpaperMaker/Gallery).
+  -->
+  <style is:global>
+    table.reg-table { width: 100%; border-collapse: collapse; font-size: 0.87rem; table-layout: fixed; }
+    .reg-table col.col-type { width: 8%; }
+    .reg-table col.col-year { width: 6%; }
+    .reg-table col.col-title { width: 27%; }
+    .reg-table col.col-authors { width: 13%; }
+    .reg-table col.col-topic { width: 14%; }
+    .reg-table col.col-pages { width: 6%; }
+    .reg-table col.col-source { width: 13%; }
+    .reg-table col.col-links { width: 13%; }
+
+    .reg-table thead th {
+      text-align: left; padding: 0.7rem 0.7rem; background: rgb(250, 248, 246);
+      border-bottom: 1px solid rgb(229, 233, 240); white-space: nowrap;
+      cursor: pointer; user-select: none; font-weight: 700; font-size: 0.8rem;
+      text-transform: uppercase; letter-spacing: 0.02em; color: rgb(40, 42, 43);
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    .reg-table thead th:hover { color: #c0392b; }
+    .reg-table thead th .sort-arrow { font-size: 0.75em; margin-left: 0.25em; color: #c0392b; }
+
+    .reg-table tbody tr.data-row { border-top: 1px solid rgb(238, 235, 231); transition: background-color 0.12s; }
+    .reg-table tbody tr.data-row:nth-of-type(4n+1) { background: rgb(253, 251, 249); }
+    .reg-table tbody tr.data-row:hover { background: rgb(250, 235, 231); }
+    .reg-table td { padding: 0.65rem 0.7rem; vertical-align: top; line-height: 1.4; }
+
+    .cell-type {
+      display: inline-block; white-space: nowrap; font-size: 0.7rem; text-transform: uppercase;
+      letter-spacing: 0.03em; color: #c0392b; font-weight: 700;
+      background: rgba(192, 57, 43, 0.08); border-radius: 4px; padding: 0.15rem 0.45rem;
+    }
+    .cell-year { white-space: nowrap; color: rgb(96, 115, 159); font-variant-numeric: tabular-nums; }
+    .cell-empty { color: rgb(200, 200, 200); }
+
+    .cell-title__main {
+      font-weight: 600; color: rgb(40, 42, 43); cursor: pointer;
+      display: block; line-height: 1.35;
+    }
+    .cell-title__main:hover { color: #c0392b; text-decoration: underline; text-decoration-color: rgba(192,57,43,0.4); }
+
+    .cell-authors { color: rgb(60, 62, 64); }
+
+    .cell-topic__label { font-size: 0.82rem; color: rgb(60, 62, 64); }
+    .cell-topic__mentions { display: block; font-size: 0.78rem; color: rgb(96, 115, 159); margin-top: 0.2rem; line-height: 1.3; }
+
+    .cell-pages { white-space: nowrap; color: rgb(96, 115, 159); font-variant-numeric: tabular-nums; }
+    .cell-source { color: rgb(60, 62, 64); overflow-wrap: break-word; }
+
+    .cell-links { white-space: nowrap; }
+    .cell-links a {
+      color: #c0392b; text-decoration: none; font-size: 0.8rem; font-weight: 500;
+      margin-right: 0.7rem; opacity: 0.85;
+    }
+    .cell-links a:hover { text-decoration: underline; opacity: 1; }
+
+    tr.citation-row { display: none; }
+    tr.citation-row.open { display: table-row; }
+    tr.citation-row td {
+      background: rgb(250, 248, 246); border-top: 1px dashed rgb(229, 223, 217);
+      padding: 0.75rem 0.7rem 0.9rem; font-size: 0.85rem; color: rgb(90, 90, 90); line-height: 1.55;
+    }
+    tr.citation-row .citation-label {
+      display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em;
+      color: rgb(96, 115, 159); margin-bottom: 0.3rem; font-weight: 700;
+    }
+  </style>
+</head>
+<body class="publications-page">
+  <Header />
+  <main>
+    <h1>{S.pageTitle}</h1>
+    <p class="reg__intro">{S.pageIntro}</p>
+
+    <nav class="reg-tabs">
+      <a href={booksBase}>{tabBooksLabel}</a>
+      <a href={registryBase} class="active">{tabRegistryLabel}</a>
+    </nav>
+
+    <div class="reg-toolbar">
+      <input id="pub-search" class="reg__search" type="text" placeholder={S.searchPlaceholder} autocomplete="off" />
+      <span class="reg__count" id="pub-count"></span>
+    </div>
+
+    <div class="reg__layout">
+      <aside class="reg__sidebar">
+        <button class="clear-filters" id="pub-clear">{S.clearFilters}</button>
+
+        <div class="facet" data-facet="typeGroup">
+          <div class="facet__title">{S.filterType}</div>
+          {Object.entries(TYPE_GROUPS).map(([key, g]) => (
+            <label class="facet__option">
+              <input type="checkbox" value={key} />
+              {g[locale]}
+            </label>
+          ))}
+        </div>
+
+        <div class="facet" data-facet="decade">
+          <div class="facet__title">{S.filterPeriod}</div>
+          {decadesPresent.map((dec) => (
+            <label class="facet__option">
+              <input type="checkbox" value={dec} />
+              {decadeLabel(dec as string, locale)}
+            </label>
+          ))}
+        </div>
+
+        <div class="facet" data-facet="topic">
+          <div class="facet__title">{S.filterTopic}</div>
+          {Object.entries(TOPICS).map(([key, tLabel]) => (
+            <label class="facet__option">
+              <input type="checkbox" value={key} />
+              {tLabel[locale]}
+            </label>
+          ))}
+        </div>
+
+        <div class="facet" data-facet="availability">
+          <div class="facet__title">{S.filterAvailability}</div>
+          {Object.entries(AVAILABILITY).map(([key, aLabel]) => (
+            <label class="facet__option">
+              <input type="checkbox" value={key} />
+              {aLabel[locale]}
+            </label>
+          ))}
+        </div>
+
+        {languagesPresent.length > 0 && (
+          <div class="facet" data-facet="language">
+            <div class="facet__title">{S.filterLanguage}</div>
+            {languagesPresent.map((lang) => (
+              <label class="facet__option">
+                <input type="checkbox" value={lang} />
+                {lang}
+              </label>
+            ))}
+          </div>
+        )}
+      </aside>
+
+      <section>
+        <div class="reg-table-wrap">
+          <table class="reg-table">
+            <colgroup>
+              <col class="col-type" /><col class="col-year" /><col class="col-title" />
+              <col class="col-authors" /><col class="col-topic" /><col class="col-pages" />
+              <col class="col-source" /><col class="col-links" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th data-sort="typeLabel">{colLabels.type}</th>
+                <th data-sort="year">{colLabels.year}</th>
+                <th data-sort="title">{colLabels.title}</th>
+                <th data-sort="authors">{colLabels.authors}</th>
+                <th data-sort="topicLabel">{colLabels.topic}</th>
+                <th data-sort="pages">{colLabels.pages}</th>
+                <th data-sort="source">{colLabels.source}</th>
+                <th>{colLabels.links}</th>
+              </tr>
+            </thead>
+            <tbody id="pub-tbody"></tbody>
+          </table>
+        </div>
+        <div id="pub-empty" class="reg__empty" style="display:none">{S.noResults}</div>
+        <div id="pub-loading-more" class="reg__loading-more" style="display:none">…</div>
+        <div id="pub-sentinel" class="reg__sentinel"></div>
+      </section>
+    </div>
+  </main>
+  <Footer />
+
+  <script type="application/json" id="pub-data" set:html={JSON.stringify(items)} />
+  <script define:vars={{
+    booksBase,
+    S: {
+      download: S.download, view: S.view, webLink: S.webLink,
+      resultsCountTemplate: S.resultsCount(0).toString().replace('0', '{n}'),
+      existingBookCta: locale === 'uk' ? 'Картка видання' : 'Book page',
+      citationLabel: locale === 'uk' ? 'Повний бібліографічний запис' : 'Full citation',
+    },
+    TYPE_GROUPS_JSON: JSON.stringify(TYPE_GROUPS),
+  }}>
+    const allItems = JSON.parse(document.getElementById('pub-data').textContent);
+    const TYPE_GROUPS = JSON.parse(TYPE_GROUPS_JSON);
+    const PAGE_SIZE = 40;
+    const DASH = '<span class="cell-empty">—</span>';
+
+    const state = {
+      q: '', typeGroup: [], decade: [], topic: [], availability: [], language: [],
+      limit: PAGE_SIZE, sortKey: 'year', sortDir: 'desc',
+    };
+
+    let observer = null;
+
+    function readStateFromUrl() {
+      const p = new URLSearchParams(location.search);
+      state.q = p.get('q') || '';
+      state.typeGroup = (p.get('typeGroup') || '').split(',').filter(Boolean);
+      state.decade = (p.get('decade') || '').split(',').filter(Boolean);
+      state.topic = (p.get('topic') || '').split(',').filter(Boolean);
+      state.availability = (p.get('availability') || '').split(',').filter(Boolean);
+      state.language = (p.get('language') || '').split(',').filter(Boolean);
+      state.sortKey = p.get('sort') || 'year';
+      state.sortDir = p.get('dir') || 'desc';
+    }
+
+    function writeStateToUrl() {
+      const p = new URLSearchParams();
+      if (state.q) p.set('q', state.q);
+      if (state.typeGroup.length) p.set('typeGroup', state.typeGroup.join(','));
+      if (state.decade.length) p.set('decade', state.decade.join(','));
+      if (state.topic.length) p.set('topic', state.topic.join(','));
+      if (state.availability.length) p.set('availability', state.availability.join(','));
+      if (state.language.length) p.set('language', state.language.join(','));
+      if (state.sortKey !== 'year' || state.sortDir !== 'desc') {
+        p.set('sort', state.sortKey);
+        p.set('dir', state.sortDir);
+      }
+      const qs = p.toString();
+      history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
+    }
+
+    function typeInSelectedGroups(type) {
+      if (!state.typeGroup.length) return true;
+      return state.typeGroup.some((g) => (TYPE_GROUPS[g]?.types || []).includes(type));
+    }
+
+    function matches(item) {
+      if (state.q) {
+        const hay = (item.authors + ' ' + item.title + ' ' + item.source + ' ' + item.full_citation + ' ' + item.mentioned_persons.join(' ')).toLowerCase();
+        if (!hay.includes(state.q.toLowerCase())) return false;
+      }
+      if (!typeInSelectedGroups(item.type)) return false;
+      if (state.decade.length && !state.decade.includes(item.decade)) return false;
+      if (state.topic.length && !state.topic.includes(item.topic)) return false;
+      if (state.availability.length && !state.availability.includes(item.availability)) return false;
+      if (state.language.length && !state.language.includes(item.language)) return false;
+      return true;
+    }
+
+    // Порожні значення завжди йдуть в кінець, незалежно від напрямку сортування —
+    // інакше зростаюче сортування починається з "—", а не з літери А.
+    function sortItems(list) {
+      const key = state.sortKey;
+      const dir = state.sortDir === 'asc' ? 1 : -1;
+      return [...list].sort((a, b) => {
+        let av = a[key], bv = b[key];
+        if (key === 'year') {
+          const aEmpty = !av, bEmpty = !bv;
+          if (aEmpty && bEmpty) return 0;
+          if (aEmpty) return 1;
+          if (bEmpty) return -1;
+          return (av - bv) * dir;
+        }
+        av = (av || '').toString().trim();
+        bv = (bv || '').toString().trim();
+        const aEmpty = av === '', bEmpty = bv === '';
+        if (aEmpty && bEmpty) return 0;
+        if (aEmpty) return 1;
+        if (bEmpty) return -1;
+        av = av.toLowerCase(); bv = bv.toLowerCase();
+        if (av < bv) return -1 * dir;
+        if (av > bv) return 1 * dir;
+        return 0;
+      });
+    }
+
+    function updateSortIndicators() {
+      document.querySelectorAll('.reg-table thead th[data-sort]').forEach((th) => {
+        const existing = th.querySelector('.sort-arrow');
+        if (existing) existing.remove();
+        if (th.dataset.sort === state.sortKey) {
+          const arrow = document.createElement('span');
+          arrow.className = 'sort-arrow';
+          arrow.textContent = state.sortDir === 'asc' ? '▲' : '▼';
+          th.appendChild(arrow);
+        }
+      });
+    }
+
+    function linksHtml(item) {
+      let html = '';
+      if (item.existing_book_id) html += `<a href="${booksBase}/${item.existing_book_id}">${S.existingBookCta}</a>`;
+      if (item.download_url) html += `<a href="${item.download_url}" target="_blank" rel="noopener">${S.download}</a>`;
+      if (item.view_url) html += `<a href="${item.view_url}" target="_blank" rel="noopener">${S.view}</a>`;
+      if (item.web_url) html += `<a href="${item.web_url}" target="_blank" rel="noopener">${S.webLink}</a>`;
+      return html || DASH;
+    }
+
+    function appendRows(pageItems) {
+      const tbody = document.getElementById('pub-tbody');
+      for (const item of pageItems) {
+        const tr = document.createElement('tr');
+        tr.className = 'data-row';
+        const mentions = item.mentioned_persons.length
+          ? `<span class="cell-topic__mentions">${item.mentioned_persons.slice(0, 2).join(', ')}${item.mentioned_persons.length > 2 ? ' …' : ''}</span>`
+          : '';
+        tr.innerHTML = `
+          <td><span class="cell-type">${item.typeLabel}</span></td>
+          <td class="cell-year">${item.year || DASH}</td>
+          <td>
+            <span class="cell-title__main" data-toggle="${item.id}">${item.title}</span>
+          </td>
+          <td class="cell-authors">${item.authors || DASH}</td>
+          <td><span class="cell-topic__label">${item.topicLabel}</span>${mentions}</td>
+          <td class="cell-pages">${item.pages || DASH}</td>
+          <td class="cell-source">${item.source || DASH}</td>
+          <td class="cell-links">${linksHtml(item)}</td>
+        `;
+        tbody.appendChild(tr);
+
+        const citeRow = document.createElement('tr');
+        citeRow.className = 'citation-row';
+        citeRow.id = `cite-${item.id}`;
+        citeRow.innerHTML = `<td colspan="8"><span class="citation-label">${S.citationLabel}</span>${item.full_citation}</td>`;
+        tbody.appendChild(citeRow);
+      }
+
+      tbody.querySelectorAll('[data-toggle]').forEach((el) => {
+        if (el.dataset.bound) return;
+        el.dataset.bound = '1';
+        el.addEventListener('click', () => {
+          const row = document.getElementById(`cite-${el.dataset.toggle}`);
+          if (row) row.classList.toggle('open');
+        });
+      });
+    }
+
+    function render(resetLimit) {
+      if (resetLimit) state.limit = PAGE_SIZE;
+
+      const filtered = sortItems(allItems.filter(matches));
+      document.getElementById('pub-count').textContent = S.resultsCountTemplate.replace('{n}', filtered.length);
+
+      const tbody = document.getElementById('pub-tbody');
+      const emptyEl = document.getElementById('pub-empty');
+      tbody.innerHTML = '';
+      emptyEl.style.display = filtered.length ? 'none' : 'block';
+
+      const visible = filtered.slice(0, state.limit);
+      appendRows(visible);
+
+      const loadingMore = document.getElementById('pub-loading-more');
+      loadingMore.style.display = state.limit < filtered.length ? 'block' : 'none';
+
+      updateSortIndicators();
+      setupObserver(filtered);
+    }
+
+    function setupObserver(filtered) {
+      const sentinel = document.getElementById('pub-sentinel');
+      if (observer) observer.disconnect();
+      observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && state.limit < filtered.length) {
+          state.limit += PAGE_SIZE;
+          const nextBatch = filtered.slice(state.limit - PAGE_SIZE, state.limit);
+          appendRows(nextBatch);
+          document.getElementById('pub-loading-more').style.display = state.limit < filtered.length ? 'block' : 'none';
+        }
+      }, { rootMargin: '300px' });
+      observer.observe(sentinel);
+    }
+
+    function update() {
+      writeStateToUrl();
+      render(true);
+    }
+
+    document.querySelectorAll('.reg-table thead th[data-sort]').forEach((th) => {
+      th.addEventListener('click', () => {
+        const key = th.dataset.sort;
+        if (state.sortKey === key) {
+          state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+          state.sortKey = key;
+          state.sortDir = key === 'year' ? 'desc' : 'asc';
+        }
+        update();
+      });
+    });
+
+    function syncFacetCheckboxes() {
+      document.querySelectorAll('[data-facet]').forEach((facetEl) => {
+        const key = facetEl.getAttribute('data-facet');
+        facetEl.querySelectorAll('input[type=checkbox]').forEach((cb) => {
+          cb.checked = state[key].includes(cb.value);
+          cb.addEventListener('change', () => {
+            const set = new Set(state[key]);
+            if (cb.checked) set.add(cb.value); else set.delete(cb.value);
+            state[key] = [...set];
+            update();
+          });
+        });
+      });
+    }
+
+    document.getElementById('pub-search').addEventListener('input', (e) => {
+      state.q = e.target.value;
+      update();
+    });
+
+    document.getElementById('pub-clear').addEventListener('click', () => {
+      state.q = ''; state.typeGroup = []; state.decade = []; state.topic = [];
+      state.availability = []; state.language = [];
+      document.getElementById('pub-search').value = '';
+      document.querySelectorAll('[data-facet] input[type=checkbox]').forEach((cb) => cb.checked = false);
+      update();
+    });
+
+    readStateFromUrl();
+    document.getElementById('pub-search').value = state.q;
+    syncFacetCheckboxes();
+    render(true);
+  </script>
+</body>
+</html>
