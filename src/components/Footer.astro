@@ -11,6 +11,7 @@ const today = new Date();
     <nav class="footer-links">
       <a href={getLocalizedPath('/blog', locale)}>{t(locale, 'nav.blog')}</a>
       <a href={getLocalizedPath('/about', locale)}>{t(locale, 'nav.about')}</a>
+      <a href={getLocalizedPath('/support', locale)}>{locale === 'uk' ? 'Підтримка' : 'Support'}</a>
       <a href={getLocalizedPath('/contacts', locale)}>{locale === 'uk' ? 'Контакти' : 'Contacts'}</a>
     </nav>
 

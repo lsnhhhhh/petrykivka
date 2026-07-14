@@ -11,6 +11,7 @@ import { STR, STATUS, REGIONS, GENERATIONS, genLabel, genLabelFull, regionLabel,
 interface Props { locale: Locale; }
 const { locale } = Astro.props;
 const S = STR[locale];
+const registryApplyHref = locale === 'en' ? '/en/registry/apply' : '/registry/apply';
 
 const registry = (await getCollection('registry')).sort((a, b) =>
   a.data.name.localeCompare(b.data.name, 'uk')
@@ -102,6 +103,11 @@ const facetGroups = [
         <h1 class="reg__title">{S.title}</h1>
         <p class="reg__sub">{S.subtitle}</p>
       </header>
+
+      <div class="reg__apply-banner">
+        <span class="reg__apply-banner-text">{S.applyBannerText}</span>
+        <a href={registryApplyHref} class="reg__apply-banner-cta">{S.applyBannerCta}</a>
+      </div>
 
       <div class="reg__layout">
         <aside class="reg__filters" aria-label={S.filters}>
@@ -320,10 +326,44 @@ const facetGroups = [
 
     <style>
       .reg { width: 1120px; max-width: calc(100% - 2rem); margin: 0 auto; padding: 2rem 1rem 4rem; }
-      .reg__head { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgb(var(--gray-light)); }
+      .reg__head { margin-bottom: 1.25rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgb(var(--gray-light)); }
       .reg__title { font-size: 2.4rem; font-weight: 800; margin: 0 0 0.5rem; color: rgb(var(--black)); letter-spacing: -0.01em; }
       .reg__sub { margin: 0; max-width: 64ch; color: rgba(var(--black), 0.65); line-height: 1.55; }
       .reg__layout { display: grid; grid-template-columns: 250px 1fr; gap: 2.5rem; align-items: start; }
+
+      .reg__apply-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+        background: rgba(192, 57, 43, 0.06);
+        border: 1px solid rgba(192, 57, 43, 0.18);
+        border-radius: 12px;
+        padding: 0.9rem 1.25rem;
+        margin: 0 0 2rem;
+      }
+      .reg__apply-banner-text {
+        font-size: 0.95rem;
+        color: rgb(var(--black));
+        line-height: 1.4;
+      }
+      .reg__apply-banner-cta {
+        flex-shrink: 0;
+        background: var(--accent);
+        color: #fff;
+        padding: 0.5rem 1.1rem;
+        border-radius: 999px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: background 0.2s ease;
+      }
+      .reg__apply-banner-cta:hover { background: #8a2418; }
+      @media (max-width: 560px) {
+        .reg__apply-banner { flex-direction: column; align-items: flex-start; }
+      }
 
       .reg__filters { position: sticky; top: 20px; }
       .reg__searchwrap { margin-bottom: 1rem; }

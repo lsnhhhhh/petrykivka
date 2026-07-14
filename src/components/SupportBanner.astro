@@ -1,0 +1,63 @@
+---
+// src/components/SupportBanner.astro
+interface Props {
+  locale: 'uk' | 'en';
+}
+const { locale } = Astro.props;
+
+const text = locale === 'uk'
+  ? 'Петриківський розпис — мистецтво України'
+  : 'Petrykivka painting is the art of Ukraine';
+const linkText = locale === 'uk' ? 'Як підтримати' : 'How to help';
+const href = locale === 'en' ? '/en/support' : '/support';
+---
+
+<div class="support-banner">
+  <div class="support-banner__inner">
+    <svg class="support-banner__flag" viewBox="0 0 3 2" width="18" height="12" aria-hidden="true">
+      <rect width="3" height="1" y="0" fill="#0057B7"></rect>
+      <rect width="3" height="1" y="1" fill="#FFD700"></rect>
+    </svg>
+    <span class="support-banner__text">{text}</span>
+    <a class="support-banner__link" href={href}>{linkText} →</a>
+  </div>
+</div>
+
+<style>
+  .support-banner {
+    background: rgba(var(--black), 0.03);
+    border-bottom: 1px solid rgba(var(--black), 0.08);
+  }
+  .support-banner__inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0.5rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+  }
+  .support-banner__flag {
+    flex-shrink: 0;
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px rgba(var(--black), 0.1);
+  }
+  .support-banner__text {
+    color: rgba(var(--black), 0.75);
+  }
+  .support-banner__link {
+    margin-left: auto;
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .support-banner__link:hover {
+    text-decoration: underline;
+  }
+  @media (max-width: 640px) {
+    .support-banner__inner { font-size: 0.8rem; }
+    .support-banner__link { margin-left: 0; }
+  }
+</style>

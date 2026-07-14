@@ -1,5 +1,6 @@
 ---
 import HomepageSection from './HomepageSection.astro';
+import PetrykivkaMap from '../PetrykivkaMap.astro';
 import { sectionTitles, aboutText, aboutLink } from '../../data/homepage';
 
 interface Props {
@@ -11,20 +12,34 @@ const { locale } = Astro.props;
 
 <HomepageSection title={sectionTitles.about[locale]}>
   <div class="about">
-    <p class="about__text">{aboutText[locale]}</p>
-    <a href={aboutLink[locale].href} class="about__link">
-      <span>{aboutLink[locale].text}</span>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <line x1="5" y1="12" x2="19" y2="12"/>
-        <polyline points="12 5 19 12 12 19"/>
-      </svg>
-    </a>
+    <div class="about__content">
+      <p class="about__text">{aboutText[locale]}</p>
+      <a href={aboutLink[locale].href} class="about__link">
+        <span>{aboutLink[locale].text}</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </a>
+    </div>
+    <div class="about__map">
+      <PetrykivkaMap locale={locale} />
+    </div>
   </div>
 </HomepageSection>
 
 <style>
   .about {
-    max-width: 760px;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  }
+  .about__content {
+  flex: 1 1 50%;
+  }
+  .about__map {
+  flex: 1 1 50%;
+  max-width: none;
   }
   .about__text {
     font-size: 1.1875rem;
@@ -48,10 +63,27 @@ const { locale } = Astro.props;
     gap: 12px;
     border-color: rgba(192, 57, 43, 0.25);
   }
+  @media (max-width: 900px) {
+    .about {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 32px;
+    }
+    .about__content {
+      max-width: 760px;
+    }
+    .about__map {
+      max-width: 380px;
+      margin: 0 auto;
+    }
+  }
   @media (max-width: 640px) {
     .about__text {
       font-size: 1.0625rem;
       line-height: 1.7;
+    }
+    .about__map {
+      max-width: 320px;
     }
   }
 </style>

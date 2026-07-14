@@ -1,0 +1,38 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+---
+<html lang="uk">
+<head>
+  <BaseHead title="Дякуємо за заявку" description="Заявку до реєстру носіїв/майстрів отримано" />
+</head>
+<body>
+  <Header />
+  <main class="thanks">
+    <h1>Дякуємо!</h1>
+    <p>Вашу заявку отримано. Ми розглянемо її та за потреби зв\u2019яжемося з вами електронною поштою.</p>
+    <a href="/registry" class="back-link">← До реєстру</a>
+  </main>
+  <Footer />
+</body>
+</html>
+
+<style>
+  .thanks {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 4rem 1.25rem;
+    text-align: center;
+  }
+  .back-link {
+    display: inline-block;
+    margin-top: 1.5rem;
+    color: rgb(96, 115, 159);
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+  .back-link:hover {
+    color: #c0392b;
+  }
+</style>

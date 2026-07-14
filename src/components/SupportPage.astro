@@ -1,0 +1,110 @@
+---
+// src/components/SupportPage.astro
+import BaseHead from './BaseHead.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+
+interface Props {
+  locale: 'uk' | 'en';
+}
+const { locale } = Astro.props;
+
+const title = locale === 'uk' ? 'Підтримка — Петриківський розпис' : 'Support — Petrykivka Painting';
+const description = locale === 'uk'
+  ? 'Петриківський розпис — мистецтво України. Як підтримати Україну та петриківських майстрів.'
+  : 'Petrykivka painting is the art of Ukraine. How to support Ukraine and its Petrykivka artists.';
+
+const nonMaterial = locale === 'uk' ? [
+  { title: 'Розкажіть про Петриківку', text: 'Поділіться сторінкою майстра чи роботи в соцмережах — це просто, і це працює.' },
+  { title: 'Доповніть Вікіпедію', text: 'Стаття про петриківський розпис існує далеко не всіма мовами світу. Переклад чи доповнення — реальний внесок.' },
+  { title: 'Розкажіть учням чи дітям', text: 'Якщо ви вчитель, викладач чи просто батьки — цей сайт можна використати як матеріал для уроку про українську культуру.' },
+  { title: 'Купуйте в майстрів напряму', text: 'Автентична петриківка — це підтримка конкретних людей і живої традиції, а не сувенірних підробок.' },
+  { title: 'Згадайте в своєму блозі чи медіа', text: 'Якщо ведете канал, подкаст чи видання — петриківка як приклад окремої, самобутньої української ідентичності — вартий сюжет.' },
+] : [
+  { title: 'Talk about Petrykivka', text: 'Share a master\u2019s page or an artwork on social media — it\u2019s simple, and it works.' },
+  { title: 'Contribute to Wikipedia', text: 'Petrykivka painting still lacks articles in many languages. A translation or addition is a real contribution.' },
+  { title: 'Tell students or children', text: 'If you teach or have kids, this site can be used as material for a lesson on Ukrainian culture.' },
+  { title: 'Buy directly from artists', text: 'Authentic Petrykivka work supports real people and a living tradition, not souvenir knockoffs.' },
+  { title: 'Mention it in your own work', text: 'If you run a blog, podcast, or publication — Petrykivka as an example of a distinct Ukrainian identity is a story worth telling.' },
+];
+---
+<html lang={locale}>
+  <head>
+    <BaseHead title={title} description={description} />
+  </head>
+  <body>
+    <Header />
+    <main class="support-page">
+      <section class="support-hero">
+        <h1>{locale === 'uk' ? 'Підтримка' : 'Support'}</h1>
+        <p class="support-hero__lead">
+          {locale === 'uk'
+            ? 'Петриківка — не тільки орнамент і легенда. Це живе село в Дніпропетровській області, регіоні, що роками перебуває в зоні досяжності російських ударів. Майстри, чиї роботи ви бачите на цьому сайті, живуть і працюють в Україні просто зараз.'
+            : 'Petrykivka is not just an ornament and a legend. It\u2019s a living village in Dnipropetrovsk Oblast, a region that has for years remained within reach of Russian strikes. The artists whose work you see on this site live and work in Ukraine right now.'}
+        </p>
+      </section>
+
+      <section class="support-block">
+        <h2>{locale === 'uk' ? 'Фінансова підтримка' : 'Financial support'}</h2>
+        <a class="support-card" href="https://u24.gov.ua" target="_blank" rel="noopener noreferrer">
+          <div class="support-card__body">
+            <h3>UNITED24</h3>
+            <p>
+              {locale === 'uk'
+                ? 'Офіційна платформа збору коштів президента України. 100% коштів надходить на рахунки Нацбанку, звіти публікуються щотижня, аудит — Deloitte і BDO.'
+                : 'The official fundraising platform of the President of Ukraine. 100% of funds go to National Bank of Ukraine accounts; reports are published weekly, audited by Deloitte and BDO.'}
+            </p>
+          </div>
+          <span class="support-card__arrow">→</span>
+        </a>
+      </section>
+
+      <section class="support-block">
+        <h2>{locale === 'uk' ? 'Нематеріальна підтримка' : 'Non-material support'}</h2>
+        <p class="support-block__intro">
+          {locale === 'uk'
+            ? 'Не кожен може донатити — і це нормально. Розповідати про Петриківку теж важлива форма підтримки.'
+            : 'Not everyone can to donate — and that\u2019s fine. Talking about Petrykivka is also a meaningful form of support.'}
+        </p>
+        <ul class="support-list">
+          {nonMaterial.map(item => (
+            <li>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .support-page { max-width: 760px; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+  .support-hero h1 { font-size: 2.2rem; margin-bottom: 1rem; }
+  .support-hero__lead { font-size: 1.05rem; line-height: 1.6; color: rgba(var(--black), 0.85); }
+  .support-block { margin-top: 3rem; }
+  .support-block h2 { font-size: 1.4rem; margin-bottom: 1rem; }
+  .support-block__intro { color: rgba(var(--black), 0.7); margin-bottom: 1.25rem; }
+  .support-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border: 1px solid rgba(var(--gray-light), 1);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .support-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .support-card h3 { margin: 0 0 0.35rem; color: var(--accent); }
+  .support-card p { margin: 0; font-size: 0.92rem; color: rgba(var(--black), 0.75); }
+  .support-card__arrow { font-size: 1.4rem; color: var(--accent); flex-shrink: 0; }
+  .support-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 1.25rem; }
+  .support-list li { border-left: 2px solid rgba(var(--gray-light), 1); padding-left: 1rem; }
+  .support-list h3 { font-size: 1rem; margin: 0 0 0.3rem; }
+  .support-list p { margin: 0; font-size: 0.92rem; color: rgba(var(--black), 0.75); line-height: 1.5; }
+</style>

@@ -1,0 +1,353 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  locale: 'uk' | 'en';
+}
+const { locale } = Astro.props;
+
+const STR = {
+  uk: {
+    title: 'Подати заявку до реєстру носіїв/майстрів',
+    description: 'Форма для подачі кандидатури до реєстру носіїв та майстрів петриківського розпису',
+    heading: 'Подати заявку до реєстру',
+    intro: 'Ця форма — для тих, хто вміє розписувати у петриківській традиції та хоче, щоб про них дізналися. Заявку розглядає команда проєкту вручну, після чого, за згодою, дані додаються до реєстру. Заповнення займає близько 5 хвилин.',
+    backLink: '← До реєстру',
+    section1: 'Про вас',
+    fullName: "Прізвище, ім'я, по батькові",
+    birthYear: 'Рік народження',
+    birthPlace: 'Місце народження (місто/селище, область)',
+    currentPlace: 'Поточне місце проживання',
+    whoAreYou: 'Хто ви?',
+    whoOption1: 'Носійка/носій традиції петриківського розпису',
+    whoOption2: 'Професійна майстриня / професійний майстер',
+    whoOption3: 'Не впевнена/ий, нехай вирішать',
+    section2: 'Контакти',
+    email: 'Email',
+    socials: 'Соцмережі / способи зв\u2019язку',
+    socialsHint: 'Instagram, Facebook, Telegram тощо — по одному посиланню в рядку',
+    section3: 'Творчість',
+    center: 'Осередок, до якого себе відносите',
+    centerHint: 'Не обов\u2019язково географічно — радше з чиєю школою/традицією себе асоціюєте',
+    centerPetrykivka: 'Петриківка',
+    centerKyiv: 'Київ',
+    centerKharkiv: 'Харків',
+    centerOther: 'Інше',
+    centerOtherPlaceholder: 'Вкажіть осередок',
+    style: 'Стиль',
+    styleTraditional: 'Традиційний',
+    styleAuthorial: 'Авторський',
+    teachers: 'Хто навчав розпису',
+    teachersHint: "Ім'я вчителя, назва школи/студії, або «самоук(а)»",
+    paintingSince: 'З якого року розписуєте',
+    section4: 'Роботи та досвід',
+    portfolio: 'Посилання на приклади робіт',
+    portfolioHint: 'Мінімум одне посилання — на фото робіт, сторінку, портфоліо тощо',
+    exhibitions: 'Участь у виставках/проєктах',
+    awards: 'Нагороди, звання, членство в НСХУ',
+    section5: 'Додатково',
+    extra: 'Щось важливе, про що хочете розповісти',
+    consent: 'Погоджуюсь на обробку моїх даних та публікацію цієї інформації на сайті у разі схвалення заявки',
+    submit: 'Надіслати заявку',
+    required: "* обов'язкове поле",
+  },
+  en: {
+    title: 'Apply to the register of tradition bearers/masters',
+    description: 'Application form for the register of Petrykivka painting tradition bearers and masters',
+    heading: 'Apply to the register',
+    intro: 'This form is for anyone who paints in the Petrykivka tradition and would like to be listed. Applications are reviewed manually by the project team, and with your consent the information is then added to the register. It takes about 5 minutes to fill in.',
+    backLink: '← Back to register',
+    section1: 'About you',
+    fullName: 'Full name',
+    birthYear: 'Year of birth',
+    birthPlace: 'Place of birth (town/village, region)',
+    currentPlace: 'Current place of residence',
+    whoAreYou: 'Who are you?',
+    whoOption1: 'A tradition bearer of Petrykivka painting',
+    whoOption2: 'A professional master painter',
+    whoOption3: 'Not sure, let the team decide',
+    section2: 'Contact',
+    email: 'Email',
+    socials: 'Social media / ways to reach you',
+    socialsHint: 'Instagram, Facebook, Telegram, etc. — one link per line',
+    section3: 'Craft',
+    center: 'Which center do you associate with',
+    centerHint: 'Not necessarily geographic — more about whose school/tradition you identify with',
+    centerPetrykivka: 'Petrykivka',
+    centerKyiv: 'Kyiv',
+    centerKharkiv: 'Kharkiv',
+    centerOther: 'Other',
+    centerOtherPlaceholder: 'Please specify',
+    style: 'Style',
+    styleTraditional: 'Traditional',
+    styleAuthorial: 'Authorial',
+    teachers: 'Who taught you painting',
+    teachersHint: 'Teacher\u2019s name, school/studio, or "self-taught"',
+    paintingSince: 'Painting since (year)',
+    section4: 'Works and experience',
+    portfolio: 'Links to examples of your work',
+    portfolioHint: 'At least one link — to photos of your work, a page, a portfolio, etc.',
+    exhibitions: 'Participation in exhibitions/projects',
+    awards: 'Awards, titles, NUAF membership',
+    section5: 'Anything else',
+    extra: 'Anything important you\u2019d like to share',
+    consent: 'I agree to the processing of my data and to publishing this information on the site if my application is approved',
+    submit: 'Submit application',
+    required: '* required field',
+  },
+} as const;
+
+const t = STR[locale];
+const registryHref = locale === 'en' ? '/en/registry' : '/registry';
+const thankYouAction = locale === 'en' ? '/en/registry/thank-you' : '/registry/dyakuyemo';
+---
+<html lang={locale}>
+<head>
+  <BaseHead title={t.title} description={t.description} />
+</head>
+<body>
+  <Header />
+  <main class="apply">
+    <a href={registryHref} class="back-link">{t.backLink}</a>
+    <h1>{t.heading}</h1>
+    <p class="intro">{t.intro}</p>
+    <p class="required-note">{t.required}</p>
+
+    <form name="registry-application" method="POST" data-netlify="true" netlify-honeypot="bot-field" action={thankYouAction}>
+      <input type="hidden" name="form-name" value="registry-application" />
+      <input type="hidden" name="locale" value={locale} />
+      <p class="hp-field">
+        <label>Don't fill this in: <input name="bot-field" /></label>
+      </p>
+
+      <fieldset>
+        <legend>{t.section1}</legend>
+
+        <label for="full_name">{t.fullName} *</label>
+        <input type="text" id="full_name" name="full_name" required />
+
+        <label for="birth_year">{t.birthYear} *</label>
+        <input type="number" id="birth_year" name="birth_year" min="1900" max="2020" required />
+
+        <label for="birth_place">{t.birthPlace}</label>
+        <input type="text" id="birth_place" name="birth_place" />
+
+        <label for="current_place">{t.currentPlace} *</label>
+        <input type="text" id="current_place" name="current_place" required />
+
+        <fieldset class="radio-group">
+          <legend>{t.whoAreYou} *</legend>
+          <label class="radio-label"><input type="radio" name="who_are_you" value="tradition_bearer" required /> {t.whoOption1}</label>
+          <label class="radio-label"><input type="radio" name="who_are_you" value="master" /> {t.whoOption2}</label>
+          <label class="radio-label"><input type="radio" name="who_are_you" value="unsure" /> {t.whoOption3}</label>
+        </fieldset>
+      </fieldset>
+
+      <fieldset>
+        <legend>{t.section2}</legend>
+
+        <label for="email">{t.email} *</label>
+        <input type="email" id="email" name="email" required />
+
+        <label for="socials">{t.socials}</label>
+        <p class="hint">{t.socialsHint}</p>
+        <textarea id="socials" name="socials" rows="3"></textarea>
+      </fieldset>
+
+      <fieldset>
+        <legend>{t.section3}</legend>
+
+        <label for="center">{t.center}</label>
+        <p class="hint">{t.centerHint}</p>
+        <select id="center" name="center">
+          <option value="petrykivka">{t.centerPetrykivka}</option>
+          <option value="kyiv">{t.centerKyiv}</option>
+          <option value="kharkiv">{t.centerKharkiv}</option>
+          <option value="other">{t.centerOther}</option>
+        </select>
+        <input type="text" id="center_other" name="center_other" placeholder={t.centerOtherPlaceholder} class="center-other-input hidden" />
+
+        <p class="checkbox-legend">{t.style}</p>
+        <label class="checkbox-label"><input type="checkbox" name="style[]" value="traditional" /> {t.styleTraditional}</label>
+        <label class="checkbox-label"><input type="checkbox" name="style[]" value="authorial" /> {t.styleAuthorial}</label>
+
+        <label for="teachers">{t.teachers}</label>
+        <p class="hint">{t.teachersHint}</p>
+        <input type="text" id="teachers" name="teachers" />
+
+        <label for="painting_since">{t.paintingSince}</label>
+        <input type="number" id="painting_since" name="painting_since" min="1900" max="2026" />
+      </fieldset>
+
+      <fieldset>
+        <legend>{t.section4}</legend>
+
+        <label for="portfolio">{t.portfolio} *</label>
+        <p class="hint">{t.portfolioHint}</p>
+        <textarea id="portfolio" name="portfolio" rows="3" required></textarea>
+
+        <label for="exhibitions">{t.exhibitions}</label>
+        <textarea id="exhibitions" name="exhibitions" rows="3"></textarea>
+
+        <label for="awards">{t.awards}</label>
+        <textarea id="awards" name="awards" rows="3"></textarea>
+      </fieldset>
+
+      <fieldset>
+        <legend>{t.section5}</legend>
+
+        <label for="extra">{t.extra}</label>
+        <textarea id="extra" name="extra" rows="4"></textarea>
+
+        <label class="checkbox-label consent-label">
+          <input type="checkbox" name="consent" value="yes" required />
+          {t.consent} *
+        </label>
+      </fieldset>
+
+      <button type="submit" class="submit-btn">{t.submit}</button>
+    </form>
+  </main>
+  <Footer />
+
+  <script>
+    const centerSelect = document.getElementById('center') as HTMLSelectElement | null;
+    const otherInput = document.getElementById('center_other') as HTMLInputElement | null;
+    if (centerSelect && otherInput) {
+      const sync = () => {
+        const isOther = centerSelect.value === 'other';
+        otherInput.classList.toggle('hidden', !isOther);
+      };
+      centerSelect.addEventListener('change', sync);
+      sync();
+    }
+  </script>
+</body>
+</html>
+
+<style>
+  .apply {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: rgb(96, 115, 159);
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+  .back-link:hover {
+    color: #c0392b;
+  }
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+  .intro {
+    color: rgba(var(--black), 0.75);
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+  }
+  .required-note {
+    font-size: 0.85rem;
+    color: rgba(var(--black), 0.5);
+    margin-bottom: 2rem;
+  }
+  fieldset {
+    border: none;
+    padding: 0;
+    margin: 0 0 2.5rem;
+  }
+  fieldset legend {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #c0392b;
+    padding: 0 0 0.75rem;
+    border-bottom: 1px solid rgba(var(--gray-light), 0.6);
+    width: 100%;
+    margin-bottom: 1.25rem;
+  }
+  label {
+    display: block;
+    font-weight: 500;
+    margin: 1.1rem 0 0.35rem;
+  }
+  .hint {
+    font-size: 0.85rem;
+    color: rgba(var(--black), 0.55);
+    margin: 0 0 0.4rem;
+  }
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid rgba(var(--gray-light), 0.9);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    background: #fff;
+    color: #282A2B;
+  }
+  textarea {
+    resize: vertical;
+  }
+  .radio-group,
+  .checkbox-legend {
+    margin-top: 1.1rem;
+  }
+  .radio-group legend,
+  .checkbox-legend {
+    font-weight: 500;
+    font-size: 1rem;
+    border: none;
+    padding: 0;
+    margin-bottom: 0.5rem;
+    color: #282A2B;
+  }
+  .radio-label,
+  .checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-weight: 400;
+    margin: 0.4rem 0;
+  }
+  .radio-label input,
+  .checkbox-label input {
+    margin-top: 0.25rem;
+  }
+  .center-other-input {
+    margin-top: 0.6rem;
+  }
+  .hidden {
+    display: none;
+  }
+  .consent-label {
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+  }
+  .hp-field {
+    position: absolute;
+    left: -9999px;
+  }
+  .submit-btn {
+    background: #c0392b;
+    color: #fff;
+    border: none;
+    padding: 0.85rem 2rem;
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .submit-btn:hover {
+    background: #8a2418;
+  }
+</style>

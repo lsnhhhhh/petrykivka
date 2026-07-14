@@ -1,0 +1,38 @@
+---
+import BaseHead from '../../../components/BaseHead.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+---
+<html lang="en">
+<head>
+  <BaseHead title="Thank you" description="Your application to the register has been received" />
+</head>
+<body>
+  <Header />
+  <main class="thanks">
+    <h1>Thank you!</h1>
+    <p>Your application has been received. We\u2019ll review it and reach out by email if needed.</p>
+    <a href="/en/registry" class="back-link">← Back to register</a>
+  </main>
+  <Footer />
+</body>
+</html>
+
+<style>
+  .thanks {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 4rem 1.25rem;
+    text-align: center;
+  }
+  .back-link {
+    display: inline-block;
+    margin-top: 1.5rem;
+    color: rgb(96, 115, 159);
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+  .back-link:hover {
+    color: #c0392b;
+  }
+</style>

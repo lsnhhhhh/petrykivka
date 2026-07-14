@@ -119,6 +119,8 @@ export const STR = {
     notes: 'Примітки',
     fullBio: 'Читати повну біографію →',
     updated: 'Інформацію оновлено',
+    applyBannerText: 'Ви носій традиції або майстер петриківського розпису і хочете потрапити до реєстру?',
+    applyBannerCta: 'Подати заявку →',
   },
   en: {
     tabBios: 'Selected biographies',
@@ -161,5 +163,7 @@ export const STR = {
     notes: 'Notes',
     fullBio: 'Read the full biography →',
     updated: 'Information updated',
+    applyBannerText: 'Are you a tradition bearer or master of Petrykivka painting and want to be listed?',
+    applyBannerCta: 'Apply now →',
   },
 } as const;
