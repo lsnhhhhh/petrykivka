@@ -28,12 +28,12 @@ export const hero = {
     en: 'Petrykivka painting — fragment from the Dnipropetrovsk Art Museum collection',
   } as LocalizedText,
   title: {
-    uk: 'Досліджуйте світ петриківського розпису',
-    en: 'Explore the world of Petrykivka painting',
+    uk: 'Найповніша цифрова енциклопедія петриківського розпису',
+    en: 'The most comprehensive digital encyclopedia of Petrykivka painting',
   } as LocalizedText,
   subtitle: {
-    uk: 'Колекція творів, біографії майстрів, книги та історичні матеріали',
-    en: 'A collection of artworks, biographies of masters, books and historical materials',
+    uk: 'Біографії майстрів, каталог творів, книги, архівні матеріали, історія та сучасні дослідження традиції, внесеної до Списку нематеріальної культурної спадщини ЮНЕСКО.',
+    en: 'Master biographies, an artwork catalog, books, archival materials, history and contemporary research on a tradition inscribed on the UNESCO Intangible Cultural Heritage list.',
   } as LocalizedText,
 };
 
@@ -78,8 +78,8 @@ export const aboutText = {
 } as LocalizedText;
 
 export const aboutLink = {
-  uk: { text: 'Цікаві факти про розпис', href: '/facts' },
-  en: { text: 'Interesting facts about painting', href: '/en/facts' },
+  uk: { text: 'Читати повну історію розпису', href: '/history' },
+  en: { text: 'Read the full history of Petrykivka painting', href: '/en/history' },
 };
 
 // ============================================================
@@ -143,7 +143,7 @@ export const keyFigures: KeyFigure[] = [
   {
     slug: 'fedir-panko',
     role: {
-      uk: 'Провідний класик, реформатор та педагогів петриківського розпису',
+      uk: 'Провідний класик, реформатор та педагог петриківського розпису',
       en: 'Leading classicist, reformer and teacher of Petrykivka painting',
     },
   },

@@ -1,10 +1,36 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { getLocaleFromUrl, getLocalizedPath } from '../i18n/translations';
+import { getLocaleFromUrl } from '../i18n/translations';
+import { SITE_DESCRIPTION } from '../consts';
 
 const locale = getLocaleFromUrl(Astro.url);
+
+const [masters, artworks, books, materials, centers, registry] = await Promise.all([
+  getCollection('masters'),
+  getCollection('artworks'),
+  getCollection('books'),
+  getCollection('materials'),
+  getCollection('centers'),
+  getCollection('registry').catch(() => []),
+]);
+
+const countByLocale = (col: any[]) => col.filter((item) => item.data.locale === locale).length;
+
+const stats = [
+  { value: countByLocale(masters), label: { uk: 'детальних біографій майстрів', en: 'detailed master biographies' } },
+  { value: registry.length, label: { uk: 'майстрів у реєстрі', en: 'masters in the registry' } },
+  { value: countByLocale(artworks), label: { uk: 'робіт у галереї', en: 'works in the gallery' } },
+  { value: countByLocale(books), label: { uk: 'книг у бібліографії', en: 'books in the bibliography' } },
+  { value: countByLocale(centers), label: { uk: 'осередків і музеїв', en: 'centers and museums' } },
+];
+
+const lastUpdated = new Date().toLocaleDateString(locale === 'uk' ? 'uk-UA' : 'en-GB', {
+  year: 'numeric',
+  month: 'long',
+});
 ---
 
 <!doctype html>
@@ -12,10 +38,20 @@ const locale = getLocaleFromUrl(Astro.url);
   <head>
     <BaseHead
       title={locale === 'uk' ? 'Про проект' : 'About'}
-      description={locale === 'uk' ? 'Про сайт Петриківський розпис' : 'About Petrykivka Painting website'}
+      description={SITE_DESCRIPTION[locale]}
     />
     <style>
-      .about-intro { color: rgb(96, 115, 159); font-size: 1.05rem; line-height: 1.7; margin-bottom: 2rem; }
+      .about-hero { margin-bottom: 2.5rem; }
+      .about-eyebrow {
+        display: inline-block;
+        color: #c0392b;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+      }
+      .about-intro { color: rgb(96, 115, 159); font-size: 1.05rem; line-height: 1.7; margin-bottom: 1.5rem; }
       .about-section { margin-bottom: 2.5rem; }
       .about-section h2 { font-size: 1.3rem; font-weight: 700; margin: 0 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #c0392b; display: inline-block; }
       .section-card { display: flex; gap: 1rem; align-items: baseline; padding: 0.75rem 0; border-bottom: 1px solid rgb(243, 244, 246); }
@@ -23,7 +59,40 @@ const locale = getLocaleFromUrl(Astro.url);
       .section-card a { color: #c0392b; text-decoration: none; font-weight: 600; font-size: 1rem; white-space: nowrap; }
       .section-card a:hover { border-bottom: 1px solid #c0392b; }
       .section-desc { color: rgb(96, 115, 159); font-size: 0.9rem; margin: 0; }
-      .dev-badge { display: inline-flex; align-items: center; gap: 0.4em; background: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.9rem; margin-bottom: 2rem; }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1px;
+        background: rgb(229, 233, 240);
+        border: 1px solid rgb(229, 233, 240);
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 2rem 0 2.5rem;
+      }
+      .stat-box {
+        background: #fff;
+        padding: 1.25rem 0.75rem;
+        text-align: center;
+      }
+      .stat-num { display: block; font-size: 1.75rem; font-weight: 700; color: #c0392b; line-height: 1.1; }
+      .stat-label { display: block; font-size: 0.78rem; color: rgb(96, 115, 159); margin-top: 0.35rem; line-height: 1.3; }
+
+      .update-note {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5em;
+        color: rgb(96, 115, 159);
+        font-size: 0.85rem;
+        background: rgb(249, 250, 251);
+        border: 1px solid rgb(243, 244, 246);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+      }
+
+      @media (max-width: 720px) {
+        .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      }
     </style>
   </head>
   <body>
@@ -31,32 +100,51 @@ const locale = getLocaleFromUrl(Astro.url);
     <main>
       {locale === 'uk' ? (
         <>
-          <h1>Про проект</h1>
-
-          <div class="dev-badge">
-            <span>🚧</span>
-            <span>Проект знаходиться в активній розробці — контент постійно доповнюється</span>
+          <div class="about-hero">
+            <span class="about-eyebrow">Про проект</span>
+            <h1>Найповніша цифрова енциклопедія петриківського розпису</h1>
+            <p class="about-intro">
+              Ми збираємо, систематизуємо та документуємо петриківський розпис — унікальний вид
+              українського декоративно-орнаментального народного мистецтва з села Петриківка
+              Дніпропетровської області, внесений ЮНЕСКО до Репрезентативного списку
+              нематеріальної культурної спадщини людства у 2013 році.
+            </p>
+            <p class="about-intro">
+              Проєкт об'єднує детальні біографії майстрів, фасетний реєстр, каталог творів,
+              бібліографію видань, архівні матеріали осередків і шкіл та історичний контекст
+              традиції — в одному місці, безкоштовно і без реклами.
+            </p>
           </div>
 
-          <p class="about-intro">
-            Цей сайт — онлайн-енциклопедія петриківського декоративно-орнаментального розпису,
-            унікального виду українського народного мистецтва, що походить із села Петриківка
-            Дніпропетровської області. У 2013 році ЮНЕСКО внесло петриківський розпис до
-            Репрезентативного списку нематеріальної культурної спадщини людства.
-          </p>
+          <div class="stats-grid">
+            {stats.map((s) => (
+              <div class="stat-box">
+                <span class="stat-num">{s.value}</span>
+                <span class="stat-label">{s.label.uk}</span>
+              </div>
+            ))}
+          </div>
 
-          <p class="about-intro">
-            Мета проєкту — зібрати, систематизувати та зробити доступною інформацію про майстрів,
-            їхні роботи, історію, техніки та матеріали, пов'язані з петриківським розписом.
-            Сайт створений для дослідників, студентів, майстрів та всіх, хто цікавиться
-            цим унікальним мистецтвом.
-          </p>
+          <div class="about-section">
+            <h2>Джерела та методологія</h2>
+            <p class="about-intro">
+              Матеріали проєкту спираються на дослідження та архів petrykivka-art.com, оцифровані
+              видання та альбоми, відкриті мистецтвознавчі джерела, а також на пряму експертну
+              роботу з упорядкування й перевірки фактажу — зокрема класифікації майстрів за
+              поколіннями та школами. Там, де опубліковані джерела суперечать одне одному,
+              пріоритет надається перевіреним первинним даним і прямій експертизі укладачів проєкту.
+            </p>
+          </div>
 
           <div class="about-section">
             <h2>Розділи сайту</h2>
             <div class="section-card">
               <a href="/masters">Майстри</a>
               <p class="section-desc">Біографії та роботи майстрів петриківського розпису — від першого покоління до сучасних художників</p>
+            </div>
+            <div class="section-card">
+              <a href="/registry">Реєстр майстрів</a>
+              <p class="section-desc">Фасетний покажчик усіх відомих майстрів — покоління, регіон, осередок, стиль, звання</p>
             </div>
             <div class="section-card">
               <a href="/gallery">Галерея</a>
@@ -81,44 +169,63 @@ const locale = getLocaleFromUrl(Astro.url);
           </div>
 
           <div class="about-section">
-            <h2>Про розробку</h2>
+            <h2>Проєкт постійно поповнюється</h2>
             <p class="about-intro">
-              Проєкт знаходиться в активній фазі розробки. Ми постійно додаємо нові біографії
-              майстрів, роботи до галереї, книги та матеріали. Якщо ви маєте інформацію,
-              фотографії робіт або інші матеріали, які можуть доповнити сайт — будемо вдячні
-              за вашу допомогу. Зв'яжіться з нами через сторінку
+              Ми регулярно додаємо нові біографії, роботи до галереї, книги та матеріали.
+              Якщо ви маєте інформацію, фотографії робіт чи інші матеріали, які можуть доповнити
+              сайт — будемо вдячні за допомогу. Пишіть через сторінку
               <a href="/contacts" style="color: #c0392b; text-decoration: none; border-bottom: 1px solid #f5c6c0;">контактів</a>.
             </p>
+            <span class="update-note">🕓 Дані оновлено: {lastUpdated}</span>
           </div>
         </>
       ) : (
         <>
-          <h1>About the Project</h1>
-
-          <div class="dev-badge">
-            <span>🚧</span>
-            <span>This project is under active development — content is being continuously updated</span>
+          <div class="about-hero">
+            <span class="about-eyebrow">About</span>
+            <h1>The most comprehensive digital encyclopedia of Petrykivka painting</h1>
+            <p class="about-intro">
+              We collect, systematize, and document Petrykivka painting — a unique form of
+              Ukrainian decorative ornamental folk art originating from the village of Petrykivka
+              in the Dnipropetrovsk region, inscribed by UNESCO on the Representative List of the
+              Intangible Cultural Heritage of Humanity in 2013.
+            </p>
+            <p class="about-intro">
+              The project brings together detailed master biographies, a faceted registry, an
+              artwork catalog, a bibliography of publications, archival materials from centers and
+              schools, and historical context — all in one place, free and ad-free.
+            </p>
           </div>
 
-          <p class="about-intro">
-            This website is an online encyclopedia of Petrykivka decorative ornamental painting,
-            a unique form of Ukrainian folk art originating from the village of Petrykivka
-            in the Dnipropetrovsk region. In 2013, UNESCO inscribed Petrykivka painting on the
-            Representative List of the Intangible Cultural Heritage of Humanity.
-          </p>
+          <div class="stats-grid">
+            {stats.map((s) => (
+              <div class="stat-box">
+                <span class="stat-num">{s.value}</span>
+                <span class="stat-label">{s.label.en}</span>
+              </div>
+            ))}
+          </div>
 
-          <p class="about-intro">
-            The goal of this project is to collect, systematize, and make accessible information
-            about the masters, their works, history, techniques, and materials related to
-            Petrykivka painting. The site is created for researchers, students, artists,
-            and anyone interested in this unique art form.
-          </p>
+          <div class="about-section">
+            <h2>Sources & Methodology</h2>
+            <p class="about-intro">
+              Project materials draw on the research and archive of petrykivka-art.com, digitized
+              publications and albums, open art-historical sources, and direct expert work on
+              compiling and verifying facts — including the classification of masters by
+              generation and school. Where published sources conflict, priority is given to
+              verified primary data and the direct expertise of the project's compilers.
+            </p>
+          </div>
 
           <div class="about-section">
             <h2>Site Sections</h2>
             <div class="section-card">
               <a href="/en/masters">Masters</a>
               <p class="section-desc">Biographies and works of Petrykivka painting masters — from the first generation to contemporary artists</p>
+            </div>
+            <div class="section-card">
+              <a href="/en/registry">Masters Registry</a>
+              <p class="section-desc">A faceted index of all known masters — generation, region, center, style, honors</p>
             </div>
             <div class="section-card">
               <a href="/en/gallery">Gallery</a>
@@ -143,14 +250,14 @@ const locale = getLocaleFromUrl(Astro.url);
           </div>
 
           <div class="about-section">
-            <h2>About Development</h2>
+            <h2>The project keeps growing</h2>
             <p class="about-intro">
-              The project is in an active development phase. We are constantly adding new master
-              biographies, works to the gallery, books, and materials. If you have information,
-              photographs of works, or other materials that could complement the site — we would
-              appreciate your help. Please reach out through our
+              We regularly add new biographies, gallery works, books, and materials. If you have
+              information, photographs of works, or other materials that could complement the
+              site — we'd appreciate your help. Please reach out through our
               <a href="/en/contacts" style="color: #c0392b; text-decoration: none; border-bottom: 1px solid #f5c6c0;">contacts page</a>.
             </p>
+            <span class="update-note">🕓 Data last updated: {lastUpdated}</span>
           </div>
         </>
       )}

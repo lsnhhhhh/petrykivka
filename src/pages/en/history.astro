@@ -1,0 +1,718 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PetrykivkaMap from '../../components/PetrykivkaMap.astro';
+
+const toc = [
+  { id: 'zemlia-stepiv-i-kozakiv', label: 'The Land of Steppes and Cossacks' },
+  { id: 'narodni-vytoky', label: 'Folk Origins: Chepurushky and Malyovky' },
+  { id: 'pershi-doslidnyky', label: 'The First Researchers' },
+  { id: 'pryroda-yak-dzherelo', label: 'Nature as a Source of Inspiration' },
+  { id: 'try-chariwnytsi', label: 'The Three Petrykivka Charmers' },
+  { id: 'pryrodni-farby', label: 'Natural Paints and Tools' },
+  { id: 'tekhnika-vykonannia', label: 'Technique' },
+  { id: 'vyznannia-1936', label: 'Recognition: The 1936 Kyiv Exhibition' },
+  { id: 'shkola', label: 'The Petrykivka School of Decorative Drawing' },
+  { id: 'porcelanova-hrupa', label: 'Porcelain Painting: The Kyiv Group' },
+  { id: 'fabryka-druzhba', label: 'The Druzhba Factory' },
+  { id: 'sokolenko', label: 'Vasyl Sokolenko' },
+  { id: 'nove-pokolinnia', label: 'A New Generation: 1970s–1990s' },
+  { id: 'dynastii', label: 'Petrykivka Dynasties' },
+  { id: 'suchasnyi-stan', label: 'Petrykivka Painting Today' },
+  { id: 'vysnovok', label: 'Conclusion' },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title="History of Petrykivka Painting"
+      description="The history of Petrykivka painting from its 18th-century origins to the present: chepurushky, Tetyana Pata, Oleksandr Statyva, the Petrykivka School, the Druzhba factory, Vasyl Sokolenko, UNESCO recognition, and the craft's state today."
+    />
+    <style>
+      .hist-page {
+        max-width: 1100px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      .hist-layout {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 56px;
+        align-items: start;
+      }
+
+      .hist-toc {
+        position: sticky;
+        top: 32px;
+      }
+      .hist-toc-inner {
+        border-left: 2px solid rgb(229, 233, 240);
+        padding-left: 1rem;
+        max-height: calc(100vh - 64px);
+        overflow-y: auto;
+      }
+      .hist-toc-label {
+        display: block;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: rgba(40, 42, 43, 0.4);
+        margin-bottom: 0.85rem;
+      }
+      .hist-toc-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+      .hist-toc-list a {
+        display: block;
+        font-size: 0.85rem;
+        line-height: 1.4;
+        color: rgba(40, 42, 43, 0.6);
+        text-decoration: none;
+        font-weight: 500;
+        border-bottom: none;
+        transition: color 0.15s ease;
+      }
+      .hist-toc-list a:hover { color: #c0392b; }
+      .hist-toc-list a.active {
+        color: #c0392b;
+        font-weight: 700;
+      }
+
+      .hist-toc-mobile { display: none; }
+
+      @media (max-width: 980px) {
+        .hist-layout { grid-template-columns: 1fr; gap: 0; }
+        .hist-toc { display: none; }
+        .hist-toc-mobile {
+          display: block;
+          margin: 0 0 2rem;
+          border: 1px solid rgb(229, 233, 240);
+          border-radius: 10px;
+          padding: 0.9rem 1.1rem;
+          background: #fff;
+        }
+        .hist-toc-mobile summary {
+          cursor: pointer;
+          font-weight: 700;
+          font-size: 0.95rem;
+          color: #282A2B;
+          list-style: none;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .hist-toc-mobile summary::-webkit-details-marker { display: none; }
+        .hist-toc-mobile summary::after {
+          content: '+';
+          color: #c0392b;
+          font-size: 1.2rem;
+          line-height: 1;
+        }
+        .hist-toc-mobile[open] summary::after { content: '−'; }
+        .hist-toc-mobile ol {
+          list-style: none;
+          margin: 0.9rem 0 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 0.55rem;
+        }
+        .hist-toc-mobile a {
+          color: rgba(40, 42, 43, 0.7);
+          text-decoration: none;
+          font-size: 0.9rem;
+          border-bottom: none;
+        }
+        .hist-toc-mobile a:hover { color: #c0392b; }
+      }
+
+      .hist-eyebrow {
+        display: inline-block;
+        color: #c0392b;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+      }
+
+      .hist-article { max-width: 68ch; }
+      .hist-article h2 {
+        font-size: 1.35rem;
+        font-weight: 700;
+        margin: 2.75rem 0 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #c0392b;
+        display: inline-block;
+        scroll-margin-top: 90px;
+      }
+      .hist-article p {
+        line-height: 1.75;
+        margin: 0 0 1.15rem;
+        color: #282A2B;
+      }
+      .hist-article a {
+        color: #c0392b;
+        text-decoration: none;
+        font-weight: 600;
+        border-bottom: 1px solid rgba(192, 57, 43, 0.25);
+      }
+      .hist-article a:hover { border-bottom-color: #c0392b; }
+
+      .hist-map {
+        margin: 1.5rem 0 2.5rem;
+        max-width: 480px;
+      }
+
+      .hist-en-note {
+        margin-top: 3rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgb(229, 233, 240);
+        max-width: 68ch;
+        font-size: 0.9rem;
+        color: rgb(96, 115, 159);
+      }
+      .hist-en-note a { color: #c0392b; text-decoration: none; font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main class="hist-page">
+      <div class="hist-layout">
+        <aside class="hist-toc" aria-label="Table of contents">
+          <div class="hist-toc-inner">
+            <span class="hist-toc-label">Contents</span>
+            <ol class="hist-toc-list">
+              {toc.map((item) => (
+                <li><a href={`#${item.id}`} data-toc-link>{item.label}</a></li>
+              ))}
+            </ol>
+          </div>
+        </aside>
+
+        <div class="hist-content">
+          <span class="hist-eyebrow">History</span>
+          <h1>History of Petrykivka Painting</h1>
+
+          <details class="hist-toc-mobile">
+            <summary>Table of contents</summary>
+            <ol>
+              {toc.map((item) => (
+                <li><a href={`#${item.id}`} data-toc-link-mobile>{item.label}</a></li>
+              ))}
+            </ol>
+          </details>
+
+          <article class="hist-article">
+            <h2 id="zemlia-stepiv-i-kozakiv">The Land of Steppes and Cossacks</h2>
+            <p>
+              Petrykivka is an urban-type settlement in the Dnipropetrovsk region, on the right bank
+              of the Dnipro. The first reliable documentary mentions of the settlement date back to
+              1772; its name is linked to Petro Kalnyshevsky, the last ataman of the Zaporozhian
+              Sich, who was involved in founding the settlement on the site of a former Zaporozhian
+              winter camp. The village held the status of a state-owned settlement and never knew
+              serfdom, and three major fairs were held there every year. This free status of the
+              population and its active trade fostered the development of distinctive local crafts,
+              among which decorative painting later emerged.
+            </p>
+
+            <div class="hist-map">
+              <PetrykivkaMap locale="en" />
+            </div>
+
+            <h2 id="narodni-vytoky">Folk Origins: Chepurushky and Malyovky</h2>
+            <p>
+              The Petrykivka region has long been known for its folk craftspeople. At the Petrykivka
+              fairs, held three times a year, peasants bought painted ceramics and wooden utensils,
+              banduras and spinning wheels, chests and towels decorated with floral patterns, and,
+              later, the malyovky themselves.
+            </p>
+            <p>
+              The most capable housewives — those who could do everything well, from whitewashing a
+              hut to weaving cloth, embroidering a towel, or painting a wall — were called chepurushky
+              in Petrykivka. It was they who passed the craft of painting from generation to
+              generation, to daughters and daughters-in-law, and the works of the chepurushky who
+              specialized in painting huts and their interiors were valued most highly.
+            </p>
+            <p>
+              From the late 19th century, once bright aniline dyes became widely available, the
+              chepurushky began transferring their floral patterns from whitewashed walls onto thin
+              sheets of paper — malyovky. These drawings were easy to carry and sell at fairs, and
+              over time they gradually displaced mural painting altogether. Wall painting itself
+              declined with the onset of collectivization, when peasant life largely lost its former
+              joy — and, with it, the desire to decorate the home.
+            </p>
+
+            <h2 id="pershi-doslidnyky">The First Researchers</h2>
+            <p>
+              Only at the turn of the 19th and 20th centuries, as interest in folk art grew, did the
+              anonymous paintings of village craftswomen acquire named authorship. Historian and
+              ethnographer <a href="/en/masters/dmytro-yavornytskyi">Dmytro Yavornytskyi</a> of
+              Yekaterinoslav (now Dnipro) was among the first to reveal the beauty of the Petrykivka
+              flower to his contemporaries: by 1905, the museum he had founded in Katerynoslav already
+              held numerous household items decorated with Petrykivka painting, and by 1923 the
+              museum's collection included roughly a thousand ornamental designs.
+            </p>
+            <p>
+              At Yavornytskyi's request, the artist <a href="/en/masters/yevheniia-evenbakh">Yevheniia
+              Evenbakh</a> made watercolour copies of wall paintings during expeditions in 1911 and
+              1913, and commissioned small paper drawings from local craftswomen — it is with such
+              drawings by <a href="/en/masters/tetyana-pata">Tetyana Pata</a> that the acquaintance
+              with Petrykivka ornamental art begins in museum collections. Further research was
+              carried out by the art historian
+              <a href="/en/masters/yevheniia-berchenko">Yevheniia Berchenko</a> (author of the book
+              "Wall Painting of Ukrainian Huts," 1930) and, in the 1960s–70s, by B. Butnyk-Siverskyi
+              and <a href="/en/masters/nataliia-hlukhenska">Nataliia Hlukhenska</a>, who wrote the
+              first monographic albums on Tetyana Pata and Fedir Panko.
+            </p>
+            <p>
+              A particularly important role in reviving the tradition was played by a local drawing
+              teacher, <a href="/en/masters/oleksandr-statyva">Oleksandr Statyva</a> (1898–1966).
+              Even before the landmark 1936 exhibition, he had begun collecting samples of the
+              chepurushky's work and doing outreach among the village community, insisting on the
+              artistic value of this craft. In the early 1930s, Statyva gathered and sent a hundred
+              samples of Petrykivka painting to the Kyiv Museum of Ukrainian Art — this selection
+              caught the attention of curators in the capital and later became one of the reasons the
+              Petrykivka craftswomen were invited to Kyiv (see the section on the 1936 exhibition
+              below). Later, in 1966, Statyva wrote the monograph "Master of Decorative Painting
+              Nadiya Bilokin" — one of the first scholarly biographical works on Petrykivka
+              craftswomen — and he also helped organize the village's school of decorative drawing.
+            </p>
+
+            <h2 id="pryroda-yak-dzherelo">Nature as a Source of Inspiration</h2>
+            <p>
+              The masters of Petrykivka painting have always been united by a deep love for their
+              native land. In the floral interlacing of the Petrykivka pattern one can sense the
+              fragrance of the herbs, berries, and flowers of the free steppes of the Dnipro region.
+            </p>
+            <p>
+              At the same time, the Petrykivka pattern was never a direct reflection of natural
+              motifs — it is a world born of the folk artists' creative imagination: fantastical
+              tsybulky ("onions") and kucheryavky ("curlicues"), roses and ferns, firebirds and
+              turtle-doves, owls and cuckoos, goldfish swimming out of a mysterious blue ocean. The
+              colour scheme settled into a combination of three principal colours — yellow, red, and
+              green — typically set against a white background, and the motifs carry their own
+              symbolism: the flower as the pinnacle of nature's beauty, the guelder rose and hollyhock
+              as symbols of a young woman's beauty, the cuckoo as a symbol of time's eternal motion.
+            </p>
+
+            <h2 id="try-chariwnytsi">The Three Petrykivka Charmers</h2>
+            <p>
+              <a href="/en/masters/tetyana-pata">Tetyana Pata</a>,
+              <a href="/en/masters/nadiya-bilokin">Nadiya Bilokin</a>, and
+              <a href="/en/masters/yaryna-pylypenko">Iryna Pylypenko</a> — three remarkable
+              craftswomen whose names were the first to become widely known.
+            </p>
+            <p>
+              <a href="/en/masters/tetyana-pata">Tetyana Pata</a> was a unique phenomenon even among
+              the most outstanding chepurushky — not only an artist with an inimitable style of her
+              own, but also the founder of an independent school of decorative painting. Born into a
+              poor peasant family of eight children, she mastered the art of painting huts and stoves
+              from a young age, creating her paradise gardens of wild and cultivated flowers and
+              guelder rose "by eye," yet with great virtuosity.
+            </p>
+            <p>
+              <a href="/en/masters/nadiya-bilokin">Nadiya Bilokin</a> perceived and created her
+              pictorial world quite differently — she was a true folk master of detail and
+              composition.
+            </p>
+            <p>
+              <a href="/en/masters/yaryna-pylypenko">Iryna Pylypenko</a> was the most traditional of
+              the three; her art is most closely tied to the origins of Petrykivka painting, from the
+              period when the malyovka still spoke the language of mural painting.
+            </p>
+            <p>
+              Working alongside them were
+              <a href="/en/masters/paraska-pavlenko">Paraska Pavlenko</a> (who continued working into
+              her hundredth year), <a href="/en/masters/nadiia-tymoshenko">Nadiia Tymoshenko</a>,
+              Hanna Pylypenko-Isaieva, <a href="/en/masters/pelaheia-hlushchenko">Pelaheia
+              Hlushchenko</a>, and <a href="/en/masters/vasyl-vovk">Vasyl Vovk</a> — each adding their
+              own distinctive voice to the shared chorus of Petrykivka masters.
+            </p>
+
+            <h2 id="pryrodni-farby">Natural Paints and Tools</h2>
+            <p>
+              The Petrykivka chepurushky made their paints from whatever the land provided: red from
+              cherry juice, green from couch-grass and black nightshade leaves, blue from snowdrop
+              flowers, and various shades of yellow from sunflower petals, onion peel, and apple-tree
+              bark. The paints were mixed with egg yolk and milk, and fixed with cherry gum or beet
+              sugar.
+            </p>
+            <p>
+              From the late 19th century, bright aniline dyes came into use, employed mainly for
+              malyovky on paper; watercolour and gouache only became widespread in the postwar years.
+              Brushes were made from reed and bulrush stems, and from homemade brushes of cat hair —
+              known as "kvachyky" — while bare fingers were also used. Remarkably, Petrykivka masters
+              still favour these same tools today over factory-made brushes.
+            </p>
+
+            <h2 id="tekhnika-vykonannia">Technique</h2>
+            <p>
+              Petrykivka painting is done without any preliminary sketch — the master works in a
+              single confident stroke of the brush, and correcting a failed mark is practically
+              impossible. Two basic strokes form the core vocabulary of Petrykivka brushwork: the
+              stroke "away from oneself" (the "comb," or hrebinchyk) and the stroke "toward oneself"
+              (the "grain," or zernyatko); combining several of these strokes produces the
+              characteristic "little nut" (horishok) element. Plump berries are traditionally applied
+              with a fingertip, leaving a slightly convex mark that creates an illusion of volume.
+            </p>
+            <p>
+              A composition is always built asymmetrically: large clusters of flowers or berries are
+              sketched first, at the centre of the sheet, and smaller elements are added afterward —
+              buds, leaves, delicate "fern" fronds, and the finest strokes and blades of grass known
+              as "milloch." Light and shadow are achieved by the simplest technical means: the upper
+              part of a petal or leaf is painted in a lighter tone, the lower part in a darker one,
+              the colours mixed directly on the brush.
+            </p>
+            <p>
+              Traditional compositional schemes in Petrykivka painting include the "rug" (a dense
+              rectangular pattern), the "wreath" or "vensel," the "bouquet," and the "runner" (an
+              endless ribbon-like border). Harmonious contrast plays an important role in building a
+              composition: a straight line alternates with a curved one, a sharp form with a rounded
+              one, and the dominant colour — usually red — is balanced by supporting colours, green
+              and yellow, or green and blue.
+            </p>
+
+            <h2 id="vyznannia-1936">Recognition: The 1936 Kyiv Exhibition</h2>
+            <p>
+              The first major exhibition of folk art was held in Kyiv in 1936 — and it was there, with
+              the help of <a href="/en/masters/oleksandr-statyva">Oleksandr Statyva</a>, who a year
+              earlier had sent a selection of Petrykivka paintings to the Kyiv Museum of Ukrainian
+              Art, that a group of Petrykivka craftswomen led by
+              <a href="/en/masters/tetyana-pata">Tetyana Pata</a> was invited. In Kyiv, these works
+              were recognized as having significant artistic potential, and the exhibition soon
+              travelled to Moscow and Leningrad as well.
+            </p>
+            <p>
+              Iryna Pylypenko and <a href="/en/masters/hanna-isaieva">Hanna Isaieva</a> received
+              First Class Diplomas; Tetyana Pata and
+              <a href="/en/masters/nadiya-bilokin">Nadiya Bilokin</a> returned home with the title of
+              Master of Folk Art. The trip proved a turning point: contact with masterpieces of world
+              art and the exchange of experience with masters from other regions of Ukraine
+              qualitatively changed the Petrykivka malyovka itself — from a simple decoration for a
+              village hut, it became an independent work of art. In 1936–1937, Tetyana Pata was
+              invited to paint the interiors of the Kyiv Art Institute, and together with Nadiya
+              Bilokin and Hanna Pavlenko she decorated the Ukrainian Pavilion at the All-Union
+              Agricultural Exhibition in Moscow.
+            </p>
+
+            <h2 id="shkola">The Petrykivka School of Decorative Drawing</h2>
+            <p>
+              Founded through the efforts of
+              <a href="/en/masters/oleksandr-statyva">Oleksandr Statyva</a>, the
+              <a href="/en/centers/petrykivska-shkola-dekorativnoho-maliuvannia">Petrykivka School of
+              Decorative Drawing</a> opened in September 1936 and played a decisive role in shaping
+              the craft. Among its most notable students were
+              <a href="/en/masters/halyna-prudnikova">Halyna Prudnikova</a>, Vekla Kucherenko,
+              <a href="/en/masters/yavdokha-kliupa">Yavdokha Kliupa</a>,
+              <a href="/en/masters/ivan-zavhorodnii">Ivan Zavhorodnii</a>,
+              <a href="/en/masters/mariia-shyshatska">Mariia Shyshatska</a>,
+              <a href="/en/masters/oleksandra-pikush">Oleksandra Pikush</a>,
+              <a href="/en/masters/nadiia-shulyk">Nadiia Shulyk</a>,
+              <a href="/en/masters/fedir-panko">Fedir Panko</a>,
+              <a href="/en/masters/vasyl-sokolenko">Vasyl Sokolenko</a>, and
+              <a href="/en/masters/zoia-kudish">Zoia Kudish</a>. The school operated until 1941, when
+              its work was cut short by the war.
+            </p>
+            <p>
+              In the 1950s–60s, thanks to numerous exhibitions, Petrykivka art travelled beyond
+              Ukraine's borders, and the most talented folk masters were admitted as full members of
+              the professional artists' union.
+            </p>
+
+            <h2 id="porcelanova-hrupa">Porcelain Painting: The Kyiv Group</h2>
+            <p>
+              In the postwar years, a group of young students of Tetyana Pata moved from Petrykivka
+              to Kyiv — <a href="/en/masters/pelaheia-hlushchenko">Pelaheia Hlushchenko</a>,
+              <a href="/en/masters/marfa-tymchenko">Marfa Tymchenko</a>,
+              <a href="/en/masters/vira-pavlenko">Vira Pavlenko</a>,
+              <a href="/en/masters/hanna-pavlenko-chernychenko">Hanna Pavlenko-Chernychenko</a>, and
+              <a href="/en/masters/vira-klymenko-zhukova">Vira Klymenko-Zhukova</a>. Their work
+              became closely tied to the Kyiv Experimental Ceramic and Art Factory: with the arrival
+              of these Petrykivka artists, a new stage began in the history of Ukrainian porcelain, as
+              the achievements of folk ornamental art were systematically transferred onto porcelain
+              for the first time.
+            </p>
+            <p>
+              <a href="/en/masters/vira-pavlenko">Vira Pavlenko</a> (1912–1991) worked in a more
+              graphic, miniature style, introducing figures of Ukrainian girls in national dress into
+              her compositions. <a href="/en/masters/hanna-pavlenko-chernychenko">Hanna
+              Pavlenko-Chernychenko</a> (1919–2008), a laureate of the Kateryna Bilokur Prize, combined
+              porcelain painting with easel drawing, composing refined two- and three-colour "vazon"
+              bouquets. <a href="/en/masters/pelaheia-hlushchenko">Pelaheia Hlushchenko</a>
+              (1908–1983) taught at the Kyiv School of Applied Arts from 1937, and her work is marked
+              by a more graphic, dense, and refined line — a result of her parallel work in printing
+              and book design. <a href="/en/masters/vira-klymenko-zhukova">Vira Klymenko-Zhukova</a>
+              (1921–1965) boldly introduced motifs unusual for the tradition in the early 1960s —
+              tulips, plums, pears, peppers — along with a new colour palette built on pink, blue, and
+              violet.
+            </p>
+            <p>
+              A distinct body of work developed within this milieu belonging to
+              <a href="/en/masters/marfa-tymchenko">Marfa Tymchenko</a> (1922–2009), People's Artist
+              of Ukraine and laureate of the Taras Shevchenko National Prize of Ukraine. For more than
+              thirty years she painted porcelain dinner sets, platters, and vases at the Kyiv
+              Experimental Ceramic and Art Factory, and from the early 1970s she turned increasingly
+              to decorative-pictorial landscape and folk-picture themes, combining the ornamental
+              tradition with narrative painting.
+            </p>
+
+            <h2 id="fabryka-druzhba">The Druzhba Factory: Between Souvenir and Art</h2>
+            <p>
+              In the postwar years, an industrial line of development emerged in Petrykivka itself.
+              In 1958, <a href="/en/masters/fedir-panko">Fedir Panko</a> brought together
+              self-employed craftspeople into a lacquer-painting workshop at the "Vilna Selianka"
+              embroiderers' artel; by the mid-1960s, that workshop had grown into the
+              <a href="/en/centers/fabryka-petrykivskyi-rozpys">"Druzhba" factory of art products</a>.
+            </p>
+            <p>
+              The factory's main line of production was under-lacquer painting on pressed sawdust,
+              papier-mâché, and plastic — mostly small boxes, decorative plates, and other souvenirs
+              coated in black lacquer. It was during this period, under Fedir Panko as the factory's
+              chief artist, that a widespread but historically inaccurate notion took hold: that
+              Petrykivka painting means a pattern on a black background. Traditionally, a black
+              background was never characteristic of Petrykivka painting; this technique was a product
+              of factory-souvenir production logic. Painting gradually lost its connection to peasant
+              life and became mass-produced merchandise.
+            </p>
+            <p>
+              This was not a personal artistic failure on Panko's part — it was simply what the times
+              demanded: factory production had to compete with cheaper industrial souvenirs, and
+              without standardization and adaptation to a new material, the Petrykivka craft might
+              simply not have survived economically.
+            </p>
+            <p>
+              In the early 1970s, <a href="/en/masters/vasyl-sokolenko">Vasyl Sokolenko</a> changed
+              the situation at the factory: he took over the lacquer-painting workshop at Druzhba and
+              returned production to the traditional material — wood — leaving the natural colour of
+              the wood as the background instead of black lacquer. At the same time, Fedir Panko
+              founded his own <a href="/en/centers/eksperymentalnyy-tsekh">experimental creative
+              workshop</a> in 1970 at the Dnipropetrovsk Art Production Combine, where he focused no
+              longer on mass-produced souvenirs but on high-quality, authored pieces and his own
+              artistic pursuits — including a series of panels based on Ukrainian folk songs.
+            </p>
+
+            <h2 id="sokolenko">Vasyl Sokolenko</h2>
+            <p>
+              <a href="/en/masters/vasyl-sokolenko">Vasyl Sokolenko</a> (1922–2018) graduated from the
+              Petrykivka School of Decorative Drawing in 1941, having studied directly under Tetyana
+              Pata. In the postwar years he worked as a methodologist at the regional house of folk
+              art and organized an art studio in the village of Ivanivka, and from 1962 he taught at
+              the Petrykivka branch of the Dnipropetrovsk children's art school.
+            </p>
+            <p>
+              For nearly twenty years — from 1971 to 1992 — Sokolenko served as chief artist at the
+              <a href="/en/centers/fabryka-petrykivskyi-rozpys">Druzhba factory</a>, and it was he who
+              moved production away from black lacquer toward painting on light-coloured wood. He was
+              the first to revive wood-based decorative work on an industrial scale — vases, plates,
+              salad bowls, ladles, spoons — acting as the author of both the painting and the form
+              itself, personally teaching wood-turners how to make the pieces he needed.
+            </p>
+            <p>
+              Sokolenko is also known as a master of the so-called "Petrykivka poster" — graphic works
+              that combined decorative ornament with a clear poster-like composition and, often, a
+              narrative or symbolic content (a characteristic example is his 1959 work "A Cuckoo
+              Among Flowers"). It was on his initiative that a museum of the history of decorative
+              painting opened at the Druzhba factory, which the master himself jokingly called "our
+              own Louvre."
+            </p>
+            <p>
+              After retiring, Sokolenko built a private house-museum on his own estate —
+              <a href="/en/centers/muzei-sadyba-sokolenka">the "Sokolenko Folk Museum"</a> — which
+              holds around 600 exhibits, including works by his wife, the craftswoman Hanna Sokolenko,
+              with whom he raised five children. The estate remains one of the stops on Petrykivka's
+              tourist map today.
+            </p>
+
+            <h2 id="nove-pokolinnia">A New Generation: 1970s–1990s</h2>
+            <p>
+              The 1970s marked a period of generational change: a wave of talented young artists
+              appeared at the Druzhba factory and in the experimental workshop —
+              <a href="/en/masters/nina-turchyn">Nina Turchyn</a>,
+              <a href="/en/masters/vira-tezyk">Vira Tezyk</a>,
+              <a href="/en/masters/tamara-kudish">Tamara Kudish</a>,
+              <a href="/en/masters/anatolii-chernuskyi">Anatolii and Nina Chernuskyi</a>, Nina
+              Hordieieva, Nataliia Kaliuha, Liubov Shtanii, Mariia Kravets,
+              <a href="/en/masters/uliana-skliar">Uliana Skliar</a>, Vitalii Panko, and Liubov Bai.
+            </p>
+            <p>
+              Among the leaders of this generation were
+              <a href="/en/masters/volodymyr-hlushchenko">Volodymyr Hlushchenko</a>,
+              <a href="/en/masters/andriy-pikush">Andrii</a> and
+              <a href="/en/masters/mariya-pikush">Mariia Pikush</a>, and
+              <a href="/en/masters/hanna-samarska">Hanna Samarska</a>.
+              <a href="/en/masters/andriy-pikush">Andrii Pikush</a> absorbed the energy of his
+              teachers Panko and Sokolenko, as well as the experience of the Petrykivka elders,
+              especially Tetyana Pata; he later opened up the long-forgotten field of ceramics for
+              Petrykivka painting, along with the techniques of batik, stained glass, and blown glass.
+              <a href="/en/masters/hanna-samarska">Hanna Samarska</a>, who was not born in Petrykivka
+              but in Bohdanivka in the Kyiv region, studied under Kateryna Bilokur from 1952 and
+              brought her own, highly detailed authorial style to Petrykivka painting.
+            </p>
+            <p>
+              The 1980s brought full creative freedom — Natalia Rybak,
+              <a href="/en/masters/valentyna-panko">Valentyna Panko</a>, Nadiia Vasylkivska,
+              Valentyna Karpets, Olena Zinchuk, Tetiana Lapshyn, Iryna Nazarenko, and Valentyna
+              Milenko all came vividly into their own, alongside the Statyva sisters — Valentyna,
+              <a href="/en/masters/lidiia-bulavin">Lidiia</a>, Mariia, and
+              <a href="/en/masters/nataliia-statyva-zharko">Nataliia</a>.
+            </p>
+
+            <h2 id="dynastii">Petrykivka Dynasties</h2>
+            <p>
+              The 1980s and 90s gave rise to genuine creative dynasties, in which every generation of
+              a family took up the craft — the Shyshatski, Panko, Sokolenko, Pikush, Chernuskyi,
+              Tymoshenko, Statyva, Skliar, and Rybak families among them. Thanks to them, the
+              tradition continues to pass from parents to children and grandchildren, generation after
+              generation.
+            </p>
+
+            <h2 id="suchasnyi-stan">Petrykivka Painting Today</h2>
+            <p>
+              By the end of the 20th century, Petrykivka painting had fully lost its connection to
+              peasant life and become, simultaneously, an independent form of authored art and a
+              souvenir industry. In 1994, on the initiative of
+              <a href="/en/masters/andriy-pikush">Andrii Pikush</a>, a production and creative
+              association called "Petrykivka" was formed on the basis of the experimental workshops;
+              in 1998 it merged with the experimental workshop to become today's
+              <a href="/en/centers/tsentr-narodnoho-mystectva">Petrykivka Centre of Folk Art</a>,
+              which today brings together several dozen of the village's leading masters. It was an
+              exhibition prepared by the Centre's masters that formed the basis of Petrykivka
+              painting's submission to UNESCO.
+            </p>
+            <p>
+              At the same time, the industrial line of development went into decline: the
+              <a href="/en/centers/fabryka-petrykivskyi-rozpys">Druzhba factory</a> halted operations
+              in 2004 and was formally liquidated in 2006 — a fate typical of many Soviet-era folk art
+              enterprises after Ukraine gained independence. Individual authored practice and the
+              teaching of the tradition, however, did not stop: since 2012, the Dnipro Theatre and Art
+              College has offered a dedicated specialization in Petrykivka painting, taught by
+              Honoured Master of Folk Art of Ukraine <a href="/en/masters/tetiana-harkava">Tetiana
+              Harkava</a> — a student of Fedir Panko who considers herself part of the fourth
+              generation of masters, and her own students part of the fifth.
+            </p>
+            <p>
+              <a href="/en/masters/halyna-nazarenko">Halyna Nazarenko</a> (b. 1968) has also made a
+              significant contribution to Petrykivka painting's contemporary life. A member of the
+              National Union of Folk Art Masters of Ukraine, she has painted church interiors in Kyiv
+              and taken part in dozens of exhibitions in France, the United States, Georgia, China,
+              and elsewhere; following exhibitions in France, she was admitted to the Association of
+              Contemporary Art of Morestel. Nazarenko actively advocates for Petrykivka painting to be
+              recognized as "high art," not merely a souvenir craft, and emphasizes the need for a
+              contemporary approach to promoting it — including through new cultural spaces in
+              Petrykivka itself.
+            </p>
+            <p>
+              On December 5, 2013, at the eighth session of the UNESCO Intergovernmental Committee for
+              the Safeguarding of the Intangible Cultural Heritage, held in Baku, Petrykivka painting
+              was inscribed on the Representative List of the Intangible Cultural Heritage of
+              Humanity — making Petrykivka the first entry from Ukraine to receive this status. That
+              same year, an exhibition titled "Petrykivka Painting — The Colour of Tradition" was held
+              at UNESCO headquarters in Paris. The craft became a symbol of the country well beyond
+              art circles: Ukraine's postal service issues stamps featuring reproductions of
+              Petrykivka patterns, and in 2016 the National Bank of Ukraine issued commemorative coins
+              titled "Petrykivka Painting." Since 2007, an annual folk-art festival called
+              <a href="/en/centers/petrykivskyi-dyvocvit">"Petrykivskyi Dyvotsvit"</a> ("Petrykivka's
+              Magic Bloom") has been held in Petrykivka (and, in 2013–2014, in Dnipro), and it has
+              since grown into an international event.
+            </p>
+            <p>
+              Today's masters carry on the tradition with the same tools their predecessors used a
+              century ago — handmade cat-hair brushes, reed stems, their own fingers — while also
+              working with acrylic paints and painting on glass, metal, and textiles, exploring new
+              surfaces and formats. Significant collections of Petrykivka painting are held today by
+              the <a href="/en/centers/dniprovskyi-khudozhnii-muzei">Dnipro Art Museum</a>, the
+              <a href="/en/centers/muzei-yavornytskogo">Dmytro Yavornytskyi National Historical Museum
+              of Dnipro</a>, and the <a href="/en/centers/petrykivskyi-muzei-etnohrafii">Petrykivka
+              Museum of Ethnography, Everyday Life, and Applied Art</a>.
+            </p>
+
+            <h2 id="vysnovok">Conclusion</h2>
+            <p>
+              One can encounter the masters of Petrykivka painting not only in Petrykivka itself —
+              rich collections of their work are held in museums across Dnipro, Kyiv, and other
+              Ukrainian cities. Petrykivka decorative painting is one of the unique phenomena of
+              Ukrainian artistic culture: an art free of foreign admixture or influence, embodying the
+              spiritual wealth and creative generosity of the Ukrainian people, and one that continues
+              to develop today, more than a century after the first recorded malyovky.
+            </p>
+          </article>
+
+          <p class="hist-en-note">
+            The original, unabridged 2001 essay by Liudmyla Tverska on this subject is available in
+            our <a href="/en/materials/PLACEHOLDER-SLUG">Materials</a> section.
+          </p>
+        </div>
+      </div>
+    </main>
+    <Footer />
+
+    <script>
+      const desktopLinks = document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]');
+      const mobileLinks = document.querySelectorAll<HTMLAnchorElement>('[data-toc-link-mobile]');
+      const mobileDetails = document.querySelector<HTMLDetailsElement>('.hist-toc-mobile');
+
+      const headings = Array.from(desktopLinks)
+        .map((link) => document.querySelector<HTMLElement>(link.getAttribute('href') || ''))
+        .filter((el): el is HTMLElement => !!el);
+
+      function setActive(id: string) {
+        desktopLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+        });
+      }
+
+      if (headings.length) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                setActive(entry.target.id);
+              }
+            });
+          },
+          { rootMargin: '-15% 0px -70% 0px', threshold: 0 }
+        );
+        headings.forEach((h) => observer.observe(h));
+      }
+
+      function smoothScrollTo(id: string) {
+        const target = document.getElementById(id);
+        if (!target) return;
+        const y = target.getBoundingClientRect().top + window.scrollY - 90;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+        history.replaceState(null, '', `#${id}`);
+      }
+
+      desktopLinks.forEach((link) => {
+        link.addEventListener('click', (e) => {
+          const id = (link.getAttribute('href') || '').slice(1);
+          if (!id) return;
+          e.preventDefault();
+          smoothScrollTo(id);
+        });
+      });
+
+      mobileLinks.forEach((link) => {
+        link.addEventListener('click', (e) => {
+          const id = (link.getAttribute('href') || '').slice(1);
+          if (!id) return;
+          e.preventDefault();
+          smoothScrollTo(id);
+          if (mobileDetails) mobileDetails.open = false;
+        });
+      });
+    </script>
+  </body>
+</html>
