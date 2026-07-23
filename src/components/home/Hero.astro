@@ -1,30 +1,13 @@
 ---
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
-import { hero, heroNavCards } from '../../data/homepage';
-
-// Імпорт 4 зображень для слайдшоу
-import slide1 from '../../assets/artworks/dnipro-art-museum/2.jpg';
-import slide2 from '../../assets/artworks/dnipro-art-museum/43.jpg';
-import slide3 from '../../assets/artworks/dnipro-art-museum/20.jpg';
-import slide4 from '../../assets/artworks/dnipro-art-museum/54.jpg';
-import slide5 from '../../assets/artworks/dnipro-art-museum/53.jpg';
-import slide6 from '../../assets/artworks/dnipro-art-museum/36.jpg';
+import { hero, heroSlides, heroNavCards } from '../../data/homepage';
 
 interface Props {
   locale: 'uk' | 'en';
 }
 
 const { locale } = Astro.props;
-
-const heroSlides = [
-  { image: slide1 },
-  { image: slide2 },
-  { image: slide3 },
-  { image: slide4 },
-  { image: slide5 },
-  { image: slide6 },
-];
 
 // Підрахунок матеріалів
 const [masters, artworks, books, materials, centers] = await Promise.all([
@@ -63,28 +46,55 @@ const wallpaperCta = {
   action: { uk: 'Створити шпалери', en: 'Start creating' },
 };
 const wallpaperHref = locale === 'uk' ? '/wallpapers' : '/en/wallpapers';
+
+const dotsLabel = locale === 'uk' ? 'Перемкнути слайд' : 'Switch slide';
+const slideWord = locale === 'uk' ? 'Слайд' : 'Slide';
 ---
 
 <section class="hero">
   <div class="hero__image-wrap">
     <div class="hero__slides" id="hero-slides">
-      {heroSlides.map((slide) => (
-        <div class="hero__slide">
+      {heroSlides.map((slide, i) => (
+        <a
+          class="hero__slide"
+          href={locale === 'uk' ? slide.hrefUk : slide.hrefEn}
+          aria-label={slide.title[locale]}
+          data-index={i}
+        >
           <Image
             src={slide.image}
-            alt={hero.imageAlt[locale]}
+            alt={(slide.alt ?? hero.imageAlt)[locale]}
             widths={[640, 1024, 1440, 1920]}
             sizes="100vw"
             loading="eager"
             class="hero__slide-img"
           />
-        </div>
+          <div class="hero__overlay"></div>
+          <div class="hero__text">
+            <p class="hero__title">{slide.title[locale]}</p>
+            <p class="hero__subtitle">{slide.subtitle[locale]}</p>
+            <span class="hero__slide-btn">
+              {slide.buttonText[locale]}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </span>
+          </div>
+        </a>
       ))}
     </div>
-    <div class="hero__overlay"></div>
-    <div class="hero__text">
-      <h1 class="hero__title">{hero.title[locale]}</h1>
-      <p class="hero__subtitle">{hero.subtitle[locale]}</p>
+
+    <div class="hero__dots" role="tablist" aria-label={dotsLabel}>
+      {heroSlides.map((slide, i) => (
+        <button
+          type="button"
+          class="hero__dot"
+          data-index={i}
+          aria-label={`${slideWord} ${i + 1}: ${slide.title[locale]}`}
+          aria-current={i === 0 ? 'true' : 'false'}
+        ></button>
+      ))}
     </div>
   </div>
 
@@ -128,13 +138,14 @@ const wallpaperHref = locale === 'uk' ? '/wallpapers' : '/en/wallpapers';
 </section>
 
 <script>
-  // Слайдшоу: новий слайд піднімається знизу і накриває попередній
-  const slides = document.querySelectorAll<HTMLElement>('.hero__slide');
+  const slides = Array.from(document.querySelectorAll<HTMLElement>('.hero__slide'));
+  const dots = Array.from(document.querySelectorAll<HTMLButtonElement>('.hero__dot'));
   const SLIDE_DURATION = 6000; // мс показу слайду
-  const TRANSITION_MS = 1500;  // тривалість анімації переходу
+  const TRANSITION_MS = 1500;  // тривалість анімації переходу картинки
 
   if (slides.length > 1) {
     let currentIdx = 0;
+    let timer: number | undefined;
 
     // Початковий стан: перший слайд показаний, решта внизу
     slides.forEach((slide, i) => {
@@ -146,30 +157,63 @@ const wallpaperHref = locale === 'uk' ? '/wallpapers' : '/en/wallpapers';
         slide.style.zIndex = '0';
       }
     });
+    // Текст першого слайду з'явиться сам — через CSS-затримку класу is-visible
+    slides[0].classList.add('is-visible');
 
-    function showNext() {
-      const nextIdx = (currentIdx + 1) % slides.length;
+    function setActiveDot(idx: number) {
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('is-active', i === idx);
+        dot.setAttribute('aria-current', i === idx ? 'true' : 'false');
+      });
+    }
+
+    function goTo(nextIdx: number) {
+      if (nextIdx === currentIdx) return;
       const current = slides[currentIdx];
       const next = slides[nextIdx];
 
-      // Поточний — під, новий — над і з анімацією піднімається
+      // Ховаємо текст поточного одразу (без затримки — правило за замовчуванням)
+      current.classList.remove('is-visible');
       current.style.zIndex = '1';
+
+      // Новий слайд піднімається над попереднім
       next.style.zIndex = '2';
       next.style.transition = '';
+      next.classList.remove('is-visible');
       requestAnimationFrame(() => {
         next.style.transform = 'translateY(0)';
+        // Текст з'явиться сам, з CSS-затримкою (після того як картинка майже доїхала)
+        next.classList.add('is-visible');
       });
 
-      // Після завершення — поточний повертається донизу (без анімації)
+      // Після завершення — попередній слайд повертається донизу (без анімації)
       setTimeout(() => {
         current.style.transition = 'none';
         current.style.transform = 'translateY(100%)';
         current.style.zIndex = '0';
-        currentIdx = nextIdx;
       }, TRANSITION_MS + 50);
+
+      currentIdx = nextIdx;
+      setActiveDot(currentIdx);
     }
 
-    setInterval(showNext, SLIDE_DURATION + TRANSITION_MS);
+    function restartAutoplay() {
+      if (timer) window.clearInterval(timer);
+      timer = window.setInterval(() => {
+        goTo((currentIdx + 1) % slides.length);
+      }, SLIDE_DURATION + TRANSITION_MS);
+    }
+
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        const idx = Number(dot.dataset.index);
+        goTo(idx);
+        restartAutoplay();
+      });
+    });
+
+    setActiveDot(0);
+    restartAutoplay();
   }
 </script>
 
@@ -192,12 +236,21 @@ const wallpaperHref = locale === 'uk' ? '/wallpapers' : '/en/wallpapers';
     position: absolute;
     inset: 0;
   }
+
+  /* Кожен слайд — суцільне посилання: картинка + текст + кнопка */
   .hero__slide {
     position: absolute;
     inset: 0;
+    display: block;
     transform: translateY(100%);
     transition: transform 1.5s cubic-bezier(0.65, 0, 0.35, 1);
     will-change: transform;
+    text-decoration: none;
+    color: inherit;
+  }
+  .hero__slide:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: -3px;
   }
   .hero__slide-img {
     width: 100% !important;
@@ -210,7 +263,6 @@ const wallpaperHref = locale === 'uk' ? '/wallpapers' : '/en/wallpapers';
   .hero__overlay {
     position: absolute;
     inset: 0;
-    z-index: 3;
     background: linear-gradient(
       to bottom,
       rgba(0, 0, 0, 0) 0%,
@@ -219,19 +271,42 @@ const wallpaperHref = locale === 'uk' ? '/wallpapers' : '/en/wallpapers';
       rgba(0, 0, 0, 0.55) 100%
     );
     pointer-events: none;
+    transition: background 0.3s ease;
+  }
+  .hero__slide:hover .hero__overlay,
+  .hero__slide:focus-visible .hero__overlay {
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0) 40%,
+      rgba(0, 0, 0, 0.2) 60%,
+      rgba(0, 0, 0, 0.62) 100%
+    );
   }
 
+  /* Текст — окрема анімація появи, не прив'язана до руху картинки */
   .hero__text {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 4;
     padding: 48px 24px;
     max-width: 1200px;
     margin: 0 auto;
     color: #fff;
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    transition-delay: 0s;
   }
+  /* Коли слайд активний — текст плавно з'являється із затримкою,
+     щоб зʼявитись вже після того, як картинка майже доїхала (1.5с) */
+  .hero__slide.is-visible .hero__text {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 1.1s;
+  }
+
   .hero__title {
     font-size: clamp(2rem, 5vw, 3.75rem);
     line-height: 1.05;
@@ -239,17 +314,76 @@ const wallpaperHref = locale === 'uk' ? '/wallpapers' : '/en/wallpapers';
     margin: 0 0 16px;
     letter-spacing: -0.02em;
     max-width: 22ch;
-    color: #fff !important;
+    color: #fff;
     text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
   }
   .hero__subtitle {
     font-size: clamp(1rem, 1.6vw, 1.25rem);
     line-height: 1.45;
-    margin: 0;
+    margin: 0 0 24px;
     max-width: 48ch;
     opacity: 0.95;
-    color: #fff !important;
+    color: #fff;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+
+  .hero__slide-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #fff;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .hero__slide-btn svg {
+    transition: transform 0.2s ease;
+  }
+  .hero__slide:hover .hero__slide-btn,
+  .hero__slide:focus-visible .hero__slide-btn {
+    background: rgba(255, 255, 255, 0.28);
+  }
+  .hero__slide:hover .hero__slide-btn svg,
+  .hero__slide:focus-visible .hero__slide-btn svg {
+    transform: translateX(4px);
+  }
+
+  /* Точки-перемикачі слайдів */
+  .hero__dots {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    z-index: 6;
+    display: flex;
+    gap: 8px;
+  }
+  .hero__dot {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.45);
+    cursor: pointer;
+    transition: background 0.25s ease, width 0.25s ease, transform 0.15s ease;
+  }
+  .hero__dot:hover {
+    background: rgba(255, 255, 255, 0.7);
+    transform: scale(1.1);
+  }
+  .hero__dot.is-active {
+    width: 26px;
+    background: #fff;
+  }
+  .hero__dot:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
   }
 
   /* Сітка карток (без змін) */
@@ -367,138 +501,3 @@ const wallpaperHref = locale === 'uk' ? '/wallpapers' : '/en/wallpapers';
     opacity: 0.28;
     transform: rotate(20deg);
   }
-  .hero__cta-flower--2 {
-    width: 120px;
-    bottom: -35px;
-    right: 440px;
-    opacity: 0.22;
-    transform: rotate(-15deg);
-  }
-  .hero__cta-flower--3 {
-    width: 80px;
-    top: 25%;
-    right: 32%;
-    opacity: 0.25;
-    transform: rotate(40deg);
-  }
-  .hero__cta-flower--4 {
-    width: 100px;
-    bottom: 15%;
-    right: 18%;
-    opacity: 0.20;
-    transform: rotate(-25deg);
-  }
-  .hero__cta:hover .hero__cta-flower {
-    opacity: 0.32;
-    transform: rotate(0deg) scale(1.05);
-  }
-
-  .hero__cta-body {
-    position: relative;
-    z-index: 1;
-    flex: 1;
-    max-width: 58%;
-  }
-  .hero__cta-badge {
-    display: inline-block;
-    background: rgba(255, 255, 255, 0.20);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    color: #fff;
-    font-size: 0.7rem;
-    font-weight: 700;
-    padding: 4px 10px;
-    border-radius: 999px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-  .hero__cta-title {
-    font-size: clamp(1.5rem, 2.4vw, 1.875rem);
-    font-weight: 600;
-    margin: 0 0 8px;
-    color: #fff;
-    letter-spacing: -0.01em;
-    line-height: 1.2;
-  }
-  .hero__cta-desc {
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.9);
-    margin: 0;
-    line-height: 1.5;
-    max-width: 50ch;
-  }
-
-  .hero__cta-action {
-    position: relative;
-    z-index: 1;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 22px;
-    background: rgba(255, 255, 255, 0.20);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    border-radius: 999px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    flex-shrink: 0;
-    color: #fff;
-    transition: background 0.2s ease, transform 0.2s ease;
-    white-space: nowrap;
-  }
-  .hero__cta:hover .hero__cta-action {
-    background: rgba(255, 255, 255, 0.30);
-  }
-  .hero__cta-arrow {
-    transition: transform 0.2s ease;
-  }
-  .hero__cta:hover .hero__cta-arrow {
-    transform: translateX(4px);
-  }
-
-  @media (max-width: 900px) {
-    .hero__nav-grid { grid-template-columns: repeat(2, 1fr); }
-    .hero__cta {
-      padding: 32px 28px;
-      gap: 20px;
-      flex-direction: column;
-      align-items: flex-start;
-      min-height: 0;
-    }
-    .hero__cta-body { max-width: 100%; }
-    .hero__cta-action {
-      align-self: stretch;
-      justify-content: center;
-    }
-    .hero__cta-flower--3 { display: none; }
-    .hero__cta-flower--4 { right: 6%; opacity: 0.16; }
-    .hero__cta-flower--1 { right: 80px; }
-    .hero__cta-flower--2 { right: 240px; }
-  }
-  @media (max-width: 640px) {
-    .hero__image-wrap { height: 60vh; min-height: 380px; }
-    .hero__text { padding: 32px 20px; }
-    .hero__nav { padding: 32px 20px 56px; }
-    .hero__nav-grid { grid-template-columns: 1fr; gap: 12px; }
-    .hero__card { padding: 24px 20px; }
-    .hero__cta {
-      padding: 28px 22px;
-      margin-top: 12px;
-    }
-    .hero__cta-flower--4 { display: none; }
-    .hero__cta-flower--1 { width: 120px; right: 30px; top: -25px; }
-    .hero__cta-flower--2 { width: 70px; right: 50%; bottom: -20px; }
-  }
-
-  /* Поважаємо налаштування «зменшити рух» */
-  @media (prefers-reduced-motion: reduce) {
-    .hero__slide,
-    .hero__cta,
-    .hero__cta-flower,
-    .hero__cta-action,
-    .hero__cta-arrow {
-      transition: none !important;
-    }
-  }
-</style>

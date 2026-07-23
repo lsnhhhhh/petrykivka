@@ -1,5 +1,14 @@
 
 export type Locale = 'uk' | 'en';
+import type { ImageMetadata } from 'astro';
+
+import heroImg1 from '../assets/artworks/dnipro-art-museum/2.jpg';
+import heroImg2 from '../assets/artworks/dnipro-art-museum/43.jpg';
+import heroImg3 from '../assets/artworks/dnipro-art-museum/20.jpg';
+import heroImg4 from '../assets/artworks/dnipro-art-museum/54.jpg';
+import heroImg5 from '../assets/artworks/dnipro-art-museum/53.jpg';
+import heroImg6 from '../assets/artworks/dnipro-art-museum/36.jpg';
+
 export type LocalizedText = { uk: string; en: string };
 
 export interface TimelineEvent {
@@ -22,20 +31,110 @@ export interface NavCard {
 // ============================================================
 
 export const hero = {
-  // image тепер імпортується в самому Hero.astro компоненті
   imageAlt: {
     uk: 'Петриківський розпис — фрагмент роботи з колекції Дніпропетровського художнього музею',
     en: 'Petrykivka painting — fragment from the Dnipropetrovsk Art Museum collection',
   } as LocalizedText,
-  title: {
-    uk: 'Найповніша цифрова енциклопедія петриківського розпису',
-    en: 'The most comprehensive digital encyclopedia of Petrykivka painting',
-  } as LocalizedText,
-  subtitle: {
-    uk: 'Біографії майстрів, каталог творів, книги, архівні матеріали, історія та сучасні дослідження традиції, внесеної до Списку нематеріальної культурної спадщини ЮНЕСКО.',
-    en: 'Master biographies, an artwork catalog, books, archival materials, history and contemporary research on a tradition inscribed on the UNESCO Intangible Cultural Heritage list.',
-  } as LocalizedText,
 };
+
+export interface HeroSlide {
+  image: ImageMetadata;
+  title: LocalizedText;
+  subtitle: LocalizedText;
+  buttonText: LocalizedText;
+  hrefUk: string;
+  hrefEn: string;
+  alt?: LocalizedText; // якщо не задано — береться hero.imageAlt
+}
+
+// Кожен слайд = картинка + свій напис + своя кнопка-посилання.
+// Порядок можна міняти вільно, картинки згодом заміниш на інші — просто onови heroImgN вище.
+export const heroSlides: HeroSlide[] = [
+  {
+    image: heroImg1,
+    title: {
+      uk: 'Найповніша цифрова енциклопедія петриківського розпису',
+      en: 'The most comprehensive digital encyclopedia of Petrykivka painting',
+    },
+    subtitle: {
+      uk: 'Біографії майстрів, каталог творів, книги, архівні матеріали та сучасні дослідження традиції, внесеної до Списку нематеріальної спадщини ЮНЕСКО.',
+      en: 'Master biographies, an artwork catalog, books, archival materials and research on a tradition inscribed on the UNESCO Intangible Cultural Heritage list.',
+    },
+    buttonText: { uk: 'Дізнатися більше', en: 'Learn more' },
+    hrefUk: '/about',
+    hrefEn: '/en/about',
+  },
+  {
+    image: heroImg2,
+    title: {
+      uk: 'Історія петриківського розпису',
+      en: 'History of Petrykivka painting',
+    },
+    subtitle: {
+      uk: 'Від народного розпису хат на Дніпропетровщині до Списку нематеріальної спадщини ЮНЕСКО',
+      en: 'From folk house painting in the Dnipro region to the UNESCO Intangible Heritage List',
+    },
+    buttonText: { uk: 'Читати історію', en: 'Read the history' },
+    hrefUk: '/history',
+    hrefEn: '/en/history',
+  },
+  {
+    image: heroImg3,
+    title: {
+      uk: 'Цікаві факти про петриківський розпис',
+      en: 'Fascinating facts about Petrykivka painting',
+    },
+    subtitle: {
+      uk: 'Десятки несподіваних фактів про традицію, якій уже понад 100 років',
+      en: 'Dozens of surprising facts about a tradition over a century old',
+    },
+    buttonText: { uk: 'Дивитись факти', en: 'See the facts' },
+    hrefUk: '/facts',
+    hrefEn: '/en/facts',
+  },
+  {
+    image: heroImg4,
+    title: {
+      uk: 'Створи свої шпалери',
+      en: 'Create your own wallpaper',
+    },
+    subtitle: {
+      uk: 'З квітів петриківського розпису — для телефону, планшета чи комп\'ютера',
+      en: 'From Petrykivka painting flowers — for your phone, tablet, or desktop',
+    },
+    buttonText: { uk: 'Створити шпалери', en: 'Start creating' },
+    hrefUk: '/wallpapers',
+    hrefEn: '/en/wallpapers',
+  },
+  {
+    image: heroImg5,
+    title: {
+      uk: 'Галерея робіт',
+      en: 'Gallery of artworks',
+    },
+    subtitle: {
+      uk: 'Сотні творів з музейних колекцій та приватних зібрань',
+      en: 'Hundreds of works from museum and private collections',
+    },
+    buttonText: { uk: 'Переглянути галерею', en: 'Browse the gallery' },
+    hrefUk: '/gallery',
+    hrefEn: '/en/gallery',
+  },
+  {
+    image: heroImg6,
+    title: {
+      uk: 'Майстри петриківського розпису',
+      en: 'Masters of Petrykivka painting',
+    },
+    subtitle: {
+      uk: 'Біографії та творчий шлях митців — від корифеїв до сучасників',
+      en: 'Biographies and creative paths — from the founders to contemporary artists',
+    },
+    buttonText: { uk: 'Усі майстри', en: 'All masters' },
+    hrefUk: '/masters',
+    hrefEn: '/en/masters',
+  },
+];
 
 export const heroNavCards: NavCard[] = [
   {
