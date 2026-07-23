@@ -19,18 +19,19 @@ export async function getStaticPaths() {
 const { master, allMasters } = Astro.props;
 const locale = getLocaleFromUrl(Astro.url);
 const localeMasters = filterByLocale(allMasters, locale);
-const { Content } = await render(master);
+const { Content, headings } = await render(master);
 
-function getMasterUrl(name) {
+function getMasterUrl(name: string) {
   const found = localeMasters.find(m => m.data.name === name);
   return found ? getContentUrl('masters', found.id) : null;
 }
 
 const resolvedTagGroups = [
-  { label: 'Period', values: master.data.period ? [master.data.period] : [], type: 'tag' },
-  { label: 'School', values: master.data.school || [], type: 'tag' },
-  { label: 'Teachers', values: master.data.teachers || [], type: 'master' },
-  { label: 'Influenced', values: master.data.influenced || [], type: 'master' },
+  { label: 'Center', values: master.data.center ? [master.data.center] : [], type: 'tag' as const },
+  { label: 'Period', values: master.data.period ? [master.data.period] : [], type: 'tag' as const },
+  { label: 'School', values: master.data.school || [], type: 'tag' as const },
+  { label: 'Teachers', values: master.data.teachers || [], type: 'master' as const },
+  { label: 'Influenced', values: master.data.influenced || [], type: 'master' as const },
 ].map(group => ({
   ...group,
   items: group.values.map(value => ({
@@ -49,6 +50,17 @@ const allArtworks = await getCollection('artworks');
 const masterArtworks = filterByLocale(allArtworks, locale).filter(
   a => a.data.master === master.data.name
 );
+
+// Table of contents: h2 headings from the markdown body, plus the
+// structural sections below it (works / links / additional materials),
+// only when they actually exist on this page.
+const contentHeadings = headings.filter((h) => h.depth === 2);
+const toc = [
+  ...contentHeadings.map((h) => ({ id: h.slug, label: h.text })),
+  ...(masterArtworks.length > 0 ? [{ id: 'works', label: 'Works' }] : []),
+  ...(master.data.links && master.data.links.length > 0 ? [{ id: 'links', label: 'Links' }] : []),
+  ...(masterBooks.length > 0 ? [{ id: 'additional-materials', label: 'Additional materials' }] : []),
+];
 ---
 <!doctype html>
 <html lang="en">
@@ -56,41 +68,211 @@ const masterArtworks = filterByLocale(allArtworks, locale).filter(
     <BaseHead title={master.data.name} description={master.data.name} />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/glightbox/3.3.0/css/glightbox.min.css" />
     <style>
-      .master-page h1 {
-        font-size: 3.5rem;
-        font-weight: 700;
-        margin: 0 0 0.5rem;
-        line-height: 1.25;
+      .master-page {
+        max-width: 1100px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 24px;
       }
-      .master-page .master-category {
-        font-size: 0.78rem;
-        color: #c0392b;
+
+      .back-link {
+        display: inline-block;
+        margin-bottom: 1.5rem;
+        color: rgb(96, 115, 159);
+        text-decoration: none;
+        font-size: 0.9rem;
+      }
+      .back-link:hover { color: #c0392b; }
+
+      .master-layout {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 56px;
+        align-items: start;
+      }
+      .master-layout.no-toc {
+        grid-template-columns: 1fr;
+      }
+
+      .master-toc {
+        position: sticky;
+        top: 32px;
+      }
+      .master-toc-inner {
+        border-left: 2px solid rgb(229, 233, 240);
+        padding-left: 1rem;
+        max-height: calc(100vh - 64px);
+        overflow-y: auto;
+      }
+      .master-toc-label {
+        display: block;
+        font-size: 0.72rem;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 0.5rem;
+        letter-spacing: 0.08em;
+        color: rgba(40, 42, 43, 0.4);
+        margin-bottom: 0.85rem;
       }
-      .master-page .master-dates {
+      .master-toc-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+      .master-toc-list a {
+        display: block;
+        font-size: 0.85rem;
+        line-height: 1.4;
+        color: rgba(40, 42, 43, 0.6);
+        text-decoration: none;
+        font-weight: 500;
+        border-bottom: none;
+        transition: color 0.15s ease;
+      }
+      .master-toc-list a:hover { color: #c0392b; }
+      .master-toc-list a.active {
+        color: #c0392b;
+        font-weight: 700;
+      }
+
+      .master-toc-mobile { display: none; }
+
+      @media (max-width: 980px) {
+        .master-layout { grid-template-columns: 1fr; gap: 0; }
+        .master-toc { display: none; }
+        .master-toc-mobile {
+          display: block;
+          margin: 0 0 2rem;
+          border: 1px solid rgb(229, 233, 240);
+          border-radius: 10px;
+          padding: 0.9rem 1.1rem;
+          background: #fff;
+        }
+        .master-toc-mobile summary {
+          cursor: pointer;
+          font-weight: 700;
+          font-size: 0.95rem;
+          color: #282A2B;
+          list-style: none;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .master-toc-mobile summary::-webkit-details-marker { display: none; }
+        .master-toc-mobile summary::after {
+          content: '+';
+          color: #c0392b;
+          font-size: 1.2rem;
+          line-height: 1;
+        }
+        .master-toc-mobile[open] summary::after { content: '−'; }
+        .master-toc-mobile ol {
+          list-style: none;
+          margin: 0.9rem 0 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 0.55rem;
+        }
+        .master-toc-mobile a {
+          color: rgba(40, 42, 43, 0.7);
+          text-decoration: none;
+          font-size: 0.9rem;
+          border-bottom: none;
+        }
+        .master-toc-mobile a:hover { color: #c0392b; }
+      }
+
+      .master-eyebrow {
+        display: inline-block;
+        color: #c0392b;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+      }
+
+      .master-content-col h1 {
+        font-size: 3.2rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem;
+        line-height: 1.2;
+      }
+      .master-dates {
         font-size: 0.9rem;
         color: rgb(96, 115, 159);
-        margin: 0 0 1.5rem;
+        margin: 0 0 1.75rem;
       }
-      .master-page .master-content {
-        font-size: 1rem;
-        line-height: 1.75;
+
+      .master-photo {
+        margin: 0 0 2.5rem;
       }
-      .master-page .master-content h2 {
-        font-size: 1.3rem;
+      .master-photo img {
+        width: 100%;
+        max-width: 800px;
+        height: auto;
+        display: block;
+        border-radius: 0;
+      }
+
+      .master-article { max-width: 68ch; }
+
+      .master-section {
+        max-width: 68ch;
+        margin-top: 2.75rem;
+        scroll-margin-top: 90px;
+      }
+      .master-section > h2 {
+        font-size: 1.35rem;
         font-weight: 700;
-        margin: 2rem 0 0.75rem;
-      }
-      .master-page .master-content h3 {
-        font-size: 1.1rem;
-        font-weight: 700;
-        margin: 1.5rem 0 0.5rem;
-      }
-      .master-page .master-content p {
         margin: 0 0 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #c0392b;
+        display: inline-block;
+      }
+
+      .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+      }
+      figcaption {
+        font-size: 0.78rem;
+        color: rgb(96,115,159);
+        padding: 0.4rem 0;
+      }
+
+      .links-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .links-list li { margin-bottom: 0.6rem; }
+      .links-list a {
+        color: #c0392b;
+        text-decoration: none;
+        font-weight: 600;
+        border-bottom: 1px solid rgba(192, 57, 43, 0.25);
+        font-size: 0.95rem;
+      }
+      .links-list a:hover { border-bottom-color: #c0392b; }
+
+      .meta-section {
+        max-width: 68ch;
+        margin-top: 2.75rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgb(229,233,240);
+      }
+      .meta-row {
+        margin-bottom: 0.6rem;
+        font-size: 0.88rem;
+      }
+      .meta-row strong {
+        color: rgb(50, 55, 65);
+        font-weight: 600;
       }
       .tag-link {
         display: inline-block;
@@ -113,39 +295,7 @@ const masterArtworks = filterByLocale(allArtworks, locale).filter(
         border: 1px solid #f5c6c0;
         font-size: 0.82rem;
       }
-      .gallery-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1rem;
-      }
-      figcaption {
-        font-size: 0.78rem;
-        color: rgb(96,115,159);
-        padding: 0.3rem 0;
-        text-align: center;
-      }
-      .meta-section {
-        margin-top: 2rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid rgb(229,233,240);
-      }
-      .meta-row {
-        margin-bottom: 0.5rem;
-        font-size: 0.88rem;
-      }
-      .meta-row strong {
-        color: rgb(50, 55, 65);
-        font-weight: 600;
-      }
-      .books-section {
-        margin-top: 2rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid rgb(229,233,240);
-      }
-      .books-section h2 {
-        font-size: 1.1rem;
-        margin-bottom: 1rem;
-      }
+
       .books-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -174,9 +324,7 @@ const masterArtworks = filterByLocale(allArtworks, locale).filter(
         justify-content: center;
         font-size: 3rem;
       }
-      .book-info {
-        padding: 0.75rem;
-      }
+      .book-info { padding: 0.75rem; }
       .book-title {
         font-size: 0.85rem;
         font-weight: 700;
@@ -188,125 +336,176 @@ const masterArtworks = filterByLocale(allArtworks, locale).filter(
         color: rgb(96,115,159);
         margin: 0;
       }
-      .back-link {
+    </style>
+    <!--
+      is:global is required here: elements inside <Content /> come from the
+      rendered markdown body of the collection entry, not from this .astro
+      file's own template, so Astro's scoped-style attribute never gets
+      attached to them and a normal <style> block silently fails to match.
+    -->
+    <style is:global>
+      .master-article h2 {
+        font-size: 1.35rem;
+        font-weight: 700;
+        margin: 2.75rem 0 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #c0392b;
         display: inline-block;
-        margin-bottom: 1.5rem;
-        color: rgb(96, 115, 159);
-        text-decoration: none;
-        font-size: 0.9rem;
+        scroll-margin-top: 90px;
       }
-      .back-link:hover { color: #c0392b; }
+      .master-article p {
+        line-height: 1.75;
+        margin: 0 0 1.15rem;
+        color: #282A2B;
+      }
+      .master-article a {
+        color: #c0392b;
+        text-decoration: none;
+        font-weight: 600;
+        border-bottom: 1px solid rgba(192, 57, 43, 0.25);
+      }
+      .master-article a:hover {
+        border-bottom-color: #c0392b;
+      }
     </style>
   </head>
   <body>
     <Header />
-    <main>
+    <main class="master-page">
       <a href="/en/masters" class="back-link" id="back-link">← All masters</a>
 
-      <div class="master-page">
-        <h1>{master.data.name}</h1>
-
-        {master.data.photo && (
-          <div style="margin: 0 0 2rem;">
-            <Image
-              src={master.data.photo}
-              alt={master.data.name}
-              width={800}
-              height={500}
-              style="width: 100%; max-width: 800px; height: auto; display: block; border-radius: 0;"
-            />
-          </div>
+      <div class:list={['master-layout', { 'no-toc': toc.length === 0 }]}>
+        {toc.length > 0 && (
+          <aside class="master-toc" aria-label="Table of contents">
+            <div class="master-toc-inner">
+              <span class="master-toc-label">Contents</span>
+              <ol class="master-toc-list">
+                {toc.map((item) => (
+                  <li><a href={`#${item.id}`} data-toc-link>{item.label}</a></li>
+                ))}
+              </ol>
+            </div>
+          </aside>
         )}
 
-        <div class="master-content">
-          <Content />
+        <div class="master-content-col">
+          <span class="master-eyebrow">{master.data.category}</span>
+          <h1>{master.data.name}</h1>
+          {(master.data.born || master.data.died) && (
+            <p class="master-dates">
+              {master.data.born}{master.data.died ? ` – ${master.data.died}` : ''}
+            </p>
+          )}
+
+          {toc.length > 0 && (
+            <details class="master-toc-mobile">
+              <summary>Contents</summary>
+              <ol>
+                {toc.map((item) => (
+                  <li><a href={`#${item.id}`} data-toc-link-mobile>{item.label}</a></li>
+                ))}
+              </ol>
+            </details>
+          )}
+
+          {master.data.photo && (
+            <div class="master-photo">
+              <Image
+                src={master.data.photo}
+                alt={master.data.name}
+                width={800}
+                height={500}
+              />
+            </div>
+          )}
+
+          <article class="master-article">
+            <Content />
+          </article>
+
+          {masterArtworks.length > 0 && (
+            <section class="master-section" id="works">
+              <h2>Works</h2>
+              <div class="gallery-grid">
+                {masterArtworks.map(artwork => (
+                  <a href={getContentUrl('gallery', artwork.id)} style="text-decoration: none; color: inherit; display: block;">
+                    <figure style="margin: 0;">
+                      <Image
+                        src={artwork.data.image}
+                        alt={artwork.data.title}
+                        widths={[300]}
+                        sizes="33vw"
+                        style="width: 100%; height: auto; display: block; border-radius: 0;"
+                      />
+                      <figcaption>
+                        {artwork.data.title}{artwork.data.year ? `, ${artwork.data.year}` : ''}
+                      </figcaption>
+                    </figure>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {master.data.links && master.data.links.length > 0 && (
+            <section class="master-section" id="links">
+              <h2>Links</h2>
+              <ul class="links-list">
+                {master.data.links.map(link => (
+                  <li>
+                    <a href={link.url} target="_blank" rel="noopener">
+                      {link.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          <section class="meta-section">
+            {resolvedTagGroups.map(group => group.items.length > 0 && (
+              <div class="meta-row">
+                <strong>{group.label}:</strong>{' '}
+                {group.items.map(item => (
+                  <a href={item.url} class={item.isMaster ? 'master-link' : 'tag-link'}>
+                    {item.value}
+                  </a>
+                ))}
+              </div>
+            ))}
+          </section>
+
+          {masterBooks.length > 0 && (
+            <section class="master-section" id="additional-materials">
+              <h2>Additional Materials</h2>
+              <div class="books-grid">
+                {masterBooks.map(book => (
+                  <a href={getContentUrl('books', book.id)} class="book-card">
+                    {book.data.cover
+                      ? (
+                        <Image
+                          src={book.data.cover}
+                          alt={book.data.title}
+                          width={160}
+                          height={200}
+                          style="width: 100%; height: 200px; object-fit: cover; display: block;"
+                        />
+                      ) : (
+                        <div class="book-cover-placeholder">📖</div>
+                      )
+                    }
+                    <div class="book-info">
+                      <p class="book-title">{book.data.title}</p>
+                      {book.data.author && (
+                        <p class="book-author">{book.data.author}</p>
+                      )}
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
-
-      {masterArtworks.length > 0 && (
-        <section style="margin-top: 2rem;">
-          <h2>{locale === 'uk' ? 'Роботи' : 'Works'}</h2>
-          <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
-            {masterArtworks.map(artwork => (
-              <a href={getContentUrl('gallery', artwork.id)} style="text-decoration: none; color: inherit; display: block;">
-                <figure style="margin: 0;">
-                  <Image
-                    src={artwork.data.image}
-                    alt={artwork.data.title}
-                    widths={[300]}
-                    sizes="33vw"
-                    style="width: 100%; height: auto; display: block; border-radius: 0;"
-                  />
-                  <figcaption style="font-size: 0.8rem; color: rgb(96,115,159); padding: 0.4rem 0;">
-                    {artwork.data.title}{artwork.data.year ? `, ${artwork.data.year}` : ''}
-                  </figcaption>
-                </figure>
-              </a>
-            ))}
-          </div>
-        </section>
-      )}
-      
-      {master.data.links && master.data.links.length > 0 && (
-        <section style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgb(229,233,240);">
-          <h2 style="font-size: 1.2rem; margin-bottom: 1rem;">{locale === 'uk' ? 'Посилання' : 'Links'}</h2>
-          <ul style="list-style: none; padding: 0; margin: 0;">
-            {master.data.links.map(link => (
-              <li style="margin-bottom: 0.5rem;">
-                <a href={link.url} target="_blank" rel="noopener" style="color: #c0392b; text-decoration: none; border-bottom: 1px solid #f5c6c0; font-size: 0.95rem;">
-                  {link.title}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      <section class="meta-section">
-        {resolvedTagGroups.map(group => group.items.length > 0 && (
-          <div class="meta-row">
-            <strong>{group.label}:</strong>{' '}
-            {group.items.map(item => (
-              <a href={item.url} class={item.isMaster ? 'master-link' : 'tag-link'}>
-                {item.value}
-              </a>
-            ))}
-          </div>
-        ))}
-        <div class="meta-row">
-          <strong>Category:</strong> {master.data.category}
-        </div>
-      </section>
-
-      {masterBooks.length > 0 && (
-        <section class="books-section">
-          <h2>Additional Materials</h2>
-          <div class="books-grid">
-            {masterBooks.map(book => (
-              <a href={getContentUrl('books', book.id)} class="book-card">
-                {book.data.cover
-                  ? (
-                    <Image
-                      src={book.data.cover}
-                      alt={book.data.title}
-                      width={160}
-                      height={200}
-                      style="width: 100%; height: 200px; object-fit: cover; display: block;"
-                    />
-                  ) : (
-                    <div class="book-cover-placeholder">📖</div>
-                  )
-                }
-                <div class="book-info">
-                  <p class="book-title">{book.data.title}</p>
-                  {book.data.author && (
-                    <p class="book-author">{book.data.author}</p>
-                  )}
-                </div>
-              </a>
-            ))}
-          </div>
-        </section>
-      )}
       </div>
     </main>
     <Footer />
@@ -326,6 +525,62 @@ const masterArtworks = filterByLocale(allArtworks, locale).filter(
           });
         }
       }
+    </script>
+    <script>
+      const desktopLinks = document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]');
+      const mobileLinks = document.querySelectorAll<HTMLAnchorElement>('[data-toc-link-mobile]');
+      const mobileDetails = document.querySelector<HTMLDetailsElement>('.master-toc-mobile');
+
+      const headingEls = Array.from(desktopLinks)
+        .map((link) => document.querySelector<HTMLElement>(link.getAttribute('href') || ''))
+        .filter((el): el is HTMLElement => !!el);
+
+      function setActive(id: string) {
+        desktopLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+        });
+      }
+
+      if (headingEls.length) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                setActive(entry.target.id);
+              }
+            });
+          },
+          { rootMargin: '-15% 0px -70% 0px', threshold: 0 }
+        );
+        headingEls.forEach((h) => observer.observe(h));
+      }
+
+      function smoothScrollTo(id: string) {
+        const target = document.getElementById(id);
+        if (!target) return;
+        const y = target.getBoundingClientRect().top + window.scrollY - 90;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+        history.replaceState(null, '', `#${id}`);
+      }
+
+      desktopLinks.forEach((link) => {
+        link.addEventListener('click', (e) => {
+          const id = (link.getAttribute('href') || '').slice(1);
+          if (!id) return;
+          e.preventDefault();
+          smoothScrollTo(id);
+        });
+      });
+
+      mobileLinks.forEach((link) => {
+        link.addEventListener('click', (e) => {
+          const id = (link.getAttribute('href') || '').slice(1);
+          if (!id) return;
+          e.preventDefault();
+          smoothScrollTo(id);
+          if (mobileDetails) mobileDetails.open = false;
+        });
+      });
     </script>
   </body>
 </html>
