@@ -9,5 +9,7 @@ dimensions: "67×54 см"
 location: "Національний музей українського народного декоративного мистецтва"
 image: ../../../assets/artworks/jul/23.jpg
 description: "Матеріал і техніка: Папір, темпера. Розміри: 67×54 см."
+featured: true
+featuredOrder: 2
 locale: uk
 ---
