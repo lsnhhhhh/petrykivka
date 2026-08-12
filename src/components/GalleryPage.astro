@@ -23,7 +23,33 @@ const artworks = filterByLocale(allArtworks, locale).sort((a, b) => {
   return 0;
 });
 
-const masters = [...new Set(artworks.map(a => a.data.master))].sort();
+// Прізвище = останнє слово повного імені ("Тетяна Пата" → "Пата").
+// Працює і для складених прізвищ через дефіс ("Валентина Карпець-Єрмолаєва"),
+// бо розбиваємо лише по пробілах, а не по дефісу.
+function getLastName(fullName: string) {
+  const parts = fullName.trim().split(/\s+/);
+  return parts[parts.length - 1];
+}
+
+// Лише для відображення: "Ім'я Прізвище" → "Прізвище Ім'я".
+// Значення для фільтрації (data-value) лишається оригінальним, щоб збігатись
+// з artwork.data.master на картках — міняємо тільки те, що бачить користувач.
+function toSurnameFirst(fullName: string) {
+  const parts = fullName.trim().split(/\s+/);
+  if (parts.length < 2) return fullName;
+  const last = parts.pop();
+  return `${last} ${parts.join(' ')}`;
+}
+
+const collatorLocale = locale === 'en' ? 'en' : 'uk';
+const masters = [...new Set(artworks.map(a => a.data.master))].sort((a, b) =>
+  getLastName(a).localeCompare(getLastName(b), collatorLocale)
+);
+
+// Мапа "оригінальне ім'я" → "Прізвище Ім'я", передається в client-side script
+// для відображення активних тегів фільтра в тому ж форматі.
+const masterDisplayNames = Object.fromEntries(masters.map(m => [m, toSurnameFirst(m)]));
+
 const decades = [...new Set(artworks.map(a => a.data.decade).filter(Boolean))].sort();
 const subjects = [...new Set(artworks.flatMap(a => a.data.subject || []))].sort();
 
@@ -194,7 +220,7 @@ const galleryBase = locale === 'en' ? '/en/gallery' : '/gallery';
                     <path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </span>
-                {m}
+                {toSurnameFirst(m)}
               </button>
             ))}
           </div>
@@ -279,7 +305,7 @@ const galleryBase = locale === 'en' ? '/en/gallery' : '/gallery';
     </main>
     <Footer />
 
-    <script is:inline define:vars={{ galleryBase }}>
+    <script is:inline define:vars={{ galleryBase, masterDisplayNames }}>
     (function() {
       const PER_PAGE = 20;
       let shown = PER_PAGE;
@@ -416,7 +442,8 @@ const galleryBase = locale === 'en' ? '/en/gallery' : '/gallery';
             hasAny = true;
             const tag = document.createElement('button');
             tag.className = 'filter-tag';
-            tag.textContent = value + ' ×';
+            const displayValue = (key === 'master' && masterDisplayNames[value]) ? masterDisplayNames[value] : value;
+            tag.textContent = displayValue + ' ×';
             tag.addEventListener('click', () => {
               const idx = filters[key].indexOf(value);
               if (idx > -1) filters[key].splice(idx, 1);

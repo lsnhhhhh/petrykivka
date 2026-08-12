@@ -1,6 +1,6 @@
 ---
 'locale': 'en'
-'name': 'Tetiana Harkava'
+'name': 'Tetyana Harkava'
 'category': 'Четверте покоління'
 'center': 'Petrykivka'
 photo: '../../../assets/masters/tetiana-harkava.jpg'
