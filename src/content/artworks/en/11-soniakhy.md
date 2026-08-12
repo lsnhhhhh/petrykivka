@@ -1,6 +1,6 @@
 ---
 title: "Sunflowers"
-master: "Andrii Pikush"
+master: "Andriy Pikush"
 year: "2006"
 decade: "2000"
 subject: ["Flowers"]

@@ -1,6 +1,6 @@
 ---
 title: "Goblet with blue painting"
-master: "Andrii Pikush"
+master: "Andriy Pikush"
 subject: ["Household items"]
 medium: "Glass, painted"
 image: ../../../assets/artworks/jul/28.jpg

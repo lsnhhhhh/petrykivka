@@ -1,6 +1,6 @@
 ---
 title: "Turkey"
-master: "Andrii Pikush"
+master: "Andriy Pikush"
 year: "2011"
 decade: "2010"
 subject: ["Birds"]
