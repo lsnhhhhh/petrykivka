@@ -4,6 +4,7 @@ name: 'Vilna Selianka Artel'
 category: 'Organizations & Institutions'
 location: 'Petrykivka, Dnipropetrovsk Oblast, Ukraine'
 founded: '1929'
+closed: '1958'
 photo: '../../../assets/centers/artil-vilna-selianka.jpg'
 masters:
   - 'Fedir Panko'

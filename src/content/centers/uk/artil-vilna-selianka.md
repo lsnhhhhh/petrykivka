@@ -4,6 +4,7 @@ name: 'Артіль «Вільна селянка»'
 category: 'Організації та установи'
 location: 'смт Петриківка, Дніпропетровська область'
 founded: '1929'
+closed: '1958'
 photo: '../../../assets/centers/artil-vilna-selianka.jpg'
 masters:
   - 'Федір Панко'

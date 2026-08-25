@@ -2,6 +2,7 @@
 locale: en
 name: 'Ihor Lisnyi Collection'
 category: 'Private Collections'
+founded: '2011'
 location: 'Lviv, Ukraine'
 masters:
   - 'Halyna Nazarenko'

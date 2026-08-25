@@ -3,6 +3,8 @@ locale: en
 name: 'Vasyl Sokolenko Museum-Estate'
 category: 'Museums'
 location: 'Petrykivka village, Dnipropetrovsk Region, Ukraine'
+founded: '2000'
+closed: '2018'
 photo: '../../../assets/centers/muzei-sadyba-sokolenka.jpg'
 masters:
   - 'Vasyl Sokolenko'

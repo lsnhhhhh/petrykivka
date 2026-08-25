@@ -2,6 +2,7 @@
 locale: en
 name: 'Yuriy Mishchenko and Natalia Pavlenko Collection'
 category: 'Private Collections'
+founded: '2010'
 location: 'USA'
 masters:
   - 'Nadiya Bilokin'

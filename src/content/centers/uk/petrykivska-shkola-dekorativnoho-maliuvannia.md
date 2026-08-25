@@ -4,6 +4,7 @@ name: 'Петриківська школа декоративного малюв
 category: 'Школи'
 location: 'смт Петриківка, Дніпропетровська область'
 founded: '1936'
+closed: '1941'
 photo: '../../../assets/centers/petrykivska-shkola-dekorativnoho-maliuvannia.jpg'
 masters:
   - 'Тетяна Пата'

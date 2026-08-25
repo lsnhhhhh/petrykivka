@@ -2,6 +2,7 @@
 locale: uk
 name: 'Колекція Ігоря Лісного'
 category: 'Приватні колекції'
+founded: '2011'
 location: 'Львів'
 masters:
   - 'Галина Назаренко'
