@@ -7,8 +7,10 @@ teachers:
   - 'Maria Pikush'
   - 'Halyna Nazarenko'
 center: 'Petrykivka'
+photo: '../../../assets/masters/ihor-lisnyi.jpg'
 locale: en
 ---
+## Biography
 
 Ihor Lisnyi is an art manager and promoter of Petrykivka painting.
 

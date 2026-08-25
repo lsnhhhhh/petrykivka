@@ -3,6 +3,7 @@
 'name': 'Yevheniia Berchenko'
 'category': 'Дослідники петриківського розпису'
 'center': 'Petrykivka'
+photo: '../../../assets/masters/yevheniia-berchenko.jpg'
 ---
 ## Biography
  

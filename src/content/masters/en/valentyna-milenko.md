@@ -17,6 +17,7 @@ tags:
 links:
   - title: "Encyclopedia of Modern Ukraine"
     url: "https://esu.com.ua/article-69656"
+photo: '../../../assets/masters/valentyna-milenko.jpg'
 locale: en
 ---
 

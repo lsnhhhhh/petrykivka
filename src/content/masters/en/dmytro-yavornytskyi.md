@@ -3,6 +3,7 @@
 'name': 'Dmytro Yavornytskyi'
 'category': 'Дослідники петриківського розпису'
 'center': 'Petrykivka'
+photo: '../../../assets/masters/dmytro-yavornytskyi.jpg'
 ---
 ## Biography
  

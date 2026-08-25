@@ -3,6 +3,7 @@
 'name': 'Nataliia Hlukhenska'
 'category': 'Дослідники петриківського розпису'
 'center': 'Petrykivka'
+photo: '../../../assets/masters/nataliia-hlukhenska.jpg'
 ---
 ## Biography
  

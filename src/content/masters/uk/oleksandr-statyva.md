@@ -21,6 +21,7 @@ tags:
   - 'мистецтвознавець'
   - 'театр'
   - 'бібліотека'
+photo: '../../../assets/masters/oleksandr-statyva.jpg'
 ---
 ## Біографія
 

@@ -17,6 +17,7 @@ tags:
   - "декоративний розпис"
   - "квіти"
   - "діаспора"
+photo: '../../../assets/masters/olena-zinchuk.jpg'
 locale: uk
 ---
 

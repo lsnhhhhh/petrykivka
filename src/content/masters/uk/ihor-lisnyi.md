@@ -7,8 +7,10 @@ teachers:
  - 'Марія Пікуш'
  - 'Галина Назаренко'
 center: 'Petrykivka'
+photo: '../../../assets/masters/ihor-lisnyi.jpg'
 locale: uk
 ---
+## Біографія
 
 Ігор Лісний — арт-менеджер і популяризатор петриківського розпису.
 

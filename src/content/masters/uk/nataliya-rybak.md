@@ -18,6 +18,7 @@ tags:
 links:
   - title: "Енциклопедія Сучасної України"
     url: "https://esu.com.ua/article-885057"
+photo: '../../../assets/masters/nataliya-rybak.jpg'
 locale: uk
 ---
 

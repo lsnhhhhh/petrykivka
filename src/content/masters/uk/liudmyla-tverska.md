@@ -3,6 +3,7 @@ locale: uk
 name: 'Людмила Тверська'
 category: 'Дослідники петриківського розпису'
 center: 'Петриківка'
+photo: '../../../assets/masters/liudmyla-tverska.jpg'
 ---
 ## Біографія
  

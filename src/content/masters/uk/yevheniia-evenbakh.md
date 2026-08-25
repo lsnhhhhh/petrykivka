@@ -11,6 +11,7 @@ tags:
   - 'експедиція'
   - 'колекція'
   - 'фіксація'
+photo: '../../../assets/masters/yevheniia-evenbakh.jpg'
 ---
 ## Біографія
 

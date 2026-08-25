@@ -16,6 +16,7 @@ tags:
 links:
   - title: "Encyclopedia of Modern Ukraine"
     url: "https://esu.com.ua/article-883616"
+photo: '../../../assets/masters/anastasiia-chudnivets.jpg'
 locale: en
 ---
 

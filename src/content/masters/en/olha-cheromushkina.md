@@ -18,6 +18,7 @@ links:
     url: "https://journals.naoma.kyiv.ua/index.php/uam/article/view/248"
   - title: "Radio Svoboda: the story of an artist from Mariupol"
     url: "https://www.radiosvoboda.org/a/petrykivskyy-rozpys-bizhenka-populyaryzuye-v-nimechchyni/33795484.html"
+photo: '../../../assets/masters/olha-cheromushkina.jpg'
 locale: en
 ---
 

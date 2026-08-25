@@ -3,6 +3,7 @@ locale: uk
 name: 'Дмитро Яворницький'
 category: 'Дослідники петриківського розпису'
 center: 'Петриківка'
+photo: '../../../assets/masters/dmytro-yavornytskyi.jpg'
 ---
 ## Біографія
  

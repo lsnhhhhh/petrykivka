@@ -21,6 +21,7 @@
 - 'art critic'
 - 'theater'
 - 'library'
+photo: '../../../assets/masters/oleksandr-statyva.jpg'
 ---
 ## Biography
 

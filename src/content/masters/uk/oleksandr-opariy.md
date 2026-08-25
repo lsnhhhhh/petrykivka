@@ -19,6 +19,7 @@ tags:
   - "художній текстиль"
   - "писанкарство"
   - "колекціонування"
+photo: '../../../assets/masters/oleksandr-opariy.jpg'
 locale: uk
 ---
 

@@ -19,6 +19,7 @@ tags:
 links:
   - title: "Енциклопедія Сучасної України"
     url: "https://esu.com.ua/article-10060"
+photo: '../../../assets/masters/valentyna-karpets-yermolaieva.jpg'
 locale: uk
 ---
 

@@ -18,6 +18,7 @@ tags:
   - "flowers"
   - "diaspora"
 locale: en
+photo: '../../../assets/masters/olena-zinchuk.jpg'
 ---
 
 Olena Zinchuk (born September 23, 1959, Petrykivka) is an artist of decorative painting and a member of the National Union of Artists of Ukraine (since 1987).

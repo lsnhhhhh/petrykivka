@@ -3,6 +3,7 @@ locale: uk
 name: 'Євгенія Берченко'
 category: 'Дослідники петриківського розпису'
 center: 'Петриківка'
+photo: '../../../assets/masters/yevheniia-berchenko.jpg'
 ---
 ## Біографія
  

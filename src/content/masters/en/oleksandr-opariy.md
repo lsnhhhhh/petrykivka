@@ -19,6 +19,7 @@ tags:
   - "artistic textiles"
   - "pysanka painting"
   - "collecting"
+photo: '../../../assets/masters/oleksandr-opariy.jpg'
 locale: en
 ---
 

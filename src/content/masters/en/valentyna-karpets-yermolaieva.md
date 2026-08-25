@@ -19,6 +19,7 @@ tags:
 links:
   - title: "Encyclopedia of Modern Ukraine"
     url: "https://esu.com.ua/article-10060"
+photo: '../../../assets/masters/valentyna-karpets-yermolaieva.jpg'
 locale: en
 ---
 

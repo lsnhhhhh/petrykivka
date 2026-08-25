@@ -18,6 +18,7 @@ tags:
 links:
   - title: "Encyclopedia of Modern Ukraine"
     url: "https://esu.com.ua/article-885057"
+photo: '../../../assets/masters/nataliya-rybak.jpg'
 locale: en
 ---
 

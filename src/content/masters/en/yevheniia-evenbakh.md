@@ -11,6 +11,7 @@
 - 'expedition'
 - 'collection'
 - 'fixation'
+photo: '../../../assets/masters/yevheniia-evenbakh.jpg'
 ---
 ## Biography
 

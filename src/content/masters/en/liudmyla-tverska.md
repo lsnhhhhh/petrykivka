@@ -3,6 +3,7 @@
 'name': 'Liudmyla Tverska'
 'category': 'Дослідники петриківського розпису'
 'center': 'Petrykivka'
+photo: '../../../assets/masters/liudmyla-tverska.jpg'
 ---
 ## Biography
  

@@ -3,6 +3,7 @@ locale: uk
 name: 'Наталія Глухенька'
 category: 'Дослідники петриківського розпису'
 center: 'Петриківка'
+photo: '../../../assets/masters/nataliia-hlukhenska.jpg'
 ---
 ## Біографія
  
