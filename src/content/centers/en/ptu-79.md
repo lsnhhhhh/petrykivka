@@ -1,7 +1,7 @@
 ---
 name: 'Vocational School No. 79'
 category: 'Schools' 
-location: 'Petrykivka, Dniprovskyi district, Dnipropetrovsk region'
+location: 'Petrykivka, Dnipropetrovsk region'
 founded: '1963'
 website: 'https://79.ptu.in.ua/'
 address: '73 Petra Kalnyshevskoho Avenue, Petrykivka'

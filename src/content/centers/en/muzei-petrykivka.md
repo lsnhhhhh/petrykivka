@@ -1,7 +1,7 @@
 ---
 name: 'Museum of the History of Petrykivka Painting and Folk Crafts'
 category: 'Museums'
-location: 'Petrykivka village, Dniprovskyi district, Dnipropetrovsk region'
+location: 'Petrykivka village, Dnipropetrovsk region'
 founded: '2021'
 website: 'https://www.facebook.com/petrikivka.museum/'
 address: '36A Petra Kalnyshevskoho Avenue, Petrykivka'
