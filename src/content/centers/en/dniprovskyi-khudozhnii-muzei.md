@@ -5,7 +5,7 @@ category: 'Museums'
 location: 'Dnipro, Ukraine'
 founded: '1914'
 closed: ''
-photo: '../../../assets/centers/1.jpg'
+photo: '../../../assets/centers/dniprovskyi-khudozhnii-muzei.jpg'
 masters:
   - 'Tetyana Pata'
   - 'Nadiya Bilokin'

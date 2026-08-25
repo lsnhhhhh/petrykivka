@@ -4,6 +4,7 @@ name: 'Fedir Panko Museum'
 category: 'Museums'
 location: 'Petrykivka village, Dnipropetrovsk Region, Ukraine'
 founded: '2013'
+photo: '../../../assets/centers/muzei-fedora-panka.jpg'
 masters:
   - 'Fedir Panko'
   - 'Valentyna Panko'

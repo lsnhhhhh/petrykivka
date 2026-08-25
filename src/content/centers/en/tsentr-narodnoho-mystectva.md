@@ -7,14 +7,8 @@ founded: '1998'
 photo: '../../../assets/centers/4.jpg'
 masters:
   - 'Andriy Pikush'
-  - 'Olena Skytsiuk'
   - 'Valentyna Deka'
   - 'Valentyna Panko'
-  - 'Tetyana Harkava'
-  - 'Hanna Samarska'
-  - 'Nataliya Statyva-Zharko'
-  - 'Yuliya Smoliy'
-  - 'Yaryna Pylypenko'
 ---
 
 ## About the Center

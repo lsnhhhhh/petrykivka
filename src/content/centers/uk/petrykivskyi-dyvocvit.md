@@ -5,6 +5,7 @@ location: 'смт Петриківка, Дніпропетровська обл�
 founded: '2008'
 closed: '2021'
 address: 'смт Петриківка (зазвичай проспект Петра Калнишевського)'
+photo: '../../../assets/centers/petrykivskyi-dyvocvit.jpg'
 locale: uk
 ---
 

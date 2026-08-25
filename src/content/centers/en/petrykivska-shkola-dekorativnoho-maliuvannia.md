@@ -4,6 +4,7 @@ name: 'Petrykivka School of Decorative Drawing'
 category: 'Schools'
 location: 'Petrykivka village, Dnipropetrovsk Region, Ukraine'
 founded: '1936'
+photo: '../../../assets/centers/petrykivska-shkola-dekorativnoho-maliuvannia.jpg'
 masters:
   - 'Tetyana Pata'
   - 'Oleksandr Statyva'

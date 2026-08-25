@@ -5,6 +5,7 @@ location: 'Petrykivka village, Dniprovskyi district, Dnipropetrovsk region'
 founded: '2021'
 website: 'https://www.facebook.com/petrikivka.museum/'
 address: '36A Petra Kalnyshevskoho Avenue, Petrykivka'
+photo: '../../../assets/centers/muzei-petrykivka.jpg'
 locale: en
 ---
 

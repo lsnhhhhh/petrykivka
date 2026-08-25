@@ -4,6 +4,7 @@ name: 'Музей Федора Панка'
 category: 'Музеї'
 location: 'смт Петриківка, Дніпропетровська область'
 founded: '2013'
+photo: '../../../assets/centers/muzei-fedora-panka.jpg'
 masters:
   - 'Федір Панко'
   - 'Валентина Панко'

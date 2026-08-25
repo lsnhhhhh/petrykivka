@@ -5,6 +5,7 @@ location: 'Petrykivka, Dniprovskyi district, Dnipropetrovsk region'
 founded: '1963'
 website: 'https://79.ptu.in.ua/'
 address: '73 Petra Kalnyshevskoho Avenue, Petrykivka'
+photo: '../../../assets/centers/ptu-79.jpg'
 locale: en
 ---
 

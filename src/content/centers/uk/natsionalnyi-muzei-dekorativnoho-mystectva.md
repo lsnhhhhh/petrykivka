@@ -3,6 +3,7 @@ locale: uk
 name: 'Національний музей українського народного декоративного мистецтва'
 category: 'Музеї'
 location: 'м. Київ'
+photo: '../../../assets/centers/natsionalnyi-muzei-dekorativnoho-mystectva.jpg'
 masters:
   - 'Марфа Тимченко'
   - 'Віра Клименко-Жукова'

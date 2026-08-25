@@ -5,6 +5,7 @@ category: 'Organizations & Institutions'
 location: 'Kyiv, Ukraine'
 founded: '1924'
 closed: '2006'
+photo: '../../../assets/centers/kekhz.jpg'
 masters:
   - 'Marfa Tymchenko'
   - 'Pelaheya Hlushchenko'

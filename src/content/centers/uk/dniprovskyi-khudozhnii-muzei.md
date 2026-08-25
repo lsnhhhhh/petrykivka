@@ -5,7 +5,7 @@ category: 'Музеї'
 location: 'м. Дніпро'
 founded: '1914'
 closed: ''
-photo: '../../../assets/centers/1.jpg'
+photo: '../../../assets/centers/dniprovskyi-khudozhnii-muzei.jpg'
 masters:
   - 'Тетяна Пата'
   - 'Надія Білокінь'

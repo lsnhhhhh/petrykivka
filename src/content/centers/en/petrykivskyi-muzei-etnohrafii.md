@@ -6,6 +6,7 @@ location: 'Petrykivka, Dnipropetrovsk Oblast, Ukraine'
 founded: '2010'
 address: 'Istorychna St. (former Korchahina St.), 14B, Petrykivka, Ukraine'
 website: 'https://petrikvskij-muzej.mozello.com/'
+photo: '../../../assets/centers/petrykivka-muzey.jpg'
 masters:
   - 'Hanna Samarska'
   - 'Volodymyr Hlushchenko'

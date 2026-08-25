@@ -5,6 +5,7 @@ location: 'Petrykivka village, Dnipropetrovsk region'
 founded: '2008'
 closed: '2021'
 address: 'Petrykivka village (usually Petra Kalnyshevskoho Avenue)'
+photo: '../../../assets/centers/petrykivskyi-dyvocvit.jpg'
 locale: en
 ---
 

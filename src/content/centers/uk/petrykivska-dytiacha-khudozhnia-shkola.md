@@ -4,6 +4,7 @@ name: 'Петриківська дитяча художня школа ім. Т.
 category: 'Школи'
 location: 'смт Петриківка, Дніпропетровська область'
 founded: '1958'
+photo: '../../../assets/centers/petrykivska-dytiача-khudozhnia-shkola.jpg'
 masters:
   - 'Федір Панко'
   - 'Василь Соколенко'

@@ -5,6 +5,7 @@ location: 'смт Петриківка, Дніпровський район, Д�
 founded: '2021'
 website: 'https://www.facebook.com/petrikivka.museum/'
 address: 'проспект Петра Калнишевського, 36А, смт Петриківка'
+photo: '../../../assets/centers/muzei-petrykivka.jpg'
 locale: uk
 ---
 

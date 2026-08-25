@@ -5,7 +5,7 @@ category: 'Organizations & Institutions'
 location: 'Petrykivka village, Dnipropetrovsk Region, Ukraine'
 founded: '1958'
 closed: '2004'
-photo: '../../../assets/centers/3.jpg'
+photo: '../../../assets/centers/fabryka-petrykivskyi-rozpys.jpg'
 masters:
   - 'Fedir Panko'
   - 'Vasyl Sokolenko'

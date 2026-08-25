@@ -3,6 +3,7 @@ locale: uk
 name: 'Музей-садиба Василя Соколенка'
 category: 'Музеї'
 location: 'смт Петриківка, Дніпропетровська область'
+photo: '../../../assets/centers/muzei-sadyba-sokolenka.jpg'
 masters:
   - 'Василь Соколенко'
 ---

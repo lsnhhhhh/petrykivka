@@ -2,6 +2,7 @@
 locale: en
 name: 'Dnipropetrovsk Professional College of Arts and Culture'
 category: 'Schools'
+photo: '../../../assets/centers/koledzh-kultury.jpg'
 location: 'Dnipro, Ukraine'
 ---
 The Dnipropetrovsk Professional College of Arts and Culture (formerly the Dnipropetrovsk Theater and Art College) is the first educational institution in Ukraine to establish professional training in the "Decorative Art" specialty, with Petrykivka painting as its key focus.

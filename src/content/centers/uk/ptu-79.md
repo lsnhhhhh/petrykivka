@@ -5,6 +5,7 @@ location: 'смт Петриківка, Дніпровський район, Д�
 founded: '1963'
 website: 'https://79.ptu.in.ua/'
 address: 'проспект Петра Калнишевського, 73, смт Петриківка'
+photo: '../../../assets/centers/ptu-79.jpg'
 locale: uk
 ---
 

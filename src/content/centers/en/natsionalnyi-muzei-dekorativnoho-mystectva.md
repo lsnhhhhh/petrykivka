@@ -3,6 +3,7 @@ locale: en
 name: 'The National Folk Decorative Art Museum'
 category: 'Museums'
 location: 'Kyiv, Ukraine'
+photo: '../../../assets/centers/natsionalnyi-muzei-dekorativnoho-mystectva.jpg'
 masters:
   - 'Marfa Tymchenko'
   - 'Vira Klymenko-Zhukova'

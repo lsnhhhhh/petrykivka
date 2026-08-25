@@ -5,7 +5,7 @@ category: 'Організації та установи'
 location: 'смт Петриківка, Дніпропетровська область'
 founded: '1958'
 closed: '2004'
-photo: '../../../assets/centers/3.jpg'
+photo: '../../../assets/centers/fabryka-petrykivskyi-rozpys.jpg'
 masters:
   - 'Федір Панко'
   - 'Василь Соколенко'

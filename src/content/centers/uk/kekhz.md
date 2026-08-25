@@ -5,6 +5,7 @@ category: 'Організації та установи'
 location: 'Київ'
 founded: '1924'
 closed: '2006'
+photo: '../../../assets/centers/kekhz.jpg'
 masters:
   - 'Марфа Тимченко'
   - 'Пелагея Глущенко'

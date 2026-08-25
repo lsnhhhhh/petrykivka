@@ -5,7 +5,7 @@ category: 'Організації та установи'
 location: 'смт Петриківка, Дніпропетровська область'
 founded: '1970'
 closed: '1998'
-photo: '../../../assets/centers/2.jpg'
+photo: '../../../assets/centers/eksperymentalnyy-tsekh.jpg'
 masters:
   - 'Федір Панко'
 address: 'просп. Петра Калнишевського, 65, смт. Петриківка'

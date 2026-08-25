@@ -6,6 +6,7 @@ location: 'смт Петриківка, Дніпропетровська обл�
 founded: '2010'
 address: 'смт Петриківка, вул. Історична (кол. Корчагіна), 14Б'
 website: 'https://petrikvskij-muzej.mozello.com/'
+photo: '../../../assets/centers/petrykivka-muzey.jpg'
 masters:
   - 'Ганна Самарська'
   - 'Володимир Глущенко'

@@ -5,7 +5,7 @@ category: 'Organizations & Institutions'
 location: 'Petrykivka village, Dnipropetrovsk Region, Ukraine'
 founded: '1970'
 closed: '1998'
-photo: '../../../assets/centers/2.jpg'
+photo: '../../../assets/centers/eksperymentalnyy-tsekh.jpg'
 masters:
   - 'Fedir Panko'
 address: '65 Petro Kalnyshevskyi Avenue, Petrykivka village, Ukraine'

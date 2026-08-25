@@ -3,6 +3,7 @@ locale: uk
 name: 'Дніпропетровський історичний музей імені Дмитра Яворницького'
 category: 'Музеї'
 location: 'м. Дніпро'
+photo: '../../../assets/centers/muzei-yavornytskogo.jpg'
 masters:
   - 'Дмитро Яворницький'
   - 'Федір Панко'

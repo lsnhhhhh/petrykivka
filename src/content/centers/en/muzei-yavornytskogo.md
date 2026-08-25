@@ -3,6 +3,7 @@ locale: en
 name: 'Dmytro Yavornytskyi National Historical Museum'
 category: 'Museums'
 location: 'Dnipro, Ukraine'
+photo: '../../../assets/centers/muzei-yavornytskogo.jpg'
 masters:
   - 'Dmytro Yavornytskyi'
   - 'Fedir Panko'

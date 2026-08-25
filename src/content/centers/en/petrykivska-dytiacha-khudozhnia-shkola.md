@@ -4,6 +4,7 @@ name: 'T. Y. Pata Petrykivka Children''s Art School'
 category: 'Schools'
 location: 'Petrykivka village, Dnipropetrovsk Region, Ukraine'
 founded: '1958'
+photo: '../../../assets/centers/petrykivska-dytiача-khudozhnia-shkola.jpg'
 masters:
   - 'Fedir Panko'
   - 'Vasyl Sokolenko'
