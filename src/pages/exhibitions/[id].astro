@@ -1,0 +1,16 @@
+---
+import { getCollection } from 'astro:content';
+import ExhibitionPage from '../../components/ExhibitionPage.astro';
+
+export async function getStaticPaths() {
+  const all = await getCollection('exhibitions');
+  const uk = all.filter(e => e.id.startsWith('uk/'));
+  return uk.map(exhibition => ({
+    params: { id: exhibition.id.replace('uk/', '') },
+    props: { exhibition },
+  }));
+}
+
+const { exhibition } = Astro.props;
+---
+<ExhibitionPage exhibition={exhibition} locale="uk" />

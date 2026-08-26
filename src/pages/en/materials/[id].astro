@@ -6,6 +6,7 @@ import ReadingProgress from '../../../components/ReadingProgress.astro';
 import { getCollection, render } from 'astro:content';
 import { getLocaleFromUrl } from '../../../i18n/translations';
 import { filterByLocale, getContentUrl } from '../../../i18n/content';
+import { getCategoryMeta, categoryLabel } from '../../../i18n/materialCategories';
 
 export async function getStaticPaths() {
   const allMaterials = await getCollection('materials');
@@ -31,6 +32,10 @@ const isGallery = material.data.category === 'Галереї';
 const isVideo = material.data.category === 'Відео';
 const isLongread = material.data.category === 'Лонгріди' || material.data.category === 'Статті';
 const isMasterclass = material.data.category === 'Майстер-класи';
+
+const categoryMeta = getCategoryMeta(material.data.category);
+const backUrl = categoryMeta ? `/en/materials/${categoryMeta.slug}` : '/en/materials';
+const backLabel = categoryMeta ? `← All ${categoryMeta.en.toLowerCase()}` : '← All materials';
 ---
 <!doctype html>
 <html lang="en">
@@ -75,8 +80,8 @@ const isMasterclass = material.data.category === 'Майстер-класи';
     <Header />
     <main>
       <div class="inner">
-        <a href="/en/materials" class="back-link" id="back-link">← All materials</a>
-        <p class="material-category">{material.data.category}</p>
+        <a href={backUrl} class="back-link" id="back-link">{backLabel}</a>
+        <p class="material-category">{categoryLabel(material.data.category, locale)}</p>
         <h1 class="material-title">{material.data.title}</h1>
         {material.data.masters && material.data.masters.length > 0 && (
           <div class="meta-row">

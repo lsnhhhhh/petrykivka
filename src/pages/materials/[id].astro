@@ -6,6 +6,7 @@ import ReadingProgress from '../../components/ReadingProgress.astro';
 import { getCollection, render } from 'astro:content';
 import { getLocaleFromUrl } from '../../i18n/translations';
 import { filterByLocale, getContentUrl } from '../../i18n/content';
+import { getCategoryMeta, categoryLabel } from '../../i18n/materialCategories';
 
 export async function getStaticPaths() {
   const allMaterials = await getCollection('materials');
@@ -32,8 +33,13 @@ const isVideo = material.data.category === 'Відео';
 const isLongread = material.data.category === 'Лонгріди' || material.data.category === 'Статті';
 const isMasterclass = material.data.category === 'Майстер-класи';
 
-const backUrl = locale === 'en' ? '/en/materials' : '/materials';
-const backLabel = locale === 'uk' ? '← Всі матеріали' : '← All materials';
+const categoryMeta = getCategoryMeta(material.data.category);
+const backUrl = categoryMeta
+  ? (locale === 'en' ? `/en/materials/${categoryMeta.slug}` : `/materials/${categoryMeta.slug}`)
+  : (locale === 'en' ? '/en/materials' : '/materials');
+const backLabel = categoryMeta
+  ? (locale === 'uk' ? `← Усі ${categoryMeta.uk.toLowerCase()}` : `← All ${categoryMeta.en.toLowerCase()}`)
+  : (locale === 'uk' ? '← Всі матеріали' : '← All materials');
 ---
 <!doctype html>
 <html lang={locale}>
@@ -97,7 +103,7 @@ const backLabel = locale === 'uk' ? '← Всі матеріали' : '← All m
     <main>
       <div class="inner">
         <a href={backUrl} class="back-link" id="back-link">{backLabel}</a>
-        <p class="material-category">{material.data.category}</p>
+        <p class="material-category">{categoryLabel(material.data.category, locale)}</p>
         <h1 class="material-title">{material.data.title}</h1>
 
         {material.data.masters && material.data.masters.length > 0 && (

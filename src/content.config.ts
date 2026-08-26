@@ -182,6 +182,20 @@ const artworks = defineCollection({
   }),
 });
 
+const exhibitions = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/exhibitions' }),
+  schema: ({ image }) => z.object({
+    title: z.string(),
+    subtitle: z.string().optional(),
+    master: z.string().optional(),      // ім'я майстра — для лінку на /gallery?master=...
+    artworks: z.array(z.string()),      // slug'и з artworks, у порядку куратора
+    cover: image().optional(),
+    accent: z.string().optional(),      // акцентний колір, за замовч. #c0392b
+    pubDate: z.coerce.date().optional(),
+    locale: localeSchema,
+  }),
+});
+
 const news = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/news' }),
   schema: z.object({
@@ -371,4 +385,4 @@ const publicationsRegistry = defineCollection({
   }),
 });
 
-export const collections = { blog, masters, books, centers, materials, artworks, news, registry, publicationsRegistry };
+export const collections = { blog, masters, books, centers, materials, artworks, news, registry, publicationsRegistry, exhibitions };

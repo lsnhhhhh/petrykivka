@@ -1,0 +1,89 @@
+---
+import BaseHead from './BaseHead.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import { getCollection, getEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import { filterByLocale, getContentUrl } from '../i18n/content';
+import type { Locale } from '../i18n/translations';
+
+interface Props { locale: Locale; }
+const { locale } = Astro.props;
+
+const allExhibitions = await getCollection('exhibitions');
+const exhibitions = filterByLocale(allExhibitions, locale).sort((a, b) => {
+  if (!a.data.pubDate) return 1;
+  if (!b.data.pubDate) return -1;
+  return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
+});
+
+async function resolveArtwork(slug: string) {
+  return (await getEntry('artworks', `${locale}/${slug}`)) ?? (await getEntry('artworks', `uk/${slug}`));
+}
+
+const cards = await Promise.all(exhibitions.map(async (exh) => {
+  let cover = exh.data.cover;
+  if (!cover && exh.data.artworks[0]) {
+    const first = await resolveArtwork(exh.data.artworks[0]);
+    cover = first?.data.image;
+  }
+  return { exh, cover };
+}));
+
+const title = locale === 'uk' ? 'Онлайн виставки' : 'Online Exhibitions';
+const subtitle = locale === 'uk'
+  ? 'Тематичні добірки робіт із нашої Галереї з кураторським текстом'
+  : 'Curated selections from our Gallery with curatorial commentary';
+const backUrl = locale === 'en' ? '/en/materials' : '/materials';
+const backLabel = locale === 'uk' ? '← Усі матеріали' : '← All materials';
+---
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <BaseHead title={title} description={subtitle} />
+    <style>
+      .back-link { display: inline-block; margin-bottom: 1.5rem; color: rgb(96, 115, 159); text-decoration: none; font-size: 0.95rem; }
+      .back-link:hover { color: #c0392b; }
+      h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+      .subtitle { color: rgb(96, 115, 159); font-size: 1.1rem; margin-bottom: 2.5rem; }
+      .exh-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.75rem; }
+      .exh-card { border-radius: 14px; overflow: hidden; border: 1px solid rgb(229, 233, 240); text-decoration: none; color: inherit; display: block; transition: transform 0.2s, box-shadow 0.2s; }
+      .exh-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(0,0,0,0.1); border-color: transparent; }
+      .exh-cover { width: 100%; height: 220px; object-fit: cover; display: block; background: rgb(229,233,240); }
+      .exh-info { padding: 1.1rem 1.3rem 1.4rem; }
+      .exh-title { font-size: 1.15rem; font-weight: 700; margin: 0 0 0.3rem; }
+      .exh-master { font-size: 0.85rem; color: #c0392b; font-weight: 600; margin: 0 0 0.4rem; }
+      .exh-subtitle { font-size: 0.88rem; color: rgb(96, 115, 159); margin: 0; line-height: 1.5; }
+      .empty { text-align: center; color: rgb(96, 115, 159); padding: 3rem 0; }
+      @media (max-width: 720px) { .exh-grid { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <a href={backUrl} class="back-link">{backLabel}</a>
+      <h1>{title}</h1>
+      <p class="subtitle">{subtitle}</p>
+
+      {cards.length > 0 ? (
+        <div class="exh-grid">
+          {cards.map(({ exh, cover }) => (
+            <a href={getContentUrl('exhibitions', exh.id)} class="exh-card">
+              {cover
+                ? <Image src={cover} alt={exh.data.title} width={400} height={220} class="exh-cover" />
+                : <div class="exh-cover" />}
+              <div class="exh-info">
+                <p class="exh-title">{exh.data.title}</p>
+                {exh.data.master && <p class="exh-master">{exh.data.master}</p>}
+                {exh.data.subtitle && <p class="exh-subtitle">{exh.data.subtitle}</p>}
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p class="empty">{locale === 'uk' ? 'Виставок поки немає' : 'No exhibitions yet'}</p>
+      )}
+    </main>
+    <Footer />
+  </body>
+</html>

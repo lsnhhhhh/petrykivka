@@ -1,0 +1,85 @@
+---
+import BaseHead from './BaseHead.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import { t } from '../i18n/translations';
+import { filterByLocale, getContentUrl } from '../i18n/content';
+import { getCategoryBySlug } from '../i18n/materialCategories';
+import type { Locale } from '../i18n/translations';
+
+interface Props {
+  locale: Locale;
+  slug: string;
+}
+
+const { locale, slug } = Astro.props;
+const meta = getCategoryBySlug(slug)!;
+
+const allMaterials = await getCollection('materials');
+const materials = filterByLocale(allMaterials, locale).filter(m => m.data.category === meta.category);
+
+const sorted = materials.sort((a, b) => {
+  if (!a.data.pubDate) return 1;
+  if (!b.data.pubDate) return -1;
+  return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
+});
+
+const title = locale === 'en' ? meta.en : meta.uk;
+const description = locale === 'en' ? meta.descriptionEn : meta.descriptionUk;
+const backUrl = locale === 'en' ? '/en/materials' : '/materials';
+const backLabel = locale === 'uk' ? '← Усі матеріали' : '← All materials';
+---
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <BaseHead title={`${title} — ${t(locale, 'nav.materials')}`} description={description} />
+    <style>
+      .back-link { display: inline-block; margin-bottom: 1.5rem; color: rgb(96, 115, 159); text-decoration: none; font-size: 0.95rem; }
+      .back-link:hover { color: #c0392b; }
+      h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+      .subtitle { color: rgb(96, 115, 159); font-size: 1.1rem; margin-bottom: 2.5rem; }
+      .materials-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+      .material-card { border-radius: 12px; overflow: hidden; border: 1px solid rgb(229, 233, 240); text-decoration: none; color: inherit; display: block; transition: transform 0.2s, box-shadow 0.2s; }
+      .material-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); border-color: transparent; }
+      .cover-image { width: 100%; height: 200px; object-fit: cover; display: block; }
+      .cover-placeholder { width: 100%; height: 200px; background: rgb(229, 233, 240); display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+      .card-info { padding: 1rem 1.25rem 1.25rem; }
+      .card-title { font-size: 1.05rem; font-weight: 700; margin: 0 0 0.4rem; line-height: 1.3; }
+      .card-description { font-size: 0.85rem; color: rgb(96, 115, 159); margin: 0; line-height: 1.5; }
+      .empty { text-align: center; color: rgb(96, 115, 159); padding: 3rem 0; }
+      @media (max-width: 720px) { .materials-grid { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <a href={backUrl} class="back-link">{backLabel}</a>
+      <h1>{title}</h1>
+      <p class="subtitle">{description}</p>
+
+      {sorted.length > 0 ? (
+        <div class="materials-grid">
+          {sorted.map(material => (
+            <a href={getContentUrl('materials', material.id)} class="material-card">
+              {material.data.cover
+                ? <Image src={material.data.cover} alt={material.data.title} width={300} height={200} class="cover-image" />
+                : <div class="cover-placeholder">{meta.icon}</div>
+              }
+              <div class="card-info">
+                <p class="card-title">{material.data.title}</p>
+                {material.data.description && <p class="card-description">{material.data.description}</p>}
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p class="empty">
+          {locale === 'uk' ? 'Матеріалів у цій категорії ще немає' : 'No materials in this category yet'}
+        </p>
+      )}
+    </main>
+    <Footer />
+  </body>
+</html>

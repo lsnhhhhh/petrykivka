@@ -1,0 +1,225 @@
+---
+import BaseHead from './BaseHead.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import { getCollection, getEntry, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import { getContentUrl } from '../i18n/content';
+import type { CollectionEntry } from 'astro:content';
+import type { Locale } from '../i18n/translations';
+
+interface Props {
+  exhibition: CollectionEntry<'exhibitions'>;
+  locale: Locale;
+}
+
+const { exhibition, locale } = Astro.props;
+const { data } = exhibition;
+const { Content } = await render(exhibition);
+
+async function resolveArtwork(slug: string) {
+  return (await getEntry('artworks', `${locale}/${slug}`)) ?? (await getEntry('artworks', `uk/${slug}`));
+}
+
+const artworkEntries = (await Promise.all(data.artworks.map(resolveArtwork)))
+  .filter((a): a is NonNullable<typeof a> => Boolean(a));
+
+const allMasters = data.master ? await getCollection('masters') : [];
+const masterEntry = data.master
+  ? (allMasters.find(m => m.data.locale === locale && m.data.name === data.master)
+      ?? allMasters.find(m => m.data.name === data.master))
+  : undefined;
+
+const coverImage = data.cover || artworkEntries[0]?.data.image;
+const accent = data.accent || '#c0392b';
+
+const backUrl = locale === 'en' ? '/en/exhibitions' : '/exhibitions';
+const backLabel = locale === 'uk' ? '← Усі виставки' : '← All exhibitions';
+const galleryBase = locale === 'en' ? '/en/gallery' : '/gallery';
+const allWorksLabel = locale === 'uk' ? 'Усі роботи в Галереї' : 'All works in the Gallery';
+
+const masterYears = masterEntry
+  ? [masterEntry.data.born, masterEntry.data.died].filter(Boolean).join(' — ')
+  : '';
+---
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <BaseHead title={data.title} description={data.subtitle || data.title} />
+    <style is:global>
+      /* Full-bleed hero потребує обнулити відступи main саме на цій сторінці */
+      .exhibition-page main {
+        max-width: none;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+    <style define:vars={{ accent }}>
+      .exh-hero {
+        position: relative;
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        min-height: 92vh;
+        display: flex;
+        align-items: flex-end;
+        overflow: hidden;
+      }
+      .exh-hero-bg {
+        position: absolute; inset: 0;
+        object-fit: cover; width: 100%; height: 100%;
+      }
+      .exh-hero-overlay {
+        position: absolute; inset: 0;
+        background:
+        linear-gradient(100deg, rgba(45,36,30,0.68) 0%, rgba(45,36,30,0.5) 32%, rgba(45,36,30,0.15) 62%, rgba(45,36,30,0) 82%),
+        linear-gradient(to top, rgba(45,36,30,0.55) 0%, rgba(45,36,30,0.08) 55%, rgba(45,36,30,0) 80%);
+      }
+      .exh-hero-content {
+        position: relative;
+        width: 100%;
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 4rem 2rem 4.5rem;
+        color: white;
+      }
+      .exh-back {
+        color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.9rem;
+        display: inline-block; margin-bottom: 2rem; letter-spacing: 0.02em;
+      }
+      .exh-back:hover { color: white; }
+
+      .exh-master-row {
+        display: flex; align-items: center; gap: 1rem; margin-bottom: 1.75rem;
+      }
+      .exh-master-photo {
+        width: 64px; height: 64px; border-radius: 50%;
+        object-fit: cover; border: 2px solid var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,255,255,0.2), 0 4px 16px rgba(0,0,0,0.4);
+        flex-shrink: 0;
+      }
+      .exh-master-info { display: flex; flex-direction: column; gap: 0.15rem; }
+      .exh-master-name {
+        font-size: 1.05rem; font-weight: 700; color: white; text-decoration: none;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+      }
+      .exh-master-name:hover { color: var(--accent); }
+      .exh-master-years {
+        font-size: 0.82rem; color: rgba(255,255,255,0.75);
+        text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      }
+
+      .exh-ornament {
+        display: inline-flex; align-items: center; gap: 0.6rem;
+        color: white; margin-bottom: 1.4rem;
+        font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase;
+        font-weight: 600;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+      }
+      .exh-ornament::before {
+        content: '';
+        width: 8px; height: 8px; border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,255,255,0.25);
+        flex-shrink: 0;
+      }
+
+      .exh-hero-title {
+        font-size: clamp(2.4rem, 4.6vw, 4rem);
+        margin: 0 0 1rem;
+        line-height: 1.12;
+        font-weight: 700;
+        color: white;
+        text-shadow: 0 4px 24px rgba(0,0,0,0.65), 0 2px 6px rgba(0,0,0,0.5);
+      }
+      .exh-hero-subtitle {
+        font-size: 1.15rem; line-height: 1.6;
+        color: rgba(255,255,255,0.92);
+        margin: 0; max-width: 640px;
+        text-shadow: 0 2px 12px rgba(0,0,0,0.55);
+      }
+
+      .exh-body { max-width: 640px; margin: 4rem auto 4rem; padding: 0 1rem; line-height: 1.75; color: var(--text-color, #282A2B); }
+      .exh-body :global(p:first-of-type)::first-letter { color: var(--accent); font-size: 3rem; font-weight: 700; float: left; line-height: 0.8; margin: 0.1em 0.1em 0 0; }
+
+      .exh-strip { max-width: 1100px; margin: 0 auto 4rem; padding: 0 1rem; display: flex; flex-direction: column; gap: 3rem; }
+      .exh-piece { display: flex; align-items: center; gap: 2.5rem; }
+      .exh-piece:nth-child(even) { flex-direction: row-reverse; }
+      .exh-piece-img-wrap { flex: 0 0 58%; }
+      .exh-piece-img { width: 100%; height: auto; display: block; border-radius: 0; box-shadow: 0 20px 40px rgba(0,0,0,0.12); }
+      .exh-piece-caption { flex: 1; }
+      .exh-piece-title { font-size: 1.2rem; font-weight: 700; margin: 0 0 0.3rem; }
+      .exh-piece-meta { font-size: 0.88rem; color: rgb(96, 115, 159); margin: 0 0 0.6rem; }
+      .exh-piece-desc { font-size: 0.92rem; color: rgb(55,65,81); line-height: 1.6; }
+
+      .exh-footer { max-width: 640px; margin: 0 auto 4rem; padding: 0 1rem; text-align: center; }
+      .exh-footer-link { display: inline-block; margin: 0.4rem 0.8rem; color: var(--accent); text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+      .exh-footer-link:hover { text-decoration: underline; }
+
+      @media (max-width: 720px) {
+        .exh-piece, .exh-piece:nth-child(even) { flex-direction: column; }
+        .exh-piece-img-wrap { flex: none; width: 100%; }
+        .exh-hero { min-height: 80vh; }
+        .exh-hero-content { padding: 2.5rem 1.25rem 3rem; }
+      }
+    </style>
+  </head>
+  <body class="exhibition-page">
+    <Header />
+    <main>
+      <section class="exh-hero">
+        {coverImage && <Image src={coverImage} alt={data.title} width={2000} class="exh-hero-bg" />}
+        <div class="exh-hero-overlay"></div>
+        <div class="exh-hero-content">
+          <a href={backUrl} class="exh-back">{backLabel}</a>
+
+          {data.master && (
+            <div class="exh-master-row">
+              {masterEntry?.data.photo && (
+                <Image src={masterEntry.data.photo} alt={data.master} width={128} height={128} class="exh-master-photo" />
+              )}
+              <div class="exh-master-info">
+                <a href={`${galleryBase}?master=${encodeURIComponent(data.master)}`} class="exh-master-name">{data.master}</a>
+                {masterYears && <span class="exh-master-years">{masterYears}</span>}
+              </div>
+            </div>
+          )}
+
+          <div class="exh-ornament">{locale === 'uk' ? 'Онлайн виставка' : 'Online Exhibition'}</div>
+
+          <h1 class="exh-hero-title">{data.title}</h1>
+          {data.subtitle && <p class="exh-hero-subtitle">{data.subtitle}</p>}
+        </div>
+      </section>
+
+      <article class="exh-body">
+        <Content />
+      </article>
+
+      <section class="exh-strip">
+        {artworkEntries.map((artwork) => (
+          <div class="exh-piece">
+            <div class="exh-piece-img-wrap">
+              <a href={getContentUrl('gallery', artwork.id)}>
+                <Image src={artwork.data.image} alt={artwork.data.title} widths={[400, 800]} sizes="(max-width: 720px) 100vw, 58vw" class="exh-piece-img" />
+              </a>
+            </div>
+            <div class="exh-piece-caption">
+              <p class="exh-piece-title">{artwork.data.title}</p>
+              <p class="exh-piece-meta">{[artwork.data.year, artwork.data.medium].filter(Boolean).join(' · ')}</p>
+              {artwork.data.description && <p class="exh-piece-desc">{artwork.data.description}</p>}
+            </div>
+          </div>
+        ))}
+      </section>
+
+      <div class="exh-footer">
+        {data.master && (
+          <a href={`${galleryBase}?master=${encodeURIComponent(data.master)}`} class="exh-footer-link">{allWorksLabel}</a>
+        )}
+        <a href={backUrl} class="exh-footer-link">{backLabel}</a>
+      </div>
+    </main>
+    <Footer />
+  </body>
+</html>
