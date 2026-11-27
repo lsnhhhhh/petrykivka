@@ -1,0 +1,266 @@
+---
+import BaseHead from './BaseHead.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import { SITE_TITLE } from '../consts';
+
+interface Props { locale: 'uk' | 'en'; }
+const { locale } = Astro.props;
+
+const content = {
+  uk: {
+    title: 'Консультації та експертний супровід',
+    description: 'Консультації, формування колекцій, лекції та дизайн на основі петриківського розпису.',
+    intro: [
+      'Ми працюємо з петриківським розписом як традиційним мистецтвом, що має власну історію, техніку, художню мову та культурний контекст.',
+      'Надаємо консультаційні та експертні послуги для тих, хто досліджує петриківський розпис, працює з його зразками, планує колекції або прагне інтегрувати традиційне мистецтво в сучасні проєкти.',
+      'Наша робота ґрунтується на глибокому знанні предмета, практичному досвіді та розумінні як історичної спадщини, так і сучасного розвитку петриківського розпису.',
+    ],
+    servicesTitle: 'Напрями роботи',
+    services: [
+      {
+        name: 'Консалтинг та експертні консультації',
+        featured: true,
+        text: [
+          'Надаємо консультації з широкого кола питань, пов\u2019язаних із петриківським розписом: від історії та техніки виконання до оцінки художньої якості, автентичності й атрибуції творів.',
+          'Допомагаємо перевірити інформацію, розібратися в конкретних мистецьких питаннях, знайти необхідні відомості та зорієнтуватися в історичному й культурному контексті.',
+          'Це може бути як окрема консультація, так і експертний супровід проєкту, для якого важливі достовірність інформації, професійна оцінка та коректна робота з традицією.',
+        ],
+      },
+      {
+        name: 'Формування колекцій',
+        text: [
+          'Допомагаємо формувати приватні та інституційні колекції петриківського розпису.',
+          'Консультуємо щодо вибору творів, особливостей різних періодів, авторства, художньої цінності та автентичності зразків. Допомагаємо зорієнтуватися в розмаїтті петриківського розпису та підібрати твори відповідно до інтересів і завдань колекціонера.',
+        ],
+      },
+      {
+        name: 'Лекції та тематичні виступи',
+        text: [
+          'Проводимо лекції про історію петриківського розпису, його розвиток, окремих майстрів, художні традиції та специфічні теми, пов\u2019язані з цим мистецтвом.',
+          'Зміст лекцій може адаптуватися до аудиторії та конкретного запиту — від загального ознайомлення з петриківським розписом до розгляду окремих історичних, мистецтвознавчих чи культурних питань.',
+          'Наразі лекції доступні в онлайн-форматі. Практичні майстер-класи до цього напряму не входять і обговорюються окремо.',
+        ],
+      },
+      {
+        name: 'Консультації щодо залучення майстрів',
+        text: [
+          'Надаємо рекомендації щодо залучення майстрів петриківського розпису до мистецьких, культурних, освітніх та комерційних проєктів.',
+          'Допомагаємо визначити, які фахівці можуть відповідати конкретному завданню, з урахуванням їхнього художнього стилю, досвіду та специфіки проєкту.',
+          'Послуга має консультаційний характер. Можливість безпосереднього залучення або представництва майстрів не є частиною стандартного формату.',
+        ],
+      },
+      {
+        name: 'Дизайн та інтеграція петриківського розпису',
+        text: [
+          'Розробляємо художні й дизайнерські рішення на основі петриківського розпису для різних сфер застосування: графічного дизайну, айдентики, поліграфії, предметного дизайну, інтер\u2019єрів та інших проєктів.',
+          'Працюємо як із традиційними мотивами, так і з їх адаптацією до сучасних візуальних завдань. Забезпечуємо консультаційний та творчий супровід на етапах розробки й реалізації, допомагаючи зберегти зв\u2019язок із традицією та коректно використовувати її художні особливості.',
+        ],
+      },
+    ],
+    individualTitle: 'Індивідуальні запити',
+    individualIntro: 'Окремі формати співпраці можемо розглянути в індивідуальному порядку, залежно від завдання, масштабу та можливостей реалізації.',
+    individual: [
+      { name: 'Навчання', text: 'Організація довготривалих освітніх програм із петриківського розпису для окремих груп, установ та організацій.' },
+      { name: 'Майстер-класи', text: 'Проведення практичних занять для груп, компаній та організацій. Формат і зміст визначаються відповідно до запиту.' },
+      { name: 'Виставки', text: 'Консультації, організація та супровід виставкових проєктів, присвячених петриківському розпису.' },
+    ],
+    experienceTitle: 'Досвід та експертиза',
+    experience: [
+      'Працюємо з темою петриківського розпису на професійному рівні та маємо досвід реалізації відповідних проєктів із 2011 року.',
+      'Поєднуємо практичне знання традиції, дослідницький підхід та досвід роботи з мистецькими, освітніми й дизайнерськими проєктами.',
+      'Для нас важливо не лише працювати з візуальною складовою петриківського розпису, а й розуміти його походження, контекст та особливості, забезпечуючи фаховий підхід до кожного завдання.',
+    ],
+    ctaTitle: 'Обговорення запиту',
+    ctaText: [
+      'Якщо ваше завдання стосується петриківського розпису та потребує фахової консультації, дослідження або професійного супроводу, зв\u2019яжіться з нами, щоб обговорити можливі формати співпраці.',
+      'Кожен запит розглядаємо індивідуально.',
+    ],
+    ctaLabel: 'Зв\u2019язатися з нами',
+    contactsUrl: '/contacts',
+  },
+  en: {
+    title: 'Consulting and Expert Support',
+    description: 'Consulting, collection building, lectures and design based on Petrykivka painting.',
+    intro: [
+      'We work with Petrykivka painting as a traditional art with its own history, technique, artistic language and cultural context.',
+      'We provide consulting and expert services for those who study Petrykivka painting, work with its examples, plan collections, or wish to bring traditional art into contemporary projects.',
+      'Our work is grounded in deep knowledge of the subject, practical experience, and an understanding of both the historical heritage and the contemporary development of Petrykivka painting.',
+    ],
+    servicesTitle: 'Areas of work',
+    services: [
+      {
+        name: 'Consulting and expert advice',
+        featured: true,
+        text: [
+          'We advise on a wide range of questions related to Petrykivka painting: from history and technique to the assessment of artistic quality, authenticity and attribution of works.',
+          'We help verify information, work through specific artistic questions, find the data you need, and find your way through the historical and cultural context.',
+          'This can be a single consultation or ongoing expert support for a project where reliable information, professional assessment and a correct approach to the tradition matter.',
+        ],
+      },
+      {
+        name: 'Building collections',
+        text: [
+          'We help build private and institutional collections of Petrykivka painting.',
+          'We advise on choosing works, the characteristics of different periods, authorship, artistic value and the authenticity of pieces. We help you find your way through the diversity of Petrykivka painting and select works that match a collector’s interests and aims.',
+        ],
+      },
+      {
+        name: 'Lectures and talks',
+        text: [
+          'We give lectures on the history of Petrykivka painting, its development, individual masters, artistic traditions, and specific topics related to this art.',
+          'The content can be adapted to the audience and the particular request, from a general introduction to Petrykivka painting to the examination of specific historical, art-historical or cultural questions.',
+          'Lectures are currently available online. Practical workshops are not part of this offering and are arranged separately.',
+        ],
+      },
+      {
+        name: 'Advice on engaging masters',
+        text: [
+          'We provide recommendations on engaging Petrykivka masters for artistic, cultural, educational and commercial projects.',
+          'We help identify which specialists may suit a particular task, taking into account their artistic style, experience and the specifics of the project.',
+          'This service is advisory in nature. Directly engaging or representing masters is not part of the standard format.',
+        ],
+      },
+      {
+        name: 'Design and integration of Petrykivka painting',
+        text: [
+          'We develop artistic and design solutions based on Petrykivka painting for a range of applications: graphic design, identity, print, product design, interiors and other projects.',
+          'We work both with traditional motifs and with their adaptation to contemporary visual tasks. We provide advisory and creative support through development and implementation, helping to preserve the link with the tradition and to use its artistic features correctly.',
+        ],
+      },
+    ],
+    individualTitle: 'Individual requests',
+    individualIntro: 'We can consider other formats of collaboration case by case, depending on the task, scale and feasibility.',
+    individual: [
+      { name: 'Training', text: 'Organizing long-term educational programs in Petrykivka painting for groups, institutions and organizations.' },
+      { name: 'Workshops', text: 'Practical sessions for groups, companies and organizations. Format and content are defined according to the request.' },
+      { name: 'Exhibitions', text: 'Consulting, organization and support for exhibition projects devoted to Petrykivka painting.' },
+    ],
+    experienceTitle: 'Experience and expertise',
+    experience: [
+      'We work with Petrykivka painting at a professional level and have experience delivering related projects since 2011.',
+      'We combine practical knowledge of the tradition, a research approach, and experience with artistic, educational and design projects.',
+      'It matters to us not only to work with the visual side of Petrykivka painting, but also to understand its origins, context and particularities, bringing a professional approach to every task.',
+    ],
+    ctaTitle: 'Discuss your request',
+    ctaText: [
+      'If your task concerns Petrykivka painting and calls for professional consultation, research or expert support, get in touch to discuss possible formats of collaboration.',
+      'We consider every request individually.',
+    ],
+    ctaLabel: 'Get in touch',
+    contactsUrl: '/en/contacts',
+  },
+};
+
+const c = content[locale];
+const pageTitle = `${c.title} | ${SITE_TITLE[locale]}`;
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <BaseHead title={pageTitle} description={c.description} />
+  </head>
+  <body>
+    <Header />
+    <main class="services">
+      <h1>{c.title}</h1>
+      <div class="intro">
+        {c.intro.map((p) => <p>{p}</p>)}
+      </div>
+
+      <section>
+        <h1>{c.servicesTitle}</h2>
+        {c.services.map((s) => (
+          <article class:list={['service', { featured: s.featured }]}>
+            <h2>{s.name}</h3>
+            {s.text.map((p) => <p>{p}</p>)}
+          </article>
+        ))}
+      </section>
+
+      <section>
+        <h2>{c.individualTitle}</h2>
+        <p>{c.individualIntro}</p>
+        <dl class="rows">
+          {c.individual.map((s) => (
+            <div class="row">
+              <dt>{s.name}</dt>
+              <dd>{s.text}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <section>
+        <h2>{c.experienceTitle}</h2>
+        {c.experience.map((p) => <p>{p}</p>)}
+      </section>
+
+      <section class="cta">
+        <h2>{c.ctaTitle}</h2>
+        {c.ctaText.map((p) => <p>{p}</p>)}
+        <a class="cta-link" href={c.contactsUrl}>{c.ctaLabel} →</a>
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  main.services {
+    width: 760px;
+    max-width: 100%;
+    padding: 2rem 1rem 3rem;
+  }
+  h1 { margin-bottom: 1.2rem; }
+  .intro p { line-height: 1.65; }
+  .intro p:first-child { font-size: 1.12rem; }
+
+  section { margin-top: 3rem; }
+  h2 { font-size: 1.5rem; margin-bottom: 1rem; }
+  p { line-height: 1.65; margin: 0 0 0.85rem; }
+
+  .service {
+    padding: 1.4rem 0;
+    border-top: 1px solid rgba(var(--gray-light), 0.9);
+  }
+  .service:last-child { border-bottom: 1px solid rgba(var(--gray-light), 0.9); }
+  .service h3 { font-size: 1.15rem; margin: 0 0 0.7rem; }
+  .service.featured {
+    border-left: 3px solid var(--accent);
+    padding-left: 1.3rem;
+  }
+
+  .rows { margin: 1.2rem 0 0; }
+  .row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 1.5rem;
+    padding: 0.9rem 0;
+    border-top: 1px solid rgba(var(--gray-light), 0.9);
+  }
+  .row:last-child { border-bottom: 1px solid rgba(var(--gray-light), 0.9); }
+  dt { font-weight: 600; }
+  dd { margin: 0; line-height: 1.6; }
+
+  .cta {
+    background: rgba(var(--gray-light), 0.35);
+    border-radius: 8px;
+    padding: 1.6rem;
+  }
+  .cta h2 { font-size: 1.3rem; }
+  .cta-link {
+    display: inline-block;
+    margin-top: 0.4rem;
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .cta-link:hover { text-decoration: underline; }
+
+  @media (max-width: 640px) {
+    .row { grid-template-columns: 1fr; gap: 0.3rem; }
+    .service.featured { padding-left: 1rem; }
+  }
+</style>
