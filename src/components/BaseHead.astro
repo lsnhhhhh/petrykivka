@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 import type { ImageMetadata } from 'astro';
-import FallbackImage from '../assets/blog-placeholder-1.jpg';
+import DefaultOGImage from '../assets/petrykivka.jpg';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { getLocaleFromUrl } from '../i18n/translations';
 import GoogleAnalytics from './GoogleAnalytics.astro';
@@ -15,7 +15,7 @@ interface Props {
 const locale = getLocaleFromUrl(Astro.url);
 const siteTitle = SITE_TITLE[locale];
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const { title, description, image = FallbackImage } = Astro.props;
+const { title, description, image = DefaultOGImage } = Astro.props;
 
 // Якщо title це назва сайту — не дублюємо. Інакше додаємо суфікс "| Site Title".
 const fullTitle = title === siteTitle ? title : `${title} | ${siteTitle}`;
