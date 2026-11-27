@@ -1,6 +1,6 @@
 ---
 date: '2016-11-15'
-type: news
+type: article
 title: 'Ukrainian-Born Artist Wins Competition to Design Starbucks’ Holiday Cup'
 source: 'Kyiv Post'
 url: 'https://archive.kyivpost.com/lifestyle/ukrainian-born-artist-wins-competition-design-starbucks-holiday-cup.html'
